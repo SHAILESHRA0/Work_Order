@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOD Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <a href="dashboard.html"><img src="../assets/logo.jpg" alt="Workorder Management Logo" class="logo"></a>
+        <h1>HOD Dashboard</h1>
+        <a href="#" class="logout" id="logoutBtn">Logout</a>
+    </header>
+
+    <main>
+        <h2>Work Orders Overview</h2>
+        <table id="workorderTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Asset ID</th>
+                    <th>Status</th>
+                    <th>Assigned To</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Work orders will be dynamically loaded here -->
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            const token = sessionStorage.getItem("token");
+
+            if (!token) {
+                alert("Unauthorized access! Please log in.");
+                window.location.href = "hod_login.html";
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/workorders", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch work orders");
+                }
+
+                const workorders = await response.json();
+                const tableBody = document.querySelector("#workorderTable tbody");
+                tableBody.innerHTML = ""; // Clear existing content
+
+                workorders.forEach(order => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${order._id}</td>
+                        <td>${order.asset_id}</td>
+                        <td>${order.status}</td>
+                        <td>${order.assigned_to || "Unassigned"}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error("Error fetching work orders:", error);
+                alert("Failed to load work orders. Please try again.");
+            }
+        });
+
+        // Logout function
+        document.getElementById("logoutBtn").addEventListener("click", () => {
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("role");
+            window.location.href = "hod_login.html";
+        });
+    </script>
+</body>
+</html>

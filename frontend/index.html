@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workorder Management System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="container">
+                <div class="logo-container">
+                    <img src="../assets/logo.jpg" alt="All Solve Logo" class="logo-img">
+                    <span class="company-name">All Solve</span>
+                </div>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="login.html" class="nav-item">Login</a></li>
+                        <li><a href="dashboard.html" class="nav-item">Dashboard</a></li>
+                        <li><a href="#solutions" class="nav-item">Solutions</a></li>
+                        <li><a href="#support" class="nav-item">Support</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>Transform Your Industrial Operations</h1>
+                <p>Streamline maintenance workflows, optimize asset performance, and drive operational excellence with our advanced Work Order Management System.</p>
+                <div class="cta-buttons">
+                    <a href="login.html" class="btn btn-primary">Get Started</a>
+                    <a href="#demo" class="btn btn-secondary">Request Demo</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h3>Maintenance Management</h3>
+                        <p>Streamline preventive and corrective maintenance workflows</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Asset Tracking</h3>
+                        <p>Real-time monitoring and performance analytics</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Work Order Automation</h3>
+                        <p>Automated scheduling and resource allocation</p>
+                    </div>
+                    <div class="feature-card">
+                        <h3>Reporting & Analytics</h3>
+                        <p>Comprehensive insights and performance metrics</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Workorder Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // GSAP Animations
+        gsap.from(".logo-container", {
+            duration: 1,
+            x: -100,
+            opacity: 0,
+            ease: "power3.out"
+        });
+
+        gsap.from(".nav-item", {
+            duration: 0.8,
+            y: -50,
+            opacity: 0,
+            stagger: 0.2,
+            ease: "back.out(1.7)"
+        });
+
+        gsap.from(".hero h1", {
+            duration: 1,
+            y: 50,
+            opacity: 0,
+            delay: 0.5,
+            ease: "power3.out"
+        });
+
+        gsap.from(".hero p", {
+            duration: 1,
+            y: 30,
+            opacity: 0,
+            delay: 0.8,
+            ease: "power3.out"
+        });
+
+        gsap.from(".cta-buttons", {
+            duration: 1,
+            y: 30,
+            opacity: 0,
+            delay: 1,
+            ease: "power3.out"
+        });
+    </script>
+</body>
+</html>

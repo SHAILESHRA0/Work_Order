@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Workorder Management</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+      .main-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        padding: 1rem;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .logo img {
+        width: 80px;
+        height: 80px;
+        border-radius: 10px;
+        object-fit: cover;
+      }
+
+      .main-header h1 {
+        color: white;
+        margin: 0;
+        font-size: 2.2rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .form-toggle {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      .form-toggle button {
+        padding: 0.5rem 2rem;
+        border: none;
+        background: #ddd;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+
+      .form-toggle button.active {
+        background: #1e3c72;
+        color: white;
+      }
+
+      .hidden-form {
+        display: none;
+      }
+
+      .active-form {
+        display: block;
+      }
+
+      .form-note {
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        color: #666;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="logo-container">
+        <div class="logo">
+          <a href="index.html">
+            <img src="../assets/logo.jpg" alt="Workorder Management Logo" />
+          </a>
+        </div>
+        <h1>Workorder Management System</h1>
+      </div>
+    </header>
+
+    <main>
+      <div class="login-container">
+        <div class="form-toggle">
+          <button id="loginToggle" class="active">Login</button>
+          <button id="signupToggle">Sign Up</button>
+        </div>
+
+        <form id="loginForm" class="active-form">
+          <h2>Login</h2>
+          <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" required />
+          </div>
+          
+          <button type="submit" class="btn-primary">Login</button>
+        </form>
+
+        <form id="signupForm" class="hidden-form">
+          <h2>Sign Up</h2>
+          <div class="form-group">
+            <label for="newUsername">Username:</label>
+            <input type="text" id="newUsername" required />
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">Password:</label>
+            <input type="password" id="newPassword" required />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm Password:</label>
+            <input type="password" id="confirmPassword" required />
+          </div>
+          
+          <button type="submit" class="btn-primary">Sign Up</button>
+          <p class="form-note">Note: Your account will need admin approval before accessing the system.</p>
+        </form>
+      </div>
+    </main>
+
+    <footer>
+      <div class="footer-content">
+        <p>&copy; 2025 Workorder Management System | All rights reserved | Contact: support@workorder.com</p>
+      </div>
+    </footer>
+
+    <script>
+      // GSAP Animations
+      window.addEventListener('DOMContentLoaded', () => {
+        gsap.from('.logo', {
+          duration: 1,
+          x: -100,
+          opacity: 0,
+          ease: 'power3.out'
+        });
+
+        gsap.from('.main-header h1', {
+          duration: 1,
+          y: -50,
+          opacity: 0,
+          delay: 0.5,
+          ease: 'back.out'
+        });
+
+        gsap.from('.login-container', {
+          duration: 1,
+          scale: 0.8,
+          opacity: 0,
+          delay: 1,
+          ease: 'power2.out'
+        });
+      });
+
+      // Function to handle logout
+      function logout() {
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('role');
+        window.location.href = 'index.html';
+      }
+
+      // Toggle functionality
+      const loginToggle = document.getElementById('loginToggle');
+      const signupToggle = document.getElementById('signupToggle');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+
+      loginToggle.addEventListener('click', () => {
+        loginToggle.classList.add('active');
+        signupToggle.classList.remove('active');
+        loginForm.classList.add('active-form');
+        loginForm.classList.remove('hidden-form');
+        signupForm.classList.add('hidden-form');
+        signupForm.classList.remove('active-form');
+      });
+
+      signupToggle.addEventListener('click', () => {
+        signupToggle.classList.add('active');
+        loginToggle.classList.remove('active');
+        signupForm.classList.add('active-form');
+        signupForm.classList.remove('hidden-form');
+        loginForm.classList.add('hidden-form');
+        loginForm.classList.remove('active-form');
+      });
+
+      // Login form handler
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        if (!username || !password) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:5502/api/auth/login", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ username, password }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            sessionStorage.setItem("token", data.token);
+            sessionStorage.setItem("role", data.role);
+            sessionStorage.setItem("username", username);
+
+            // Redirect to the assigned page based on redirectUrl
+            if (data.redirectUrl) {
+              window.location.replace(data.redirectUrl);
+            } else {
+              alert("No redirect URL assigned. Please contact support.");
+            }
+          } else {
+            alert(data.message || "Invalid credentials. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Server error. Please try again later.");
+        }
+      });
+
+      // Signup form handler
+      document.getElementById("signupForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const username = document.getElementById("newUsername").value.trim();
+        const password = document.getElementById("newPassword").value.trim();
+        const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+        // Enhanced validation
+        if (!username || !password || !confirmPassword) {
+          alert("Please fill in all fields.");
+          return;
+        }
+
+        if (username.length < 3) {
+          alert("Username must be at least 3 characters long.");
+          return;
+        }
+
+        if (password.length < 6) {
+          alert("Password must be at least 6 characters long.");
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alert("Passwords do not match!");
+          return;
+        }
+
+        try {
+          const response = await fetch("http://localhost:5502/api/auth/register", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ 
+              name: username, 
+              password,
+              role: "Visitor"
+            })
+          });
+
+          // Check if response is JSON
+          const contentType = response.headers.get("content-type");
+          if (!contentType || !contentType.includes("application/json")) {
+            throw new Error("Server sent non-JSON response");
+          }
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert("Registration successful! Please wait for admin approval before logging in.");
+            document.getElementById("signupForm").reset();
+            loginToggle.click();
+          } else {
+            throw new Error(data.message || "Registration failed");
+          }
+
+        } catch (error) {
+          console.error("Registration error:", error);
+          if (error.message === "Server sent non-JSON response") {
+            alert("Server error: Invalid response format");
+          } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+            alert("Unable to connect to server. Please check your internet connection and try again.");
+          } else {
+            alert(error.message || "Registration failed. Please try again later.");
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

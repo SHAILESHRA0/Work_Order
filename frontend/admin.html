@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Add User</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="main-header">
+        <h1>Admin Panel</h1>
+    </header>
+
+    <main>
+        <div class="admin-container">
+            <h2>Add User</h2>
+            <form id="addUserForm">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="role">Role:</label>
+                    <select id="role" required>
+                        <option value="admin">Admin</option>
+                        <option value="hod">HOD</option>
+                        <option value="manager">Manager</option>
+                        <option value="supervisor">Supervisor</option>
+                        <option value="technician">Technician</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Add User</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Workorder Management System | All rights reserved</p>
+    </footer>
+
+    <script>
+        document.getElementById("addUserForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const role = document.getElementById("role").value;
+
+            if (!username || !password || !role) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:5502/api/admin/addUser", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ username, password, role }), // Ensure correct field names
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("User added successfully!");
+                    document.getElementById("addUserForm").reset();
+                } else {
+                    alert(data.message || "Failed to add user.");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Server error. Please try again later.");
+            }
+        });
+    </script>
+</body>
+</html>

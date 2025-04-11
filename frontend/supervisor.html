@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supervisor Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a href="dashboard.html"><img src="../assets/logo.jpg" alt="Workorder Management Logo" class="logo"></a>
+            <h1>Supervisor Panel</h1>
+        </div>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="index.html">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <div class="search-filter">
+            <input type="text" id="searchInput" placeholder="Search work orders...">
+            <select id="statusFilter">
+                <option value="all">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="assigned">Assigned</option>
+                <option value="in-progress">In Progress</option>
+                <option value="completed">Completed</option>
+            </select>
+        </div>
+
+        <section class="manager-assigned">
+            <h2>Manager Assigned Tasks</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Technician</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="managerTasksList">
+                    <tr>
+                        <td>WO-002</td>
+                        <td>System Upgrade</td>
+                        <td>Medium</td>
+                        <td>2023-12-01</td>
+                        <td>Pending</td>
+                        <td>
+                            <select class="technician-select">
+                                <option value="">Select Technician</option>
+                                <option value="tech1">John Doe</option>
+                                <option value="tech2">Jane Smith</option>
+                                <option value="tech3">Mike Johnson</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="assign-btn" onclick="assignTask('WO-002')">Assign</button>
+                        </td>
+                    </tr>
+                    <!-- Additional tasks will be dynamically populated -->
+                </tbody>
+            </table>
+        </section>
+
+        <section class="workorder-assignment">
+            <h2>Assign Work Orders</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Technician</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="assignmentList">
+                    <tr>
+                        <td>WO-001</td>
+                        <td>Equipment Maintenance</td>
+                        <td>
+                            <select class="technician-select">
+                                <option value="">Select Technician</option>
+                                <option value="tech1">John Doe</option>
+                                <option value="tech2">Jane Smith</option>
+                                <option value="tech3">Mike Johnson</option>
+                            </select>
+                        </td>
+                        <td>High</td>
+                        <td>Pending</td>
+                        <td>
+                            <button class="assign-btn">Assign</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="technician-progress">
+            <h2>Technician Progress Monitoring</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Technician</th>
+                        <th>Current Task</th>
+                        <th>Progress</th>
+                        <th>Status</th>
+                        <th>Time Spent</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="progressList">
+                    <!-- Progress will be populated dynamically -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script src="supervisor.js"></script>
+    <script>
+        function assignTask(workOrderId) {
+            const technicianSelect = document.querySelector(`#managerTasksList tr td select.technician-select`);
+            const technicianId = technicianSelect.value;
+
+            if (!technicianId) {
+                alert("Please select a technician before assigning.");
+                return;
+            }
+
+            fetch('/api/assignWorkOrder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ workOrderId, technicianId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Work order assigned successfully!");
+                    // Optionally, refresh the task list
+                } else {
+                    alert("Failed to assign work order.");
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        const socket = new WebSocket('ws://localhost:3000');
+
+        socket.onopen = () => {
+            console.log('WebSocket connection established.');
+        };
+
+        socket.onclose = () => {
+            console.error('WebSocket connection closed. Reconnecting...');
+            setTimeout(() => {
+                location.reload(); // Reload the page to reconnect
+            }, 5000);
+        };
+
+        socket.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+
+            if (data.type === 'taskUpdate') {
+                alert(`Task ${data.workOrderId} has been updated: ${data.message}`);
+                refreshTaskList();
+            }
+        };
+
+        function refreshTaskList() {
+            const managerTasksList = document.getElementById('managerTasksList');
+            managerTasksList.innerHTML = '<tr><td colspan="7">Loading...</td></tr>'; // Show loading indicator
+
+            fetch('/api/getManagerTasks')
+                .then(response => response.json())
+                .then(tasks => {
+                    managerTasksList.innerHTML = ''; // Clear existing rows
+
+                    tasks.forEach(task => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${task.id}</td>
+                            <td>${task.description}</td>
+                            <td>${task.priority}</td>
+                            <td>${task.dueDate}</td>
+                            <td>${task.status}</td>
+                            <td>
+                                <select class="technician-select">
+                                    <option value="">Select Technician</option>
+                                    ${task.technicians.map(tech => `<option value="${tech.id}">${tech.name}</option>`).join('')}
+                                </select>
+                            </td>
+                            <td>
+                                <button class="assign-btn" onclick="assignTask('${task.id}')">Assign</button>
+                            </td>
+                        `;
+                        managerTasksList.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching tasks:', error);
+                    managerTasksList.innerHTML = '<tr><td colspan="7">Failed to load tasks. Please try again.</td></tr>';
+                });
+        }
+    </script>
+</body>
+</html>
