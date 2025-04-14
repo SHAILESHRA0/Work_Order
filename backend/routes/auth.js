@@ -55,7 +55,7 @@ router.post("/api/auth/login", async (req, res) => {
         role: user.role,
         name: user.name,
       },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET || "jwt_secret",
       { expiresIn: "24h" }
     );
 
@@ -110,4 +110,4 @@ router.post("/api/auth/signup", async (req, res) => {
   }
 });
 
-export { router };
+export { router as authRouter };

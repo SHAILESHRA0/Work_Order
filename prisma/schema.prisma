@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  name     String   @default("user")
+  email    String   @unique
+  password String
+  role     Role @default(user)
+
+  // One user can have multiple employee records
+  employees Employee[] // One-to-many relationship
+  
+  // Client-related fields - only used when role is client-type
+  company  String?
+  address  String?
+  phone    String?
+  
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  assignedTasks Task[] // Tasks assigned to this user
+  workOrders   WorkOrder[] // Work orders associated with this user as client
+}
+
+model Employee {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  access    AccessLevel @default(low)
+
+  // Many employees can belong to one user
+  userId    String? @db.ObjectId
+  user      User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
+  
+  // Employee relationships
+  createdWorkOrders WorkOrder[] @relation("CreatedBy")
+  managedWorkOrders WorkOrder[] @relation("ManagedBy")
+  assignedTasks Task[] // Tasks assigned by this employee
+}
+
+model WorkOrder {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+ 
+  status WorkOrderStatus @default(pending)
+  priority Priority @default(medium)
+  
+  // Vehicle/equipment details
+  model String
+  license String
+  type String
+  parts String[]
+  tools String[]
+  resources String[]
+
+  // Dates
+  startDate DateTime?
+  dueDate DateTime?
+  completedAt DateTime?
+  
+  // Relationships
+  createdById String? @db.ObjectId
+  createdBy Employee? @relation("CreatedBy", fields: [createdById], references: [id])
+  
+  managedById String? @db.ObjectId
+  managedBy Employee? @relation("ManagedBy", fields: [managedById], references: [id])
+  
+  clientId String? @db.ObjectId
+  client User? @relation(fields: [clientId], references: [id])
+  
+  tasks Task[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  progress Int @default(0) @db.Long
+  
+  priority Priority @default(low)
+  status TaskStatus @default(pending)
+  
+  // Dates
+  startDate DateTime?
+  dueDate DateTime?
+  completedAt DateTime?
+
+  // Assignment
+  assignedToId String? @db.ObjectId
+  assignedTo User? @relation(fields: [assignedToId], references: [id])
+
+  assignedById String? @db.ObjectId
+  assignedBy Employee? @relation(fields: [assignedById], references: [id])
+  
+  // Related work order
+  workOrderId String? @db.ObjectId
+  workOrder WorkOrder? @relation(fields: [workOrderId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OrderType {
+  id String @id @default(auto()) @map("_id")@db.ObjectId
+  name String @unique
+}
+
+enum TaskStatus {
+  pending
+  assigned
+  in_progress
+  completed
+  cancelled
+}
+
+enum WorkOrderStatus {
+  pending
+  in_progress
+  completed
+  cancelled
+}
+
+enum Priority {
+  low
+  medium
+  high
+}
+
+enum Role {
+  admin
+  hod
+  supervisor
+  manager
+  technician
+  user
+}
+
+enum AccessLevel {
+  high
+  medium
+  low
+}

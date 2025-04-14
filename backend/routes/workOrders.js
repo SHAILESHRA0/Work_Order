@@ -1,96 +1,152 @@
-const express = require('express');
+import express from 'express';
+import { db } from '../db/db.js';
+import { auth } from '../middleware/auth.js';
+import { getDataFromJWT } from '../utils/token.js';
+
 const router = express.Router();
-const WorkOrder = require('../models/WorkOrder');
-const auth = require('../middleware/auth');
-const roleCheck = require('../middleware/roleCheck');
+
+// Validation schema for creating a work order
 
 // Get all work orders
-router.get('/', async (req, res) => {
-    try {
-        const workOrders = await WorkOrder.find().sort({ createdAt: -1 });
-        res.json(workOrders);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+router.get('/api/work-order/get-all', auth, async (req, res) => {
+  try {
+    const workOrders = await db.workOrder.findMany({
+      include: {
+        tasks: true,
+        _count: true
+      }
+    });
+    return res.json(workOrders);
+  } catch (error) {
+    console.error('Error fetching work orders:', error);
+    return res.status(500).json({ error: 'Failed to fetch work orders' });
+  }
 });
 
-// Manager routes
-router.post('/', auth, roleCheck('manager'), async (req, res) => {
+// Get a single work order by ID
+// router.get('/api/work-order/get/:id', auth, async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const workOrder = await db.workOrder.findUnique({
+//       where: { id },
+//       include: {
+//         tasks: true
+//       }
+//     });
+    
+//     if (!workOrder) {
+//       return res.status(404).json({ error: 'Work order not found' });
+//     }
+    
+//     res.json(workOrder);
+//   } catch (error) {
+//     console.error('Error fetching work order:', error);
+//     res.status(500).json({ error: 'Failed to fetch work order' });
+//   }
+// });
+
+// Create a new work order
+router.post('/api/work-order/create', auth, async (req, res) => {
   try {
-    const workOrder = new WorkOrder({
-      ...req.body,
-      assignedBy: req.user.id,
-      history: [{
-        action: 'created',
-        performedBy: req.user.id,
-        timestamp: new Date(),
-        details: 'Work order created'
-      }]
+    const data = req.body
+    const tokenData = getDataFromJWT(req)
+
+    if (!tokenData) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    
+    // Extract tasks from the data
+    const { tasks, ...workOrderData } = data;
+    
+    // Create work order with nested tasks
+    const workOrder = await db.workOrder.create({
+      data: {
+        ...workOrderData,
+        tasks: {
+          create: tasks.map((task) => ({
+            ...task,
+            assignedById: tokenData.id,
+          })),
+        },
+      },
+      include: {
+        tasks: true,
+      },
     });
-    await workOrder.save();
+    
     res.status(201).json(workOrder);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error creating work order:', error);
+    res.status(500).json({ error: 'Failed to create work order' });
   }
 });
 
-// Supervisor routes
-router.get('/supervised', auth, roleCheck('supervisor'), async (req, res) => {
-  try {
-    const workOrders = await WorkOrder.find({ supervisor: req.user.id })
-      .populate('assignedTo', 'username')
-      .populate('assignedBy', 'username');
-    res.json(workOrders);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+// Update a work order
+// router.put('/api/work-order/update/:id', async (req, res) => {
+//   try {
+//     const { id } = req.params;
 
-// Technician routes
-router.put('/:id/status', auth, roleCheck('technician'), async (req, res) => {
-  try {
-    const workOrder = await WorkOrder.findById(req.params.id);
-    if (workOrder.assignedTo.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
+//     const { tasks, ...workOrderData } = req.body;
     
-    workOrder.status = req.body.status;
-    workOrder.history.push({
-      action: 'status-update',
-      performedBy: req.user.id,
-      timestamp: new Date(),
-      details: `Status updated to ${req.body.status}`
-    });
+//     // First update the work order
+//     const workOrder = await db.workOrder.update({
+//       where: { id },
+//       data: workOrderData
+//     });
     
-    await workOrder.save();
-    res.json(workOrder);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+//     // Then handle tasks if provided
+//     if (tasks && tasks.length > 0) {
+//       // Delete existing tasks
+//       await db.task.deleteMany({
+//         where: { workOrderId: id }
+//       });
+      
+//       // Create new tasks
+//       for (const task of tasks) {
+//         await db.task.create({
+//           data: {
+//             ...task,
+//             workOrderId: id
+//           }
+//         });
+//       }
+//     }
+    
+//     // Return updated work order with tasks
+//     const updatedWorkOrder = await db.workOrder.findUnique({
+//       where: { id },
+//       include: {
+//         tasks: true
+//       }
+//     });
+    
+//     res.json(updatedWorkOrder);
+//   } catch (error) {
+//     console.error('Error updating work order:', error);
+//     res.status(500).json({ error: 'Failed to update work order' });
+//   }
+// });
 
-// Update work order
-router.put('/:id', async (req, res) => {
-    try {
-        const updatedWorkOrder = await WorkOrder.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            { new: true }
-        );
-        res.json(updatedWorkOrder);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-});
+// Delete a work order
+// router.delete('/api/work-order/delete/:id', async (req, res) => {
+//   try {
+//     const { id } = req.params;
+    
+//     // First delete associated tasks
+//     await db.task.deleteMany({
+//       where: { workOrderId: id }
+//     });
+    
+//     // Then delete the work order
+//     const workOrder = await db.workOrder.delete({
+//       where: { id }
+//     });
+    
+//     res.json(workOrder);
+//   } catch (error) {
+//     console.error('Error deleting work order:', error);
+//     res.status(500).json({ error: 'Failed to delete work order' });
+//   }
+// });
 
-// Delete work order
-router.delete('/:id', async (req, res) => {
-    try {
-        await WorkOrder.findByIdAndDelete(req.params.id);
-        res.json({ message: 'Work order deleted' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-module.exports = router;
+export { router as workOrderRouter };

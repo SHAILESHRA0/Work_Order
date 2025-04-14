@@ -68,7 +68,7 @@
             font-weight: bold;
         }
 
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             padding: 0.5rem;
             border: 1px solid #ccc;
             border-radius: 5px;
@@ -83,13 +83,17 @@
         .checkbox-group label {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            font-weight: normal;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 0.5rem;
         }
 
         .form-actions {
+            margin-top: 1.5rem;
             display: flex;
             gap: 1rem;
-            justify-content: flex-end;
         }
 
         .form-actions button {
@@ -97,6 +101,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-weight: bold;
         }
 
         .form-actions button[type="submit"] {
@@ -105,18 +110,8 @@
         }
 
         .form-actions button[type="reset"] {
-            background-color: #dc3545;
+            background-color: #6c757d;
             color: white;
-        }
-
-        .form-actions button:hover {
-            opacity: 0.9;
-        }
-
-        .table-controls {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
         }
 
         table {
@@ -125,43 +120,47 @@
         }
 
         table th, table td {
-            padding: 0.75rem;
+            padding: 0.5rem;
             text-align: left;
-            border: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
         }
 
         table th {
             background-color: #f8f9fa;
         }
 
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #333;
-            color: white;
-            padding: 10px 20px;
+        .table-controls {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .table-controls input, .table-controls select {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
             border-radius: 5px;
-            z-index: 1000;
         }
 
-        .loader {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            z-index: 1000;
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
 
-        @keyframes spin {
-            0% { transform: translate(-50%, -50%) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        .status-pending {
+            background-color: #ffeeba;
+            color: #856404;
+        }
+
+        .status-completed {
+            background-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .status-in-progress {
+            background-color: #b8daff;
+            color: #004085;
         }
     </style>
 </head>
@@ -180,16 +179,24 @@
             <form id="workorderForm">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Car Model:
+                        <label for="title">Title:
+                            <input type="text" id="title" required>
+                        </label>
+                        <label for="description">Description:
+                            <textarea id="description" rows="3"></textarea>
+                        </label>
+                        <label for="carModel">Car Model:
                             <input type="text" id="carModel" required>
                         </label>
-                        <label>License Plate:
+                        <label for="licensePlate">License Plate:
                             <input type="text" id="licensePlate" required>
                         </label>
-                        <label>WO Number:
+                        <label for="woNumber">Order Number:
                             <input type="text" id="woNumber" required>
                         </label>
-                        <label>Repair Type:
+                    </div>
+                    <div class="form-group">
+                        <label for="repairType">Repair Type:
                             <select id="repairType" required>
                                 <option value="">Select Type</option>
                                 <option value="engine">Engine</option>
@@ -199,7 +206,7 @@
                                 <option value="electrical">Electrical</option>
                             </select>
                         </label>
-                        <label>Priority:
+                        <label for="priority">Priority:
                             <select id="priority" required>
                                 <option value="">Select Priority</option>
                                 <option value="high">High</option>
@@ -207,9 +214,9 @@
                                 <option value="low">Low</option>
                             </select>
                         </label>
-                        <label>Assign To:
-                            <select id="assignedEmployee" required>
-                                <option value="">Select Mechanic</option>
+                        <label for="assignedTo">Assign To:
+                            <select id="assignedTo" required>
+                                <option value="">Select Technician</option>
                                 <option value="emp1">John Smith</option>
                                 <option value="emp2">Jane Doe</option>
                                 <option value="emp3">Mike Johnson</option>
@@ -255,8 +262,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Start Time: <input type="datetime-local" id="startTime" required></label>
-                        <label>End Time: <input type="datetime-local" id="endTime" required></label>
+                        <label>Start Date: <input type="datetime-local" id="startDate" required></label>
+                        <label>Due Date: <input type="datetime-local" id="dueDate" required></label>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -279,15 +286,16 @@
             <table>
                 <thead>
                     <tr>
-                        <th>WO Number</th>
+                        <th>Order #</th>
+                        <th>Title</th>
                         <th>Car Model</th>
                         <th>License Plate</th>
                         <th>Repair Type</th>
                         <th>Priority</th>
                         <th>Assigned To</th>
                         <th>Status</th>
-                        <th>Start Time</th>
-                        <th>End Time</th>
+                        <th>Start Date</th>
+                        <th>Due Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -296,7 +304,6 @@
         </section>
     </main>
     <script>
-        const API_URL = 'http://localhost:5502/api/workorders'; // Corrected API URL
 
         document.addEventListener('DOMContentLoaded', function() {
             const workorderForm = document.getElementById('workorderForm');
@@ -334,19 +341,17 @@
             workorderForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const formData = {
-                    woNumber: document.getElementById('woNumber').value,
-                    carModel: document.getElementById('carModel').value,
-                    licensePlate: document.getElementById('licensePlate').value,
-                    repairType: document.getElementById('repairType').value,
-                    priority: document.getElementById('priority').value,
-                    assignedTo: document.getElementById('assignedEmployee').value,
-                    partsRequired: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
-                    safetyTools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value),
-                    tasks: Array.from(document.querySelectorAll('.task-input')).map(input => input.value).filter(Boolean),
-                    resources: Array.from(document.querySelectorAll('.resource-input')).map(input => input.value).filter(Boolean),
-                    startTime: document.getElementById('startTime').value,
-                    endTime: document.getElementById('endTime').value,
-                    status: 'Pending'
+                    model: document.getElementById('carModel').value,
+                    license: document.getElementById('licensePlate').value,
+                    type: document.getElementById('repairType').value,
+                    parts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
+                    tools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value),
+                    tasks: Array.from(document.querySelectorAll('.task-input')).map(input => ({
+                        title: input.value,
+                        description: "",
+                        priority: document.getElementById('priority').value,
+                        assignedToId: document.getElementById('assignedTo').value || null
+                    })).filter(task => task.title)
                 };
 
                 saveWorkOrder(formData);
@@ -369,15 +374,17 @@
             // Work Order Management Functions
             async function saveWorkOrder(workOrder) {
                 try {
-                    const response = await fetch(API_URL, {
+                    const response = await fetch("/api/work-order/create", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Authorization': `${localStorage.getItem('token')}`
                         },
                         body: JSON.stringify(workOrder)
                     });
                     if (!response.ok) throw new Error('Failed to save work order');
                     await updateWorkOrderHistory();
+                    alert('Work order created successfully!');
                 } catch (error) {
                     console.error('Error:', error);
                     alert('Failed to save work order');
@@ -386,35 +393,40 @@
 
             async function updateWorkOrderHistory() {
                 try {
-                    const response = await fetch(API_URL); // Ensure API URL is correct
+                    const response = await fetch("/api/work-order/get-all", {
+                        headers: {
+                            'Authorization': `${localStorage.getItem('token')}`
+                        }
+                    });
                     if (!response.ok) throw new Error('Failed to fetch work orders');
                     const workOrders = await response.json();
                     const searchTerm = searchInput.value.toLowerCase();
                     const priorityFilter = filterPriority.value;
 
                     const filteredOrders = workOrders.filter(wo => {
-                        const matchesSearch = Object.values(wo).some(val => 
-                            String(val).toLowerCase().includes(searchTerm)
-                        );
-                        const matchesPriority = !priorityFilter || wo.priority === priorityFilter;
+                        const matchesSearch = 
+                            wo.model?.toLowerCase().includes(searchTerm) || 
+                            wo.license?.toLowerCase().includes(searchTerm) || 
+                            wo.type?.toLowerCase().includes(searchTerm);
+                        const matchesPriority = !priorityFilter || wo.tasks.some(task => task.priority === priorityFilter);
                         return matchesSearch && matchesPriority;
                     });
 
                     const tbody = document.getElementById('historyTableBody');
                     tbody.innerHTML = filteredOrders.map(wo => `
                         <tr>
-                            <td>${wo.woNumber}</td>
-                            <td>${wo.carModel}</td>
-                            <td>${wo.licensePlate}</td>
-                            <td>${wo.repairType}</td>
-                            <td>${wo.priority}</td>
-                            <td>${wo.assignedTo}</td>
-                            <td>${wo.status}</td>
-                            <td>${new Date(wo.startTime).toLocaleString()}</td>
-                            <td>${new Date(wo.endTime).toLocaleString()}</td>
+                            <td>${wo.id.substring(0, 8)}</td>
+                            <td>${wo.model}</td>
+                            <td>${wo.license}</td>
+                            <td>${wo.type}</td>
+                            <td>${wo.tasks.length ? wo.tasks[0].priority : 'N/A'}</td>
+                            <td>${wo.tasks.length && wo.tasks[0].assignedToId ? wo.tasks[0].assignedToId : 'Unassigned'}</td>
+                            <td><span class="status-badge">${wo.tasks.length ? wo.tasks[0].status : 'PENDING'}</span></td>
+                            <td>${new Date(wo.createdAt).toLocaleString()}</td>
+                            <td>${wo.updatedAt ? new Date(wo.updatedAt).toLocaleString() : 'Not set'}</td>
                             <td>
-                                <button onclick="editWorkOrder('${wo._id}')">Edit</button>
-                                <button onclick="deleteWorkOrder('${wo._id}')">Delete</button>
+                                <button onclick="editWorkOrder('${wo.id}')">Edit</button>
+                                <button onclick="deleteWorkOrder('${wo.id}')">Delete</button>
                             </td>
                         </tr>
                     `).join('');
@@ -429,7 +441,10 @@
                 if (confirm('Are you sure you want to delete this work order?')) {
                     try {
                         const response = await fetch(`${API_URL}/${id}`, {
-                            method: 'DELETE'
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `${localStorage.getItem('token')}`
+                            }
                         });
                         if (!response.ok) throw new Error('Failed to delete work order');
                         await updateWorkOrderHistory();
@@ -437,6 +452,118 @@
                         console.error('Error:', error);
                         alert('Failed to delete work order');
                     }
+                }
+            };
+
+            // Add edit function
+            window.editWorkOrder = async function(id) {
+                try {
+                    const response = await fetch(`${API_URL}/${id}`, {
+                        headers: {
+                            'Authorization': `${localStorage.getItem('token')}`
+                        }
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch work order');
+                    const workOrder = await response.json();
+                    
+                    // Switch to form view
+                    workorderSection.style.display = 'block';
+                    historySection.style.display = 'none';
+                    toggleViewBtn.textContent = 'View Work Order History';
+                    
+                    // Populate form
+                    document.getElementById('carModel').value = workOrder.model;
+                    document.getElementById('licensePlate').value = workOrder.license;
+                    document.getElementById('repairType').value = workOrder.type;
+                    
+                    // Handle tasks if they exist
+                    if (workOrder.tasks && workOrder.tasks.length > 0) {
+                        // Clear existing tasks first
+                        document.getElementById('taskList').innerHTML = '';
+                        
+                        // Add each task
+                        workOrder.tasks.forEach(task => {
+                            const taskItem = document.createElement('div');
+                            taskItem.className = 'task-item';
+                            taskItem.innerHTML = `
+                                <input type="text" placeholder="Enter task" class="task-input" value="${task.title}">
+                                <button type="button" class="remove-task">-</button>
+                            `;
+                            document.getElementById('taskList').appendChild(taskItem);
+                        });
+                        
+                        // Set priority based on first task
+                        if (workOrder.tasks[0].priority) {
+                            document.getElementById('priority').value = workOrder.tasks[0].priority;
+                        }
+                        
+                        // Set assigned to based on first task
+                        if (workOrder.tasks[0].assignedToId) {
+                            document.getElementById('assignedTo').value = workOrder.tasks[0].assignedToId;
+                        }
+                    }
+                    
+                    // Create hidden input for ID to use when updating
+                    const idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.id = 'workOrderId';
+                    idInput.value = workOrder.id;
+                    workorderForm.appendChild(idInput);
+                    
+                    // Update submit button text
+                    const submitBtn = workorderForm.querySelector('button[type="submit"]');
+                    submitBtn.textContent = 'Update Work Order';
+                    
+                    // Update form submit handler to perform update instead of create
+                    workorderForm.onsubmit = async function(e) {
+                        e.preventDefault();
+                        const formData = {
+                            model: document.getElementById('carModel').value,
+                            license: document.getElementById('licensePlate').value,
+                            type: document.getElementById('repairType').value,
+                            parts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
+                            tools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value),
+                            tasks: Array.from(document.querySelectorAll('.task-input')).map(input => ({
+                                title: input.value,
+                                description: "",
+                                priority: document.getElementById('priority').value,
+                                assignedToId: document.getElementById('assignedTo').value || null
+                            })).filter(task => task.title)
+                        };
+                        
+                        try {
+                            const response = await fetch(`/api/work-order/update/${id}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `${localStorage.getItem('token')}`
+                                },
+                                body: JSON.stringify(formData)
+                            });
+                            
+                            if (!response.ok) throw new Error('Failed to update work order');
+                            
+                            alert('Work order updated successfully!');
+                            
+                            // Reset form and remove ID field
+                            workorderForm.reset();
+                            document.getElementById('workOrderId').remove();
+                            
+                            // Reset submit button and handler
+                            submitBtn.textContent = 'Create Work Order';
+                            workorderForm.onsubmit = null;
+                            
+                            // Update work order list
+                            await updateWorkOrderHistory();
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Failed to update work order');
+                        }
+                    };
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to edit work order');
                 }
             };
 
