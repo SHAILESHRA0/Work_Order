@@ -139,6 +139,51 @@
     </footer>
 
     <script>
+      // Check JWT and role on page load
+      async function validateAndRedirect() {
+        const token = sessionStorage.getItem('token');
+        if (!token) return;
+
+        try {
+          const response = await fetch('/api/auth/validate', {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            if (data.valid) {
+              const role = data.role;
+              // Redirect based on role
+              switch (role.toLowerCase()) {
+                case 'admin':
+                  window.location.replace('/admin/dashboard.html');
+                  break;
+                case 'user':
+                  window.location.replace('/user/dashboard.html');
+                  break;
+                case 'supervisor':
+                  window.location.replace('/supervisor/dashboard.html');
+                  break;
+                default:
+                  sessionStorage.clear();
+              }
+            } else {
+              // Clear invalid token
+              sessionStorage.clear();
+            }
+          }
+        } catch (error) {
+          console.error('Token validation error:', error);
+          sessionStorage.clear();
+        }
+      }
+
+      // Run validation immediately when page loads
+      validateAndRedirect();
+
       // GSAP Animations
       window.addEventListener('DOMContentLoaded', () => {
         gsap.from('.logo', {

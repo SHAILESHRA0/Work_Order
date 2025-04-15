@@ -1,8 +1,8 @@
+import { config } from "dotenv";
 import express from "express";
 import jwt from "jsonwebtoken";
 import { db } from "../db/db.js";
 import * as hashing from "../utils/hash.js";
-import { config } from "dotenv";
 
 config();
 
@@ -110,4 +110,54 @@ router.post("/api/auth/signup", async (req, res) => {
   }
 });
 
+// Add validation endpoint
+router.get("/api/auth/validate", async (req, res) => {
+  try {
+    // Auth middleware already verified the token
+    // Get user from database to ensure they still exist and are active
+    const user = await db.user.findUnique({
+      where: { id: req.user.id },
+      select: {
+        id: true,
+        role: true,
+        isActive: true
+      }
+    });
+
+    if (!user || !user.isActive) {
+      return res.json({ 
+        valid: false,
+        message: "User not found or inactive"
+      });
+    }
+
+    return res.json({
+      valid: true,
+      role: user.role,
+      redirectUrl: getRedirectUrl(user.role)
+    });
+
+  } catch (error) {
+    console.error("Token validation error:", error);
+    return res.status(500).json({ 
+      valid: false,
+      message: "Error validating token" 
+    });
+  }
+});
+
+// Helper function to get redirect URL based on role
+function getRedirectUrl(role) {
+  const urls = {
+    admin: '/admin.html',
+    user: '/',
+    supervisor: '/supervisor.html',
+    technician: '/technician.html',
+    manager: '/manager.html',
+    hod: '/hod.html'
+  };
+  return urls[role.toLowerCase()] || '/';
+}
+
 export { router as authRouter };
+

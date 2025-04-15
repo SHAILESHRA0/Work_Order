@@ -338,25 +338,67 @@
             });
 
             // Form Submission
-            workorderForm.addEventListener('submit', function(e) {
+            workorderForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                const formData = {
-                    model: document.getElementById('carModel').value,
-                    license: document.getElementById('licensePlate').value,
-                    type: document.getElementById('repairType').value,
-                    parts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
-                    tools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value),
-                    tasks: Array.from(document.querySelectorAll('.task-input')).map(input => ({
-                        title: input.value,
-                        description: "",
+                
+                // Get values from form
+                const workOrder = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    vehicle: {
+                        model: document.getElementById('carModel').value,
+                        licensePlate: document.getElementById('licensePlate').value
+                    },
+                    maintenanceDetails: {
+                        type: document.getElementById('repairType').value,
                         priority: document.getElementById('priority').value,
-                        assignedToId: document.getElementById('assignedTo').value || null
-                    })).filter(task => task.title)
+                        requiredParts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
+                        safetyTools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value)
+                    },
+                    scheduling: {
+                        startDate: document.getElementById('startDate').value,
+                        dueDate: document.getElementById('dueDate').value,
+                        orderNumber: document.getElementById('woNumber').value
+                    },
+                    tasks: Array.from(document.querySelectorAll('.task-input')).map(input => ({
+                        description: input.value,
+                        status: 'pending',
+                        assignedTo: document.getElementById('assignedTo').value || null
+                    })),
+                    resources: Array.from(document.querySelectorAll('.resource-input')).map(input => ({
+                        name: input.value,
+                        type: 'equipment' // Default type
+                    })),
+                    status: 'created',
+                    createdBy: sessionStorage.getItem('userId'), // Ensure this is set during login
+                    createdAt: new Date().toISOString(),
+                    department: 'maintenance', // Can be made dynamic if needed
+                    lastModified: new Date().toISOString()
                 };
 
-                saveWorkOrder(formData);
-                workorderForm.reset();
-                updateWorkOrderHistory();
+                try {
+                    const response = await fetch("/api/work-orders", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify(workOrder)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create work order');
+                    }
+
+                    const result = await response.json();
+                    alert('Work order created successfully!');
+                    workorderForm.reset();
+                    updateWorkOrderHistory();
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to create work order: ' + error.message);
+                }
             });
 
             // Toggle View
