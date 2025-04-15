@@ -63,7 +63,7 @@ router.post("/api/auth/login", async (req, res) => {
     return res
       .status(202)
       .header("Authorization", token)
-      .json({ role: user.role, username: user.name, redirectUrl: "/", token });
+      .json({ role: user.role, username: user.name, redirectUrl: getRedirectUrl(user.role), token });
   } catch (error) {
     console.error("Login Error:", error);
     return res
@@ -148,15 +148,15 @@ router.get("/api/auth/validate", async (req, res) => {
 
 // Helper function to get redirect URL based on role
 function getRedirectUrl(role) {
-  const urls = {
-    admin: '/admin.html',
-    user: '/',
-    supervisor: '/supervisor.html',
-    technician: '/technician.html',
-    manager: '/manager.html',
-    hod: '/hod.html'
+  const roleUrls = {
+    'admin': '/admin.html',
+    'manager': '/manager.html',
+    'supervisor': '/supervisor.html',
+    'technician': '/technician.html',
+    'hod': '/hod.html',
+    'user': '/user.html'
   };
-  return urls[role.toLowerCase()] || '/';
+  return roleUrls[role.toLowerCase()] || '/login.html';
 }
 
 export { router as authRouter };

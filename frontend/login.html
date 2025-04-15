@@ -156,20 +156,7 @@
             const data = await response.json();
             if (data.valid) {
               const role = data.role;
-              // Redirect based on role
-              switch (role.toLowerCase()) {
-                case 'admin':
-                  window.location.replace('/admin/dashboard.html');
-                  break;
-                case 'user':
-                  window.location.replace('/user/dashboard.html');
-                  break;
-                case 'supervisor':
-                  window.location.replace('/supervisor/dashboard.html');
-                  break;
-                default:
-                  sessionStorage.clear();
-              }
+              redirectBasedOnRole(role);
             } else {
               // Clear invalid token
               sessionStorage.clear();
@@ -241,6 +228,34 @@
         loginForm.classList.remove('active-form');
       });
 
+      // Add this helper function before the login form handler
+      function redirectBasedOnRole(role) {
+        switch (role.toLowerCase()) {
+          case 'admin':
+            window.location.href = '/admin.html';
+            break;
+          case 'manager':
+            window.location.href = '/manager.html';
+            break;
+          case 'supervisor':
+            window.location.href = '/supervisor.html';
+            break;
+          case 'technician':
+            window.location.href = '/technician.html';
+            break;
+          case 'hod':
+            window.location.href = '/hod.html';
+            break;
+          case 'user':
+            window.location.href = '/user.html';
+            break;
+          default:
+            alert('Invalid role assigned');
+            sessionStorage.clear();
+            window.location.href = '/login.html';
+        }
+      }
+
       // Login form handler
       document.getElementById("loginForm").addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -267,13 +282,7 @@
           if (response.ok) {
             sessionStorage.setItem("token", data.token);
             sessionStorage.setItem("role", data.role);
-
-            // Redirect to the assigned page based on redirectUrl
-            if (data.redirectUrl) {
-              window.location.replace(data.redirectUrl);
-            } else {
-              alert("No redirect URL assigned. Please contact support.");
-            }
+            redirectBasedOnRole(data.role);
           } else {
             alert(data.message || "Invalid credentials. Please try again.");
           }
