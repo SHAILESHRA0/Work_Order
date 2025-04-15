@@ -1,4 +1,4 @@
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import { db } from "../db/db.js";
 
 export async function auth(req, res, next) {
@@ -15,7 +15,7 @@ export async function auth(req, res, next) {
       : authHeader;
     
     // Verify token
-    const tokenData = verify(token, process.env.JWT_SECRET || "jwt_secret");
+    const tokenData = jwt.verify(token, process.env.JWT_SECRET || "jwt_secret");
     
     // Check if token is expired
     if (tokenData.exp && tokenData.exp < Math.floor(Date.now() / 1000)) {

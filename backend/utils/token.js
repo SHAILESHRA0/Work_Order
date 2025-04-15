@@ -1,4 +1,4 @@
-import { verify } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export function getDataFromJWT(req) {
     const authHeader = req.headers["authorization"];
@@ -12,7 +12,7 @@ export function getDataFromJWT(req) {
       : authHeader;
     
     try {
-        const tokenData = verify(token, process.env.JWT_SECRET || "jwt_secret");
+        const tokenData = jwt.verify(token, process.env.JWT_SECRET || "jwt_secret");
         
         if (tokenData.exp < Math.floor(Date.now() / 1000)) {
             return null;

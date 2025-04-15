@@ -36,8 +36,8 @@ app.get("/api", (req, res) => {
 });
 
 // Serve static assets
-app.use("/assets", express.static(path.join(__dirname, "../assets")));
-app.use(express.static(path.join(__dirname, "../frontend")));
+app.use("/assets", express.static(path.join(__dirname, "./assets")));
+app.use(express.static(path.join(__dirname, "./frontend")));
 
 // Catch-all route for SPA
 // app.get("*", (req, res) => {
