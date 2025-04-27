@@ -1,13 +1,14 @@
-import express from "express";
-import cors from "cors";
-import http from "http";
 import bodyParser from "body-parser";
+import cors from "cors";
 import { config } from "dotenv";
+import express from "express";
+import http from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { authRouter } from "./backend/routes/auth.js";
 import { adminRouter } from "./backend/routes/admin.js";
+import { authRouter } from "./backend/routes/auth.js";
+import { technicianRouter } from './backend/routes/technicians.js';
 import { workOrderRouter } from "./backend/routes/workOrders.js";
 // import { userRouter } from "./routes/users.js";
 // import { taskRouter } from "./routes/tasks.js";
@@ -30,6 +31,7 @@ app.use(bodyParser.json());
 app.use(authRouter);
 app.use(adminRouter);
 app.use(workOrderRouter);
+app.use(technicianRouter);
 
 app.get("/api", (req, res) => {
   res.send("🚀 Welcome to the Work Order Management System API!");

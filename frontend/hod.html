@@ -8,78 +8,213 @@
 </head>
 <body>
     <header>
-        <a href="dashboard.html"><img src="../assets/logo.jpg" alt="Workorder Management Logo" class="logo"></a>
+        <a href="index.html"><img src="../assets/logo.jpg" alt="Workorder Management Logo" class="logo"></a>
         <h1>HOD Dashboard</h1>
         <a href="#" class="logout" id="logoutBtn">Logout</a>
     </header>
 
     <main>
-        <h2>Work Orders Overview</h2>
-        <table id="workorderTable">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Asset ID</th>
-                    <th>Status</th>
-                    <th>Assigned To</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Work orders will be dynamically loaded here -->
-            </tbody>
-        </table>
-    </main>
+        <div class="dashboard-controls">
+            <div class="filters">
+                <select id="departmentFilter">
+                    <option value="">All Departments</option>
+                    <option value="electrical">Electrical</option>
+                    <option value="mechanical">Mechanical</option>
+                    <option value="operations">Operations</option>
+                </select>
+                <select id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <input type="text" id="searchInput" placeholder="Search work orders...">
+            </div>
+            <div class="department-stats">
+                <!-- Department statistics will be inserted here -->
+            </div>
+        </div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-            const token = sessionStorage.getItem("token");
+        <div class="department-sections">
+            <!-- Department work orders will be grouped here -->
+        </div>
 
-            if (!token) {
-                alert("Unauthorized access! Please log in.");
-                window.location.href = "hod_login.html";
-                return;
+        <style>
+            .dashboard-controls {
+                margin-bottom: 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
 
-            try {
-                const response = await fetch("/api/workorders", {
-                    method: "GET",
-                    headers: {
-                        "Authorization": `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                });
+            .filters {
+                display: flex;
+                gap: 1rem;
+            }
 
-                if (!response.ok) {
-                    throw new Error("Failed to fetch work orders");
+            .filters select, .filters input {
+                padding: 0.5rem;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+
+            .department-stats {
+                display: flex;
+                gap: 2rem;
+            }
+
+            .stat-card {
+                background: white;
+                padding: 1rem;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .department-section {
+                background: white;
+                margin: 1rem 0;
+                padding: 1rem;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .department-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+
+            .status-badge {
+                padding: 0.25rem 0.5rem;
+                border-radius: 3px;
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
+        </style>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", async function () {
+                const departmentFilter = document.getElementById('departmentFilter');
+                const statusFilter = document.getElementById('statusFilter');
+                const searchInput = document.getElementById('searchInput');
+
+                // Event listeners for filters
+                departmentFilter.addEventListener('change', loadWorkOrders);
+                statusFilter.addEventListener('change', loadWorkOrders);
+                searchInput.addEventListener('input', loadWorkOrders);
+
+                async function loadWorkOrders() {
+                    try {
+                        const token = sessionStorage.getItem('token');
+                        if (!token) {
+                            window.location.href = 'login.html';
+                            return;
+                        }
+
+                        const response = await fetch('/api/hod/work-orders', {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                        if (!response.ok) throw new Error('Failed to fetch work orders');
+                        
+                        const data = await response.json();
+                        renderDepartmentStats(data);
+                        renderWorkOrders(data);
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Failed to load work orders');
+                    }
                 }
 
-                const workorders = await response.json();
-                const tableBody = document.querySelector("#workorderTable tbody");
-                tableBody.innerHTML = ""; // Clear existing content
+                function renderDepartmentStats(data) {
+                    const stats = data.reduce((acc, wo) => {
+                        const dept = wo.department;
+                        if (!acc[dept]) acc[dept] = { total: 0, pending: 0 };
+                        acc[dept].total++;
+                        if (wo.status === 'pending') acc[dept].pending++;
+                        return acc;
+                    }, {});
 
-                workorders.forEach(order => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${order._id}</td>
-                        <td>${order.asset_id}</td>
-                        <td>${order.status}</td>
-                        <td>${order.assigned_to || "Unassigned"}</td>
-                    `;
-                    tableBody.appendChild(row);
-                });
+                    const statsHtml = Object.entries(stats).map(([dept, counts]) => `
+                        <div class="stat-card">
+                            <h3>${dept}</h3>
+                            <p>Total: ${counts.total}</p>
+                            <p>Pending: ${counts.pending}</p>
+                        </div>
+                    `).join('');
 
-            } catch (error) {
-                console.error("Error fetching work orders:", error);
-                alert("Failed to load work orders. Please try again.");
-            }
-        });
+                    document.querySelector('.department-stats').innerHTML = statsHtml;
+                }
 
-        // Logout function
-        document.getElementById("logoutBtn").addEventListener("click", () => {
-            sessionStorage.removeItem("token");
-            sessionStorage.removeItem("role");
-            window.location.href = "hod_login.html";
-        });
-    </script>
+                function renderWorkOrders(workOrders) {
+                    const deptFilter = departmentFilter.value;
+                    const statusFilt = statusFilter.value;
+                    const searchTerm = searchInput.value.toLowerCase();
+
+                    const filtered = workOrders.filter(wo => 
+                        (!deptFilter || wo.department === deptFilter) &&
+                        (!statusFilt || wo.status === statusFilt) &&
+                        (wo.title.toLowerCase().includes(searchTerm) ||
+                        wo.workOrderId.toLowerCase().includes(searchTerm))
+                    );
+
+                    const grouped = filtered.reduce((acc, wo) => {
+                        if (!acc[wo.department]) acc[wo.department] = [];
+                        acc[wo.department].push(wo);
+                        return acc;
+                    }, {});
+
+                    const sectionsHtml = Object.entries(grouped).map(([dept, orders]) => `
+                        <div class="department-section">
+                            <div class="department-header">
+                                <h2>${dept}</h2>
+                                <span>${orders.length} Work Orders</span>
+                            </div>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Engineer</th>
+                                        <th>Created Date</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${orders.map(wo => `
+                                        <tr>
+                                            <td>${wo.workOrderId}</td>
+                                            <td>${wo.title}</td>
+                                            <td>${wo.engineer}</td>
+                                            <td>${new Date(wo.createdAt).toLocaleDateString()}</td>
+                                            <td><span class="status-badge ${wo.status}">${wo.status}</span></td>
+                                            <td>${wo.priority}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `).join('');
+
+                    document.querySelector('.department-sections').innerHTML = sectionsHtml;
+                }
+
+                // Initial load
+                loadWorkOrders();
+            });
+
+            // Logout function
+            document.getElementById("logoutBtn").addEventListener("click", () => {
+                sessionStorage.removeItem("token");
+                sessionStorage.removeItem("role");
+                window.location.href = "hod_login.html";
+            });
+        </script>
+    </main>
 </body>
 </html>

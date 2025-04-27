@@ -1,18 +1,29 @@
-const express = require('express');
+import express from 'express';
+import { db } from '../db/db.js';
+import { auth } from '../middleware/auth.js';
+
 const router = express.Router();
-const auth = require('../middleware/auth');
-const WorkOrder = require('../models/WorkOrder');
 
 // Get all work orders assigned to the technician
 router.get('/workorders', auth, async (req, res) => {
     try {
-        const workOrders = await WorkOrder.find({ 
-            assignedTo: req.user.id 
-        }).populate('assignedBy', 'name role');
+        const workOrders = await db.workOrder.findMany({
+            where: { 
+                assignedToId: req.user.id 
+            },
+            include: {
+                creator: {
+                    select: {
+                        name: true,
+                        role: true
+                    }
+                }
+            }
+        });
         
         res.json(workOrders);
     } catch (error) {
-        res.status(500).send('Server error');
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
@@ -20,30 +31,38 @@ router.get('/workorders', auth, async (req, res) => {
 router.put('/workorders/:id/status', auth, async (req, res) => {
     try {
         const { status, issueDescription } = req.body;
-        const workOrder = await WorkOrder.findById(req.params.id);
+        
+        const workOrder = await db.workOrder.findUnique({
+            where: { id: req.params.id }
+        });
         
         if (!workOrder) {
-            return res.status(404).json({ msg: 'Work order not found' });
+            return res.status(404).json({ message: 'Work order not found' });
         }
         
-        if (workOrder.assignedTo.toString() !== req.user.id) {
-            return res.status(401).json({ msg: 'Not authorized' });
+        if (workOrder.assignedToId !== req.user.id) {
+            return res.status(401).json({ message: 'Not authorized' });
         }
         
-        workOrder.status = status;
-        if (issueDescription) {
-            workOrder.issues.push({
-                description: issueDescription,
-                reportedBy: req.user.id,
-                reportedAt: new Date()
-            });
-        }
+        const updatedWorkOrder = await db.workOrder.update({
+            where: { id: req.params.id },
+            data: {
+                status,
+                tasks: issueDescription ? {
+                    create: {
+                        description: issueDescription,
+                        createdById: req.user.id,
+                        status: 'issue_reported'
+                    }
+                } : undefined
+            }
+        });
         
-        await workOrder.save();
-        res.json(workOrder);
+        res.json(updatedWorkOrder);
     } catch (error) {
-        res.status(500).send('Server error');
+        console.error('Error updating work order:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
-module.exports = router;
+export { router as technicianRouter };

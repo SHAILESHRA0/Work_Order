@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineer Panel - Car Repair Work Order</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        header button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        header button:hover {
+            background-color: #0056b3;
+        }
+
+        main {
+            padding: 1rem;
+        }
+
+        .workorder-form, .workorder-history {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 0.5rem;
+        }
+
+        .form-actions {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-actions button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-actions button[type="submit"] {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .form-actions button[type="reset"] {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th, table td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #f8f9fa;
+        }
+
+        .table-controls {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .table-controls input, .table-controls select {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: #ffeeba;
+            color: #856404;
+        }
+
+        .status-completed {
+            background-color: #c3e6cb;
+            color: #155724;
+        }
+
+        .status-in-progress {
+            background-color: #b8daff;
+            color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Engineer Panel - Car Repair Work Order</h1>
+        <div>
+            <button id="logoutBtn">Logout</button>
+            <button id="toggleViewBtn">View Work Order History</button>
+        </div>
+    </header>
+    
+    <main>
+        <section class="workorder-form">
+            <h2>Create/Edit Car Repair Work Order</h2>
+            <form id="workorderForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="title">Title:
+                            <input type="text" id="title" required>
+                        </label>
+                        <label for="description">Description:
+                            <textarea id="description" rows="3"></textarea>
+                        </label>
+                        <label for="department">Department:
+                            <select id="department" required name="department">
+                                <option value="">Select Department</option>
+                                <option value="ELECTRICAL">Electrical</option>
+                                <option value="MECHANICAL">Mechanical</option>
+                                <option value="IT">IT</option>
+                                <option value="OPERATIONS">Operations</option>
+                                <option value="MAINTENANCE">Maintenance</option>
+                                <option value="QUALITY">Quality</option>
+                                <option value="GENERAL">General</option>
+                            </select>
+                        </label>
+                        <label for="carModel">Car Model:
+                            <input type="text" id="carModel" required>
+                        </label>
+                        <label for="licensePlate">License Plate:
+                            <input type="text" id="licensePlate" required>
+                        </label>
+                        <label for="woNumber">Order Number:
+                            <input type="text" id="woNumber" required onblur="fetchWorkOrderDetails(this.value)">
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="repairType">Repair Type:
+                            <select id="repairType" required>
+                                <option value="">Select Type</option>
+                                <option value="engine">Engine</option>
+                                <option value="transmission">Transmission</option>
+                                <option value="brakes">Brakes</option>
+                                <option value="suspension">Suspension</option>
+                                <option value="electrical">Electrical</option>
+                            </select>
+                        </label>
+                        <label for="priority">Priority:
+                            <select id="priority" required>
+                                <option value="">Select Priority</option>
+                                <option value="high">High</option>
+                                <option value="medium">Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                        </label>
+                        <label for="assignedTo">Assign To:
+                            <select id="assignedTo" required>
+                                <option value="">Select Technician</option>
+                                <!-- Technicians will be populated dynamically -->
+                            </select>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Parts Required:</label>
+                        <div class="checkbox-group" id="partsRequired">
+                            <label><input type="checkbox" value="oil"> Oil</label>
+                            <label><input type="checkbox" value="brakePads"> Brake Pads</label>
+                            <label><input type="checkbox" value="filters"> Filters</label>
+                            <label><input type="checkbox" value="sparkPlugs"> Spark Plugs</label>
+                            <label><input type="checkbox" value="belts"> Belts</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Safety Tools Required:</label>
+                        <div class="checkbox-group" id="safetyTools">
+                            <label><input type="checkbox" value="helmet"> Safety Helmet</label>
+                            <label><input type="checkbox" value="gloves"> Safety Gloves</label>
+                            <label><input type="checkbox" value="goggles"> Safety Goggles</label>
+                            <label><input type="checkbox" value="boots"> Safety Boots</label>
+                            <label><input type="checkbox" value="harness"> Safety Harness</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Task List:</label>
+                        <div id="taskList">
+                            <div class="task-item">
+                                <input type="text" placeholder="Enter task" class="task-input">
+                                <button type="button" class="add-task">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Resource List:</label>
+                        <div id="resourceList">
+                            <div class="resource-item">
+                                <input type="text" placeholder="Enter resource" class="resource-input">
+                                <button type="button" class="add-resource">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date: <input type="datetime-local" id="startDate" required></label>
+                        <label>Due Date: <input type="datetime-local" id="dueDate" required></label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Create Work Order</button>
+                    <button type="reset">Clear Form</button>
+                </div>
+            </form>
+        </section>
+
+        <section class="workorder-history" style="display: none;">
+            <h2>Work Order History</h2>
+            <div class="table-controls">
+                <input type="text" id="searchInput" placeholder="Search work orders...">
+                <select id="filterPriority">
+                    <option value="">All Priorities</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Title</th>
+                        <th>Car Model</th>
+                        <th>License Plate</th>
+                        <th>Repair Type</th>
+                        <th>Priority</th>
+                        <th>Assigned To</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBody"></tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const workorderForm = document.getElementById('workorderForm');
+            const toggleViewBtn = document.getElementById('toggleViewBtn');
+            const workorderSection = document.querySelector('.workorder-form');
+            const historySection = document.querySelector('.workorder-history');
+            const searchInput = document.getElementById('searchInput');
+            const filterPriority = document.getElementById('filterPriority');
+
+            // Task and Resource Management
+            function addNewInput(containerName, type) {
+                const container = document.getElementById(containerName);
+                const newItem = document.createElement('div');
+                newItem.className = `${type}-item`;
+                newItem.innerHTML = `
+                    <input type="text" placeholder="Enter ${type}" class="${type}-input">
+                    <button type="button" class="remove-${type}">-</button>
+                `;
+                container.appendChild(newItem);
+            }
+
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('add-task')) {
+                    addNewInput('taskList', 'task');
+                }
+                if (e.target.classList.contains('add-resource')) {
+                    addNewInput('resourceList', 'resource');
+                }
+                if (e.target.classList.contains('remove-task') || e.target.classList.contains('remove-resource')) {
+                    e.target.parentElement.remove();
+                }
+            });
+
+            // Form Submission
+            workorderForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                // Get values from form
+                const workOrder = {
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    vehicle: {
+                        model: document.getElementById('carModel').value,
+                        licensePlate: document.getElementById('licensePlate').value
+                    },
+                    maintenanceDetails: {
+                        type: document.getElementById('repairType').value,
+                        priority: document.getElementById('priority').value,
+                        requiredParts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
+                        safetyTools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value)
+                    },
+                    scheduling: {
+                        startDate: document.getElementById('startDate').value,
+                        dueDate: document.getElementById('dueDate').value,
+                        orderNumber: document.getElementById('woNumber').value
+                    },
+                    tasks: Array.from(document.querySelectorAll('.task-input')).map(input => ({
+                        description: input.value,
+                        status: 'pending',
+                        assignedTo: document.getElementById('assignedTo').value || null
+                    })),
+                    resources: Array.from(document.querySelectorAll('.resource-input')).map(input => ({
+                        name: input.value,
+                        type: 'equipment' // Default type
+                    })),
+                    status: 'created',
+                    createdBy: sessionStorage.getItem('userId'), // Ensure this is set during login
+                    createdAt: new Date().toISOString(),
+                    department: 'maintenance', // Can be made dynamic if needed
+                    lastModified: new Date().toISOString()
+                };
+
+                try {
+                    const response = await fetch("/api/work-orders", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify(workOrder)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to create work order');
+                    }
+
+                    const result = await response.json();
+                    alert('Work order created successfully!');
+                    workorderForm.reset();
+                    updateWorkOrderHistory();
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to create work order: ' + error.message);
+                }
+            });
+
+            // Toggle View
+            toggleViewBtn.addEventListener('click', function() {
+                const isShowingHistory = workorderSection.style.display === 'none';
+                workorderSection.style.display = isShowingHistory ? 'block' : 'none';
+                historySection.style.display = isShowingHistory ? 'none' : 'block';
+                toggleViewBtn.textContent = isShowingHistory ? 'View Work Order History' : 'Create Work Order';
+            });
+
+            // Search and Filter
+            searchInput.addEventListener('input', updateWorkOrderHistory);
+            filterPriority.addEventListener('change', updateWorkOrderHistory);
+
+            // Work Order Management Functions
+            async function saveWorkOrder(workOrder) {
+                try {
+                    const response = await fetch("/api/work-order/create", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify(workOrder)
+                    });
+                    if (!response.ok) throw new Error('Failed to save work order');
+                    await updateWorkOrderHistory();
+                    alert('Work order created successfully!');
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to save work order');
+                }
+            }
+
+            async function updateWorkOrderHistory() {
+                try {
+                    const response = await fetch("/api/work-order/get-all", {
+                        headers: {
+                            'Authorization': `${localStorage.getItem('token')}`
+                        }
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch work orders');
+                    const workOrders = await response.json();
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const priorityFilter = filterPriority.value;
+
+                    const filteredOrders = workOrders.filter(wo => {
+                        const matchesSearch = 
+                            wo.model?.toLowerCase().includes(searchTerm) || 
+                            wo.license?.toLowerCase().includes(searchTerm) || 
+                            wo.type?.toLowerCase().includes(searchTerm);
+                        const matchesPriority = !priorityFilter || wo.tasks.some(task => task.priority === priorityFilter);
+                        return matchesSearch && matchesPriority;
+                    });
+
+                    const tbody = document.getElementById('historyTableBody');
+                    tbody.innerHTML = filteredOrders.map(wo => `
+                        <tr>
+                            <td>${wo.id.substring(0, 8)}</td>
+                            <td>${wo.model}</td>
+                            <td>${wo.license}</td>
+                            <td>${wo.type}</td>
+                            <td>${wo.tasks.length ? wo.tasks[0].priority : 'N/A'}</td>
+                            <td>${wo.tasks.length && wo.tasks[0].assignedToId ? wo.tasks[0].assignedToId : 'Unassigned'}</td>
+                            <td><span class="status-badge">${wo.tasks.length ? wo.tasks[0].status : 'PENDING'}</span></td>
+                            <td>${new Date(wo.createdAt).toLocaleString()}</td>
+                            <td>${wo.updatedAt ? new Date(wo.updatedAt).toLocaleString() : 'Not set'}</td>
+                            <td>
+                                <button onclick="editWorkOrder('${wo.id}')">Edit</button>
+                                <button onclick="deleteWorkOrder('${wo.id}')">Delete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to fetch work orders');
+                }
+            }
+
+            // Add delete function
+            window.deleteWorkOrder = async function(id) {
+                if (confirm('Are you sure you want to delete this work order?')) {
+                    try {
+                        const response = await fetch(`${API_URL}/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `${localStorage.getItem('token')}`
+                            }
+                        });
+                        if (!response.ok) throw new Error('Failed to delete work order');
+                        await updateWorkOrderHistory();
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Failed to delete work order');
+                    }
+                }
+            };
+
+            // Add edit function
+            window.editWorkOrder = async function(id) {
+                try {
+                    const response = await fetch(`${API_URL}/${id}`, {
+                        headers: {
+                            'Authorization': `${localStorage.getItem('token')}`
+                        }
+                    });
+                    if (!response.ok) throw new Error('Failed to fetch work order');
+                    const workOrder = await response.json();
+
+                    // Switch to form view
+                    workorderSection.style.display = 'block';
+                    historySection.style.display = 'none';
+                    toggleViewBtn.textContent = 'View Work Order History';
+
+                    // Populate form
+                    document.getElementById('carModel').value = workOrder.model;
+                    document.getElementById('licensePlate').value = workOrder.license;
+                    document.getElementById('repairType').value = workOrder.type;
+
+                    // Handle tasks if they exist
+                    if (workOrder.tasks && workOrder.tasks.length > 0) {
+                        // Clear existing tasks first
+                        document.getElementById('taskList').innerHTML = '';
+                        // Add each task
+                        workOrder.tasks.forEach(task => {
+                            const taskItem = document.createElement('div');
+                            taskItem.className = 'task-item';
+                            taskItem.innerHTML = `
+                                <input type="text" placeholder="Enter task" class="task-input" value="${task.title}">
+                                <button type="button" class="remove-task">-</button>
+                            `;
+                            document.getElementById('taskList').appendChild(taskItem);
+                        });
+
+                        // Set priority based on first task
+                        if (workOrder.tasks[0].priority) {
+                            document.getElementById('priority').value = workOrder.tasks[0].priority;
+                        }
+
+                        // Set assigned to based on first task
+                        if (workOrder.tasks[0].assignedToId) {
+                            document.getElementById('assignedTo').value = workOrder.tasks[0].assignedToId;
+                        }
+                    }
+
+                    // Create hidden input for ID to use when updating
+                    const idInput = document.createElement('input');
+                    idInput.type = 'hidden';
+                    idInput.id = 'workOrderId';
+                    idInput.value = workOrder.id;
+                    workorderForm.appendChild(idInput);
+
+                    // Update submit button text
+                    const submitBtn = workorderForm.querySelector('button[type="submit"]');
+                    submitBtn.textContent = 'Update Work Order';
+
+                    // Update form submit handler to perform update instead of create
+                    workorderForm.onsubmit = async function(e) {
+                        e.preventDefault();
+                        const formData = {
+                            model: document.getElementById('carModel').value,
+                            license: document.getElementById('licensePlate').value,
+                            type: document.getElementById('repairType').value,
+                            parts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
+                            tools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value),
+                            tasks: Array.from(document.querySelectorAll('.task-input')).map(input => ({
+                                title: input.value,
+                                description: "",
+                                priority: document.getElementById('priority').value,
+                                assignedToId: document.getElementById('assignedTo').value || null
+                            })).filter(task => task.title)
+                        };
+
+                        try {
+                            const response = await fetch(`/api/work-order/update/${id}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `${localStorage.getItem('token')}`
+                                },
+                                body: JSON.stringify(formData)
+                            });
+                            if (!response.ok) throw new Error('Failed to update work order');
+                            alert('Work order updated successfully!');
+
+                            // Reset form and remove ID field
+                            workorderForm.reset();
+                            document.getElementById('workOrderId').remove();
+                            
+                            // Reset submit button and handler
+                            submitBtn.textContent = 'Create Work Order';
+                            workorderForm.onsubmit = null;
+                            
+                            // Update work order list
+                            await updateWorkOrderHistory();
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Failed to update work order');
+                        }
+                    };
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to edit work order');
+                }
+            };
+
+            // Add function to fetch work order details by order number
+            async function fetchWorkOrderDetails(orderNo) {
+                if (!orderNo) return;
+                
+                try {
+                    const response = await fetch(`/api/work-order/by-number/${orderNo}`);
+                    if (response.ok) {
+                        const workOrder = await response.json();
+                        if (workOrder) {
+                            populateForm(workOrder);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching work order:', error);
+                }
+            }
+
+            function populateForm(workOrder) {
+                document.getElementById('title').value = workOrder.title;
+                document.getElementById('description').value = workOrder.description;
+                document.getElementById('department').value = workOrder.department;
+                document.getElementById('carModel').value = workOrder.vehicle.model;
+                document.getElementById('licensePlate').value = workOrder.vehicle.licensePlate;
+                document.getElementById('repairType').value = workOrder.maintenanceDetails.type;
+                document.getElementById('priority').value = workOrder.maintenanceDetails.priority;
+                document.getElementById('assignedTo').value = workOrder.assignedTo;
+                document.getElementById('startDate').value = workOrder.scheduling.startDate;
+                document.getElementById('dueDate').value = workOrder.scheduling.dueDate;
+
+                // Update checkboxes
+                workOrder.maintenanceDetails.requiredParts.forEach(part => {
+                    document.querySelector(`input[value="${part}"]`).checked = true;
+                });
+                
+                workOrder.maintenanceDetails.safetyTools.forEach(tool => {
+                    document.querySelector(`input[value="${tool}"]`).checked = true;
+                });
+
+                // Update tasks
+                if (workOrder.tasks && workOrder.tasks.length > 0) {
+                    document.getElementById('taskList').innerHTML = '';
+                    workOrder.tasks.forEach(task => {
+                        const taskItem = document.createElement('div');
+                        taskItem.className = 'task-item';
+                        taskItem.innerHTML = `
+                            <input type="text" placeholder="Enter task" class="task-input" value="${task.title}">
+                            <button type="button" class="remove-task">-</button>
+                        `;
+                        document.getElementById('taskList').appendChild(taskItem);
+                    });
+                }
+            }
+
+            // Add this new function to fetch technicians
+            async function loadTechnicians() {
+                try {
+                    // Get selected department
+                    const department = document.getElementById('department').value;
+                    
+                    const response = await fetch(`/api/technicians?department=${department}`, {
+                        headers: {
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch technicians');
+                    }
+
+                    const technicians = await response.json();
+                    const technicianSelect = document.getElementById('assignedTo');
+                    
+                    // Clear and reset select
+                    technicianSelect.innerHTML = '<option value="">Select Technician</option>';
+                    
+                    // Only add technicians if department is selected
+                    if (department) {
+                        technicians.forEach(tech => {
+                            const option = document.createElement('option');
+                            option.value = tech.id;
+                            option.textContent = `${tech.name} - ${tech.department}`;
+                            technicianSelect.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error loading technicians:', error);
+                    alert('Failed to load technicians');
+                }
+            }
+
+            // Add event listener to department select to reload technicians
+            document.getElementById('department').addEventListener('change', loadTechnicians);
+
+            // Call loadTechnicians when page loads
+            loadTechnicians();
+
+            // Update the form submission code
+            workorderForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
+                const workOrder = {
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    department: formData.get('department'),
+                    vehicle: {
+                        model: formData.get('carModel'),
+                        licensePlate: formData.get('licensePlate')
+                    },
+                    repairType: formData.get('repairType'),
+                    priority: formData.get('priority'),
+                    assignedToId: formData.get('assignedTo'),
+                    orderNumber: formData.get('woNumber'),
+                    maintenanceDetails: {
+                        requiredParts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
+                        safetyTools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value)
+                    },
+                    scheduling: {
+                        startDate: formData.get('startDate'),
+                        dueDate: formData.get('dueDate')
+                    },
+                    tasks: Array.from(document.querySelectorAll('.task-input'))
+                        .map(input => input.value)
+                        .filter(Boolean)
+                        .map(task => ({
+                            description: task,
+                            status: 'pending'
+                        })),
+                    status: 'pending'
+                };
+
+                try {
+                    const response = await fetch('/api/work-orders', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify(workOrder)
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || 'Failed to create work order');
+                    }
+
+                    const result = await response.json();
+                    alert('Work order created successfully!');
+                    this.reset();
+                    await updateWorkOrderHistory();
+                } catch (error) {
+                    console.error('Error creating work order:', error);
+                    alert(error.message);
+                }
+            });
+
+            // Initialize
+            updateWorkOrderHistory();
+        });
+    </script>
+</body>
+</html>

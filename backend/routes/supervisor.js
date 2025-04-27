@@ -1,15 +1,22 @@
-const express = require('express');
+import express from 'express';
+import { db } from '../db/db.js';
+import { auth } from '../middleware/auth.js';
+
 const router = express.Router();
-const Task = require('../models/Task');
-const User = require('../models/User');
-const auth = require('../middleware/auth');
 
 // Get all tasks assigned to supervisor's department
 router.get('/tasks', auth, async (req, res) => {
     try {
-        const tasks = await Task.find()
-            .populate('assignedTechnician', 'name')
-            .populate('assignedBy', 'name');
+        const tasks = await db.task.findMany({
+            include: {
+                assignedTechnician: {
+                    select: { name: true }
+                },
+                assignedBy: {
+                    select: { name: true }
+                }
+            }
+        });
         res.json(tasks);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -19,9 +26,11 @@ router.get('/tasks', auth, async (req, res) => {
 // Get available technicians
 router.get('/technicians', auth, async (req, res) => {
     try {
-        const technicians = await User.find({ 
-            role: 'technician',
-            available: true 
+        const technicians = await db.user.findMany({
+            where: {
+                role: 'technician',
+                available: true
+            }
         });
         res.json(technicians);
     } catch (error) {
@@ -32,19 +41,22 @@ router.get('/technicians', auth, async (req, res) => {
 // Assign task to technician
 router.put('/assign/:taskId', auth, async (req, res) => {
     try {
-        const task = await Task.findOneAndUpdate(
-            { taskId: req.params.taskId },
-            {
+        const task = await db.task.update({
+            where: { taskId: req.params.taskId },
+            data: {
                 assignedTechnician: req.body.technicianId,
                 status: 'Assigned',
                 assignedAt: new Date()
             },
-            { new: true }
-        ).populate('assignedTechnician');
+            include: {
+                assignedTechnician: true
+            }
+        });
 
         // Update technician availability
-        await User.findByIdAndUpdate(req.body.technicianId, {
-            available: false
+        await db.user.update({
+            where: { id: req.body.technicianId },
+            data: { available: false }
         });
 
         res.json(task);
@@ -56,9 +68,14 @@ router.put('/assign/:taskId', auth, async (req, res) => {
 // Get technician progress
 router.get('/progress', auth, async (req, res) => {
     try {
-        const tasks = await Task.find({
-            status: { $in: ['Assigned', 'In Progress'] }
-        }).populate('assignedTechnician');
+        const tasks = await db.task.findMany({
+            where: {
+                status: { in: ['Assigned', 'In Progress'] }
+            },
+            include: {
+                assignedTechnician: true
+            }
+        });
         res.json(tasks);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -68,18 +85,17 @@ router.get('/progress', auth, async (req, res) => {
 // Update task status
 router.put('/status/:taskId', auth, async (req, res) => {
     try {
-        const task = await Task.findOneAndUpdate(
-            { taskId: req.params.taskId },
-            {
+        const task = await db.task.update({
+            where: { taskId: req.params.taskId },
+            data: {
                 status: req.body.status,
                 progress: req.body.progress
-            },
-            { new: true }
-        );
+            }
+        });
         res.json(task);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
 });
 
-module.exports = router;
+export { router as supervisorRouter };

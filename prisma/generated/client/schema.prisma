@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client" // Changed from node_modules location
+}
+
+datasource db {
+  provider  = "mongodb"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  manager
+  hod
+  supervisor
+  technician
+  engineer
+  user
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum WorkOrderStatus {
+  PENDING
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  REJECTED
+  ON_HOLD
+}
+
+enum Department {
+  ELECTRICAL
+  MECHANICAL
+  ELECTRONICS
+  MAINTENANCE
+  OPERATIONS
+  PRODUCTION
+  QUALITY
+  IT
+  GENERAL
+}
+
+model User {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  email      String      @unique
+  name       String
+  password   String
+  role       Role        @default(user)
+  department Department?
+  isActive   Boolean     @default(true)
+  lastLogin  DateTime?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  // Relations
+  createdOrders    WorkOrder[] @relation("CreatedBy")
+  assignedOrders   WorkOrder[] @relation("AssignedTo")
+  supervisedOrders WorkOrder[] @relation("SupervisedBy")
+}
+
+model WorkOrder {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber String          @unique
+  title       String
+  description String
+  priority    Priority        @default(MEDIUM)
+  status      WorkOrderStatus @default(PENDING)
+  department  String
+  location    String?
+  equipment   String?
+
+  startDate     DateTime?
+  dueDate       DateTime?
+  completedDate DateTime?
+
+  createdById  String  @db.ObjectId
+  assignedToId String? @db.ObjectId
+  supervisorId String? @db.ObjectId
+
+  createdBy    User  @relation("CreatedBy", fields: [createdById], references: [id])
+  assignedTo   User? @relation("AssignedTo", fields: [assignedToId], references: [id])
+  supervisedBy User? @relation("SupervisedBy", fields: [supervisorId], references: [id])
+
+  tasks       Task[]
+  comments    Comment[]
+  attachments Attachment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId String    @db.ObjectId
+  description String
+  status      String    @default("pending")
+  completedAt DateTime?
+
+  workOrder WorkOrder @relation(fields: [workOrderId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Comment {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId String    @db.ObjectId
+  content     String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model Attachment {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId String    @db.ObjectId
+  filename    String
+  path        String
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
+  uploadedAt  DateTime  @default(now())
+}

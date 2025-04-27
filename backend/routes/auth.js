@@ -1,51 +1,57 @@
 import { config } from "dotenv";
-import express from "express";
-import jwt from "jsonwebtoken";
-import { db } from "../db/db.js";
+import { Router } from 'express';
+import jwt from 'jsonwebtoken';
+import { db } from '../db/db.js';
 import * as hashing from "../utils/hash.js";
 
 config();
 
-const router = express.Router();
+const router = Router();
 
 router.post("/api/auth/login", async (req, res) => {
   try {
-    const { password, email } = req.body;
+    const { email, password } = req.body;
+
+    // Add debug logging
+    console.log("Login attempt for email:", email);
 
     // Validate input
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "name and password are required." });
+      return res.status(400).json({ message: "Email and password are required" });
     }
 
-    // Find user in MongoDB
+    // Find user without password hash comparison first
     const user = await db.user.findUnique({
-      where: { email: email },
+      where: { email },
       select: {
         id: true,
-        name: true,
         email: true,
         password: true,
         role: true,
-      },
+        name: true,
+        isActive: true
+      }
     });
 
     if (!user) {
-      return res.status(404).json({ message: "User Not found" });
+      console.log("User not found:", email);
+      return res.status(404).json({ message: "User not found" });
     }
 
-    // Compare passwords
+    // Debug log
+    console.log("Found user:", { email: user.email, role: user.role, isActive: user.isActive });
+
+    if (!user.isActive) {
+      return res.status(401).json({ message: "Account is not activated" });
+    }
+
+    // Direct password comparison for debugging
     const isMatch = await hashing.comparePassword(password, user.password);
+    console.log("Password comparison result:", isMatch);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "Invalid password" });
     }
-
-    await db.user.update({
-      where: { id: user.id },
-      data: { lastLogin: new Date() },
-    });
 
     // Generate JWT token
     const token = jwt.sign(
@@ -55,25 +61,35 @@ router.post("/api/auth/login", async (req, res) => {
         role: user.role,
         name: user.name,
       },
-      process.env.JWT_SECRET || "jwt_secret",
-      { expiresIn: "24h" }
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN || "24h" }
     );
 
-    // Send response with token and redirect URL
-    return res
-      .status(202)
-      .header("Authorization", token)
-      .json({ role: user.role, username: user.name, redirectUrl: getRedirectUrl(user.role), token });
+    // Update last login
+    await db.user.update({
+      where: { id: user.id },
+      data: { lastLogin: new Date() }
+    });
+
+    // Send response
+    return res.status(200).json({
+      token,
+      role: user.role,
+      name: user.name,
+      redirectUrl: getRedirectUrl(user.role)
+    });
+
   } catch (error) {
     console.error("Login Error:", error);
-    return res
-      .status(500)
-      .json({ message: "Server error. Please try again later." });
+    return res.status(500).json({ 
+      message: "Server error",
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 
 router.post("/api/auth/signup", async (req, res) => {
-  const { email, name, password } = req.body;
+  const { email, name, password, department } = req.body;
 
   if (!email || !name || !password) {
     return res
@@ -95,9 +111,10 @@ router.post("/api/auth/signup", async (req, res) => {
 
     await db.user.create({
       data: {
-        name: name,
-        email: email,
+        name,
+        email,
         password: hashedPassword,
+        department: department || "GENERAL", // Set default department if none provided
       },
     });
 
@@ -153,6 +170,7 @@ function getRedirectUrl(role) {
     'manager': '/manager.html',
     'supervisor': '/supervisor.html',
     'technician': '/technician.html',
+    'engineer': '/engineer.html',
     'hod': '/hod.html',
     'user': '/user.html'
   };

@@ -1,216 +1,293 @@
-const express = require("express");
-const path = require("path");
-const cors = require("cors");
-const authRoutes = require("./routes/authRoutes");
-const db = require("./db");
-// const adminRoutes = require("./routes/adminRoutes");
-// const workOrderRoutes = require('./routes/workOrders');
-// const supervisorRoutes = require('./routes/supervisor');
-// const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
-const bcrypt = require("bcryptjs");
-const Manager = require('./models/Manager');
-// const WorkOrder = require('./models/WorkOrder');
-const http = require("http");
-const WebSocket = require("ws");
-const bodyParser = require("body-parser");
-// const { assignWorkOrderToTechnician, getManagerTasks } = require('./database');
-require("dotenv").config();
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
+import bodyParser from "body-parser";
+import cors from "cors";
+import dotenv from 'dotenv';
+import express from "express";
+import http from "http";
+import jwt from 'jsonwebtoken';
+import path, { dirname } from 'path';
+import { fileURLToPath } from 'url';
+import { WebSocketServer } from "ws";
+import { connectDB } from './db/db.js';
+import { authRouter } from './routes/auth.js';
+import { technicianRouter } from './routes/technicians.js';
 
+// Initialize ES module __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+dotenv.config();
+
+const prisma = new PrismaClient();
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocketServer({ server });
 const PORT = process.env.PORT || 3000;
-const HOST = "0.0.0.0"; // Allows external access
+const HOST = "0.0.0.0";
 
-// // Middleware
-app.use(cors());
+// Connect to database
+await connectDB();
+
+// Middleware
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' ? 'https://yoursite.com' : 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.json());
 app.use(bodyParser.json());
 
-// // Default route for API home page
-app.get("/api", (req, res) => {
-  res.send("🚀 Welcome to the Work Order Management System API!");
+// Serve static files from frontend directory
+const frontendPath = path.join(__dirname, '..', 'frontend');
+app.use('/assets', express.static(path.join(__dirname, '../assets')));
+app.use(express.static(frontendPath));
+
+// Root route handler
+app.get('/', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// // API Routes
-app.use("/api/auth", authRoutes);
-// app.use("/api/admin", adminRoutes);
-// app.use('/api/workorders', workOrderRoutes);
-// app.use('/api/supervisor', supervisorRoutes);
-
-// // Authentication middleware
+// Authentication middleware
 const auth = async (req, res, next) => {
     try {
-        const token = req.header('Authorization').replace('Bearer ', '');
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        if (!token) throw new Error('No token provided');
+        
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const manager = await Manager.findById(decoded.id);
-        if (!manager) throw new Error();
-        req.manager = manager;
+        const user = await prisma.user.findUnique({
+            where: { id: decoded.id },
+            include: { employees: true }
+        });
+        if (!user) throw new Error('User not found');
+        req.user = user;
         next();
     } catch (error) {
-        res.status(401).send({ error: 'Please authenticate' });
+        res.status(401).json({ error: error.message || 'Please authenticate' });
     }
 };
 
-// // Manager routes
+// Import routes
+import { adminRouter } from './routes/admin.js';
+import { supervisorRouter } from './routes/supervisor.js';
+import { userRouter } from './routes/users.js';
+import { workOrderRouter } from './routes/workOrders.js';
+
+// API routes
+app.get("/api", (req, res) => {
+    res.send("🚀 Welcome to the Work Order Management System API!");
+});
+
+app.use('/api/auth', authRouter);
+app.use('/api/supervisor', auth, supervisorRouter);
+app.use('/api/technician', auth, technicianRouter); 
+app.use('/api/admin', auth, adminRouter);
+app.use('/api/users', auth, userRouter);
+app.use('/api/workorders', auth, workOrderRouter);
+app.use('/api', technicianRouter);
+
+// Manager registration
 app.post('/api/managers/register', async (req, res) => {
     try {
-        const manager = new Manager(req.body);
-        await manager.save();
+        const { name, email, password } = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
         
-        res.status(201).send(JSON.stringify(manager));
+        const manager = await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                role: 'MANAGER',
+                employees: {
+                    create: {
+                        jobTitle: 'Manager',
+                        department: req.body.department,
+                        access: 'high'
+                    }
+                }
+            }
+        });
+        
+        res.status(201).json({ id: manager.id, email: manager.email, role: manager.role });
     } catch (error) {
-        res.status(400).send(error);
+        res.status(400).json({ error: error.message });
     }
 });
 
-// app.post('/api/managers/login', async (req, res) => {
-//     try {
-//         const manager = await Manager.findOne({ username: req.body.username });
-//         if (!manager) throw new Error('Invalid credentials');
+// WebSocket connection handling
+const clients = new Set();
 
-//         const isMatch = await bcrypt.compare(req.body.password, manager.password);
-//         if (!isMatch) throw new Error('Invalid credentials');
+wss.on('connection', (ws) => {
+    clients.add(ws);
+    console.log('New WebSocket client connected');
 
-//         const token = jwt.sign({ id: manager._id }, 'your_jwt_secret', { expiresIn: '24h' });
-//         res.send({ token });
-//     } catch (error) {
-//         res.status(400).send({ error: error.message });
-//     }
-// });
+    ws.on('message', async (message) => {
+        try {
+            const data = JSON.parse(message);
+            
+            // Handle different message types
+            switch(data.type) {
+                case 'workorder_update':
+                    // Broadcast work order updates to all connected clients
+                    broadcastMessage({
+                        type: 'workorder_update',
+                        data: data.data
+                    });
+                    break;
+                    
+                case 'notification':
+                    // Handle notifications
+                    broadcastMessage({
+                        type: 'notification',
+                        data: data.data
+                    });
+                    break;
 
-// // Work Order routes
-// app.post('/api/workorders', auth, async (req, res) => {
-//     try {
-//         const workOrder = new WorkOrder({
-//             ...req.body,
-//             createdBy: req.manager._id
-//         });
-//         await workOrder.save();
-//         res.status(201).send(workOrder);
-//     } catch (error) {
-//         res.status(400).send(error);
-//     }
-// });
+                default:
+                    console.log('Unknown message type:', data.type);
+            }
+        } catch (error) {
+            console.error('WebSocket message error:', error);
+        }
+    });
 
-// app.get('/api/workorders', auth, async (req, res) => {
-//     try {
-//         const workOrders = await WorkOrder.find({ createdBy: req.manager._id });
-//         res.send(workOrders);
-//     } catch (error) {
-//         res.status(500).send(error);
-//     }
-// });
+    ws.on('close', () => {
+        clients.delete(ws);
+        console.log('Client disconnected');
+    });
 
-// app.delete('/api/workorders/:id', auth, async (req, res) => {
-//     try {
-//         const workOrder = await WorkOrder.findOneAndDelete({
-//             _id: req.params.id,
-//             createdBy: req.manager._id
-//         });
-//         if (!workOrder) return res.status(404).send();
-//         res.send(workOrder);
-//     } catch (error) {
-//         res.status(500).send(error);
-//     }
-// });
-
-// // WebSocket routes
-// wss.on('connection', (ws) => {
-//     console.log('New WebSocket connection established.');
-
-//     ws.on('close', () => {
-//         console.log('WebSocket connection closed.');
-//     });
-
-//     ws.on('error', (error) => {
-//         console.error('WebSocket error:', error);
-//     });
-// });
-
-// function broadcast(data) {
-//     if (!data || typeof data !== 'object') {
-//         console.error('Invalid data for broadcast:', data);
-//         return;
-//     }
-
-//     wss.clients.forEach(client => {
-//         if (client.readyState === WebSocket.OPEN) {
-//             client.send(JSON.stringify(data));
-//         }
-//     });
-// }
-
-// app.post('/api/assignWorkOrder', (req, res) => {
-//     const { workOrderId, technicianId } = req.body;
-
-//     if (!workOrderId || !technicianId) {
-//         return res.status(400).json({ success: false, message: "Invalid input" });
-//     }
-
-//     assignWorkOrderToTechnician(workOrderId, technicianId)
-//         .then(() => {
-//             broadcast({
-//                 type: 'taskUpdate',
-//                 workOrderId,
-//                 technicianId,
-//                 message: `Task ${workOrderId} assigned to technician ${technicianId}.`,
-//             });
-//             res.json({ success: true });
-//         })
-//         .catch(err => {
-//             console.error('Error assigning work order:', err);
-//             res.status(500).json({ success: false, message: "Internal server error" });
-//         });
-// });
-
-// app.get('/api/getManagerTasks', (req, res) => {
-//     getManagerTasks()
-//         .then(tasks => res.json(tasks))
-//         .catch(err => {
-//             console.error('Error fetching manager tasks:', err);
-//             res.status(500).json({ success: false, message: "Internal server error" });
-//         });
-// });
-
-// // Serve static assets
-app.use("/assets", express.static(path.join(__dirname, "../assets")));
-app.use(express.static(path.join(__dirname, "../frontend")));
-
-// // Catch-all route for SPA - must be after API routes
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "index.html"));
+    ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
+        clients.delete(ws);
+    });
 });
 
-// // Error handling middleware
+// Broadcast helper function
+function broadcastMessage(message) {
+    const messageString = JSON.stringify(message);
+    clients.forEach(client => {
+        if (client.readyState === 1) { // 1 = OPEN
+            client.send(messageString);
+        }
+    });
+}
+
+// Enhanced error handling
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    message: "Something broke!",
-    error: process.env.NODE_ENV === "development" ? err.message : undefined,
-  });
+    console.error('Error:', {
+        message: err.message,
+        stack: err.stack,
+        timestamp: new Date().toISOString()
+    });
+
+    res.status(err.status || 500).json({
+        message: err.message || "Something went wrong!",
+        error: process.env.NODE_ENV === "development" ? {
+            stack: err.stack,
+            details: err.details
+        } : undefined
+    });
 });
 
-// Gracefull Db disconnection
+// Improved graceful shutdown
+async function gracefulShutdown(signal) {
+    console.log(`${signal} signal received: closing HTTP server and database connection`);
+    
+    // Close WebSocket connections
+    wss.clients.forEach(client => {
+        client.close();
+    });
+    
+    // Close HTTP server
+    server.close(() => {
+        console.log('HTTP server closed');
+    });
+    
+    try {
+        // Disconnect Prisma
+        await prisma.$disconnect();
+        console.log('Database connection closed');
+        
+        process.exit(0);
+    } catch (err) {
+        console.error('Error during shutdown:', err);
+        process.exit(1);
+    }
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        message: "Something broke!",
+        error: process.env.NODE_ENV === "development" ? err.message : undefined,
+    });
+});
+
+// Catch-all route for SPA
+app.get('*', (req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+});
+
+// Graceful shutdown
 process.on("SIGTERM", async () => {
     console.log("SIGTERM signal received: closing server and disconnecting database.");
-    server.close(async () => {
-        await dbConnection.disconnectDB();
-    });
+    await prisma.$disconnect();
+    server.close();
 });
+
 process.on("SIGINT", async () => {
     console.log("SIGINT signal received: closing server and disconnecting database.");
-    server.close(async () => {
-        await dbConnection.disconnectDB();
-    });
+    await prisma.$disconnect();
+    server.close();
 });
-server.listen(PORT, HOST, async () => {
+
+const startServer = async () => {
   try {
-    await dbConnection.connectDB();
-    console.log(`🚀 Server running at http://localhost:${PORT}/`);
+    // Connect to database first
+    const isConnected = await connectDB();
+    if (!isConnected) {
+      throw new Error('Failed to connect to database');
+    }
+
+    // Start server on first available port
+    const ports = [PORT, ...process.env.ALTERNATE_PORTS.split(',').map(Number)];
+    
+    for (const port of ports) {
+      try {
+        await new Promise((resolve, reject) => {
+          server.listen(port, HOST, () => {
+            console.log(`🚀 Server running at http://localhost:${port}/`);
+            resolve();
+          }).on('error', (err) => {
+            if (err.code === 'EADDRINUSE') {
+              console.log(`Port ${port} is busy, trying next port...`);
+              reject(err);
+            } else {
+              console.error('Server error:', err);
+              reject(err);
+            }
+          });
+        });
+        break; // If successful, exit the loop
+      } catch (err) {
+        if (port === ports[ports.length - 1]) {
+          throw new Error('All ports are in use');
+        }
+        // Continue to next port if current is in use
+        continue;
+      }
+    }
   } catch (error) {
-    console.error("❌ Error connecting to MongoDB:", error);
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
-});
+};
+
+startServer();
+
+// Export for potential import in other files
+export { app, prisma, server };
+

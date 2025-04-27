@@ -1,7 +1,7 @@
 import express from "express";
-import { auth } from "../middleware/auth.js";
-import { admin } from "../middleware/admin.js";
 import { db } from "../db/db.js";
+import { admin } from "../middleware/admin.js";
+import { auth } from "../middleware/auth.js";
 import { hashPassword } from "../utils/hash.js";
 import { getDataFromJWT } from "../utils/token.js";
 
@@ -11,40 +11,43 @@ const router = express.Router();
 router.get("/api/users", auth, admin, async (req, res) => {
   try {
     const users = await db.user.findMany({
+      take: 100,
+      skip: 0,
       select: {
         id: true,
-        name: true,
         email: true,
+        name: true,
         role: true,
-        userType: true,
+        department: true,
+        isActive: true,
         lastLogin: true,
         createdAt: true,
-        employee: {
+        updatedAt: true,
+        createdOrders: {
           select: {
-            id: true,
-            access: true,
-            department: true,
-            jobTitle: true
+            id: true
           }
         },
-        client: {
+        assignedOrders: {
           select: {
-            id: true,
-            company: true,
-            address: true,
-            phone: true
+            id: true
+          }
+        },
+        supervisedOrders: {
+          select: {
+            id: true
           }
         }
-      },
-      orderBy: {
-        name: "asc"
       }
     });
     
-    return res.json(users);
+    res.json(users);
   } catch (error) {
-    console.error("Error fetching users:", error);
-    return res.status(500).json({ message: "Error fetching users" });
+    console.error('Error fetching users:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 

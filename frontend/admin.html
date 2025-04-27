@@ -71,6 +71,9 @@
             color: white;
             padding: 1rem 2rem;
             margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .status-message {
@@ -91,11 +94,27 @@
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
+        .logout-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
     <header class="main-header">
         <h1>Admin Panel</h1>
+        <button class="logout-btn" onclick="handleLogout()">Logout</button>
     </header>
 
     <main>
@@ -135,6 +154,21 @@
                     </div>
                     
                     <div class="form-group">
+                        <label for="department">Department:</label>
+                        <select id="department" required>
+                            <option value="">Select department</option>
+                            <option value="electrical">Electrical</option>
+                            <option value="mechanical">Mechanical</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="maintenance">Maintenance</option>
+                            <option value="operations">Operations</option>
+                            <option value="production">Production</option>
+                            <option value="quality">Quality Control</option>
+                            <option value="it">Information Technology</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
                         <label for="accessLevel">Access Level:</label>
                         <select id="accessLevel" required>
                             <option value="">Select access level</option>
@@ -155,50 +189,67 @@
     </footer>
 
     <script>
+        // Add this logout function at the top of your script section
+        function handleLogout() {
+            // Clear session storage
+            sessionStorage.removeItem('token');
+            sessionStorage.removeItem('role');
+            sessionStorage.removeItem('name');
+            
+            // Redirect to index page
+            window.location.href = 'index.html';
+        }
+
         document.getElementById("addEmployeeForm").addEventListener("submit", async (e) => {
             e.preventDefault();
-
-            const name = document.getElementById("name").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const password = document.getElementById("password").value.trim();
-            const role = document.getElementById("role").value;
-            const accessLevel = document.getElementById("accessLevel").value;
             
-            const statusMessage = document.getElementById("statusMessage");
-            
-            if (!name || !email || !password || !role || !accessLevel) {
-                showMessage("Please fill in all fields.", "error");
-                return;
-            }
-
             try {
-                const response = await fetch("/api/add-employee", {
-                    method: "POST",
+                const token = sessionStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                const formData = {
+                    name: document.getElementById("name").value.trim(),
+                    email: document.getElementById("email").value.trim(),
+                    password: document.getElementById("password").value.trim(),
+                    role: document.getElementById("role").value,
+                    department: document.getElementById("department").value,
+                    accessLevel: document.getElementById("accessLevel").value
+                };
+
+                // Validate form data
+                if (!formData.name || !formData.email || !formData.password || 
+                    !formData.role || !formData.department || !formData.accessLevel) {
+                    throw new Error("All fields are required!");
+                }
+
+                const response = await fetch('/api/add-employee', {
+                    method: 'POST',
                     headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": sessionStorage.getItem("token")
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ 
-                        name,
-                        email,
-                        password, 
-                        role,
-                        accessLevel
-                    }),
-                    credentials: "include"
+                    body: JSON.stringify(formData)
                 });
 
-                const data = await response.json();
-
-                if (response.ok) {
-                    showMessage("Employee added successfully!", "success");
-                    document.getElementById("addEmployeeForm").reset();
-                } else {
-                    showMessage(data.message || "Failed to add employee.", "error");
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.message || 'Failed to add employee');
                 }
+
+                const data = await response.json();
+                showMessage("Employee added successfully!", "success");
+                e.target.reset();
             } catch (error) {
                 console.error("Error:", error);
-                showMessage("Server error. Please try again later.", "error");
+                if (error.message.includes('Invalid token')) {
+                    sessionStorage.clear();
+                    window.location.href = '/login.html';
+                    return;
+                }
+                showMessage(error.message || "Server error. Please try again later.", "error");
             }
         });
 
