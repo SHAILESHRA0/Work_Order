@@ -220,10 +220,9 @@
                         </label>
                         <label for="priority">Priority:
                             <select id="priority" required>
-                                <option value="">Select Priority</option>
-                                <option value="high">High</option>
-                                <option value="medium">Medium</option>
-                                <option value="low">Low</option>
+                                <option value="HIGH">High</option>
+                                <option value="MEDIUM" selected>Medium</option>
+                                <option value="LOW">Low</option>
                             </select>
                         </label>
                         <label for="assignedTo">Assign To:
@@ -352,62 +351,85 @@
             workorderForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
 
-                // Get values from form
+                // Validate required fields
+                const requiredFields = ['title', 'description', 'department', 'woNumber', 'carModel', 'licensePlate'];
+                for (const field of requiredFields) {
+                    const input = document.getElementById(field);
+                    if (!input.value.trim()) {
+                        alert(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
+                        input.focus();
+                        return;
+                    }
+                }
+
                 const workOrder = {
-                    title: document.getElementById('title').value,
-                    description: document.getElementById('description').value,
+                    title: document.getElementById('title').value.trim(),
+                    description: document.getElementById('description').value.trim(),
+                    department: document.getElementById('department').value,
+                    orderNumber: document.getElementById('woNumber').value.trim(),
+                    priority: document.getElementById('priority').value || 'MEDIUM',
                     vehicle: {
-                        model: document.getElementById('carModel').value,
-                        licensePlate: document.getElementById('licensePlate').value
+                        model: document.getElementById('carModel').value.trim(),
+                        licensePlate: document.getElementById('licensePlate').value.trim()
                     },
+                    assignedTo: document.getElementById('assignedTo').value || null,
+                    repairType: document.getElementById('repairType').value,
+                    startDate: document.getElementById('startDate').value,
+                    dueDate: document.getElementById('dueDate').value,
                     maintenanceDetails: {
-                        type: document.getElementById('repairType').value,
-                        priority: document.getElementById('priority').value,
                         requiredParts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
                         safetyTools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value)
                     },
-                    scheduling: {
-                        startDate: document.getElementById('startDate').value,
-                        dueDate: document.getElementById('dueDate').value,
-                        orderNumber: document.getElementById('woNumber').value
-                    },
-                    tasks: Array.from(document.querySelectorAll('.task-input')).map(input => ({
-                        description: input.value,
-                        status: 'pending',
-                        assignedTo: document.getElementById('assignedTo').value || null
-                    })),
-                    resources: Array.from(document.querySelectorAll('.resource-input')).map(input => ({
-                        name: input.value,
-                        type: 'equipment' // Default type
-                    })),
-                    status: 'created',
-                    createdBy: sessionStorage.getItem('userId'), // Ensure this is set during login
-                    createdAt: new Date().toISOString(),
-                    department: 'maintenance', // Can be made dynamic if needed
-                    lastModified: new Date().toISOString()
+                    tasks: Array.from(document.querySelectorAll('.task-input'))
+                        .map(input => input.value.trim())
+                        .filter(Boolean)
+                        .map(description => ({
+                            description,
+                            status: 'PENDING'
+                        }))
                 };
 
                 try {
-                    const response = await fetch("/api/work-orders", {
+                    const token = sessionStorage.getItem('token');
+                    if (!token) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
+
+                    const response = await fetch('/api/workorders/create', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                            'Authorization': `Bearer ${token}`
                         },
                         body: JSON.stringify(workOrder)
                     });
 
                     if (!response.ok) {
-                        throw new Error('Failed to create work order');
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.message || 'Failed to create work order');
                     }
 
-                    const result = await response.json();
+                    const data = await response.json();
                     alert('Work order created successfully!');
-                    workorderForm.reset();
-                    updateWorkOrderHistory();
+                    this.reset();
+                    
+                    // Reset task list
+                    document.getElementById('taskList').innerHTML = `
+                        <div class="task-item">
+                            <input type="text" placeholder="Enter task" class="task-input">
+                            <button type="button" class="add-task">+</button>
+                        </div>
+                    `;
+
+                    // Uncheck all checkboxes
+                    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+                    await updateWorkOrderHistory();
+
                 } catch (error) {
-                    console.error('Error:', error);
-                    alert('Failed to create work order: ' + error.message);
+                    console.error('Error creating work order:', error);
+                    alert(error.message || 'Failed to create work order. Please try again.');
                 }
             });
 
@@ -445,37 +467,49 @@
 
             async function updateWorkOrderHistory() {
                 try {
-                    const response = await fetch("/api/work-order/get-all", {
+                    const token = sessionStorage.getItem('token');
+                    if (!token) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
+
+                    const response = await fetch("/api/workorders", {
                         headers: {
-                            'Authorization': `${localStorage.getItem('token')}`
+                            'Authorization': `Bearer ${token}`
                         }
                     });
-                    if (!response.ok) throw new Error('Failed to fetch work orders');
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.message || 'Failed to fetch work orders');
+                    }
+
                     const workOrders = await response.json();
                     const searchTerm = searchInput.value.toLowerCase();
                     const priorityFilter = filterPriority.value;
 
                     const filteredOrders = workOrders.filter(wo => {
                         const matchesSearch = 
-                            wo.model?.toLowerCase().includes(searchTerm) || 
-                            wo.license?.toLowerCase().includes(searchTerm) || 
-                            wo.type?.toLowerCase().includes(searchTerm);
-                        const matchesPriority = !priorityFilter || wo.tasks.some(task => task.priority === priorityFilter);
+                            wo.vehicle?.model?.toLowerCase().includes(searchTerm) || 
+                            wo.vehicle?.licensePlate?.toLowerCase().includes(searchTerm) || 
+                            wo.repairType?.toLowerCase().includes(searchTerm);
+                        const matchesPriority = !priorityFilter || wo.priority === priorityFilter;
                         return matchesSearch && matchesPriority;
                     });
 
                     const tbody = document.getElementById('historyTableBody');
                     tbody.innerHTML = filteredOrders.map(wo => `
                         <tr>
-                            <td>${wo.id.substring(0, 8)}</td>
-                            <td>${wo.model}</td>
-                            <td>${wo.license}</td>
-                            <td>${wo.type}</td>
-                            <td>${wo.tasks.length ? wo.tasks[0].priority : 'N/A'}</td>
-                            <td>${wo.tasks.length && wo.tasks[0].assignedToId ? wo.tasks[0].assignedToId : 'Unassigned'}</td>
-                            <td><span class="status-badge">${wo.tasks.length ? wo.tasks[0].status : 'PENDING'}</span></td>
-                            <td>${new Date(wo.createdAt).toLocaleString()}</td>
-                            <td>${wo.updatedAt ? new Date(wo.updatedAt).toLocaleString() : 'Not set'}</td>
+                            <td>${wo.orderNumber}</td>
+                            <td>${wo.title}</td>
+                            <td>${wo.vehicle?.model || 'N/A'}</td>
+                            <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
+                            <td>${wo.repairType}</td>
+                            <td>${wo.priority}</td>
+                            <td>${wo.assignedTo?.name || 'Unassigned'}</td>
+                            <td><span class="status-badge ${wo.status.toLowerCase()}">${wo.status}</span></td>
+                            <td>${new Date(wo.scheduling?.startDate).toLocaleString()}</td>
+                            <td>${new Date(wo.scheduling?.dueDate).toLocaleString()}</td>
                             <td>
                                 <button onclick="editWorkOrder('${wo.id}')">Edit</button>
                                 <button onclick="deleteWorkOrder('${wo.id}')">Delete</button>
@@ -484,7 +518,7 @@
                     `).join('');
                 } catch (error) {
                     console.error('Error:', error);
-                    alert('Failed to fetch work orders');
+                    alert('Failed to fetch work orders: ' + error.message);
                 }
             }
 
@@ -712,42 +746,28 @@
             loadTechnicians();
 
             // Update the form submission code
-            workorderForm.addEventListener('submit', async function(e) {
+            document.getElementById('workorderForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
-
-                const formData = new FormData(this);
-                const workOrder = {
-                    title: formData.get('title'),
-                    description: formData.get('description'),
-                    department: formData.get('department'),
-                    vehicle: {
-                        model: formData.get('carModel'),
-                        licensePlate: formData.get('licensePlate')
-                    },
-                    repairType: formData.get('repairType'),
-                    priority: formData.get('priority'),
-                    assignedToId: formData.get('assignedTo'),
-                    orderNumber: formData.get('woNumber'),
-                    maintenanceDetails: {
-                        requiredParts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
-                        safetyTools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value)
-                    },
-                    scheduling: {
-                        startDate: formData.get('startDate'),
-                        dueDate: formData.get('dueDate')
-                    },
-                    tasks: Array.from(document.querySelectorAll('.task-input'))
-                        .map(input => input.value)
-                        .filter(Boolean)
-                        .map(task => ({
-                            description: task,
-                            status: 'pending'
-                        })),
-                    status: 'pending'
-                };
-
+                
                 try {
-                    const response = await fetch('/api/work-orders', {
+                    const formData = new FormData(this);
+                    
+                    const workOrder = {
+                        title: formData.get('title'),
+                        description: formData.get('description'),
+                        department: formData.get('department'),
+                        orderNumber: formData.get('woNumber'),
+                        priority: formData.get('priority')?.toUpperCase() || 'HIGH',
+                        vehicle: {
+                            model: formData.get('carModel'),
+                            licensePlate: formData.get('licensePlate')
+                        },
+                        startDate: formData.get('startDate'),
+                        dueDate: formData.get('dueDate'),
+                        assignedToId: formData.get('assignedTo')
+                    };
+
+                    const response = await fetch('/api/work-orders/create', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -756,18 +776,19 @@
                         body: JSON.stringify(workOrder)
                     });
 
+                    const result = await response.json();
+
                     if (!response.ok) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || 'Failed to create work order');
+                        throw new Error(result.error || 'Failed to create work order');
                     }
 
-                    const result = await response.json();
                     alert('Work order created successfully!');
                     this.reset();
                     await updateWorkOrderHistory();
+
                 } catch (error) {
-                    console.error('Error creating work order:', error);
-                    alert(error.message);
+                    console.error('Error:', error);
+                    alert(error.message || 'Failed to create work order. Please try again.');
                 }
             });
 

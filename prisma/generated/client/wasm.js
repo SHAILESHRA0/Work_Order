@@ -133,12 +133,21 @@ exports.Prisma.WorkOrderScalarFieldEnum = {
   department: 'department',
   location: 'location',
   equipment: 'equipment',
+  vehicleId: 'vehicleId',
   startDate: 'startDate',
   dueDate: 'dueDate',
   completedDate: 'completedDate',
   createdById: 'createdById',
   assignedToId: 'assignedToId',
   supervisorId: 'supervisorId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.VehicleScalarFieldEnum = {
+  id: 'id',
+  model: 'model',
+  licensePlate: 'licensePlate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -217,6 +226,7 @@ exports.WorkOrderStatus = exports.$Enums.WorkOrderStatus = {
 exports.Prisma.ModelName = {
   User: 'User',
   WorkOrder: 'WorkOrder',
+  Vehicle: 'Vehicle',
   Task: 'Task',
   Comment: 'Comment',
   Attachment: 'Attachment'
