@@ -1,54 +1,35 @@
 import { PrismaClient } from "@prisma/client";
 
-let db;
+const prisma = global.prisma || new PrismaClient({
+    log: ['query', 'error', 'warn'],
+    errorFormat: 'minimal'
+});
 
-if (process.env.NODE_ENV === 'production') {
-  db = new PrismaClient({
-    datasources: {
-      db: {
-        url: process.env.DATABASE_URL
-      }
-    }
-  });
-} else {
-  if (!global.db) {
-    global.db = new PrismaClient({
-      log: ['query', 'info', 'warn', 'error'],
-      datasources: {
-        db: {
-          url: process.env.DATABASE_URL
-        }
-      }
-    });
-  }
-  db = global.db;
-}
+if (process.env.NODE_ENV !== 'production') global.prisma = prisma;
 
-// Track connection status
+export const db = prisma;
+
+// Handle cleanup
+process.on('beforeExit', async () => {
+    await prisma.$disconnect();
+});
+
 let isConnected = false;
 
-async function connectDB() {
-  try {
-    const connectPromise = db.$connect();
-    const timeoutPromise = new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Connection timeout')), 
-      parseInt(process.env.MONGODB_CONNECT_TIMEOUT || '5000'))
-    );
-
-    await Promise.race([connectPromise, timeoutPromise]);
-    
-    // Verify database connection
-    const dbName = process.env.DATABASE_NAME || 'Work_Order';
-    await db.$queryRaw`db.getMongo().getDBNames()`;
-    
-    isConnected = true;
-    console.log(`🌟 Database connected successfully to ${dbName}`);
-    return true;
-  } catch (error) {
-    console.error("❌ Database connection error:", error);
-    return false;
-  }
-}
+export const connectDB = async () => {
+    try {
+        await prisma.$connect();
+        
+        // Test the connection
+        await prisma.$queryRaw`SELECT 1`;
+        
+        console.log('Database connected successfully');
+        return true;
+    } catch (error) {
+        console.error('Database connection failed:', error);
+        throw new Error('Failed to connect to database');
+    }
+};
 
 async function disconnectDB() {
   if (!isConnected) {
@@ -88,4 +69,4 @@ async function disconnectDB() {
   });
 });
 
-export { connectDB, db, disconnectDB, isConnected };
+export { disconnectDB, isConnected };

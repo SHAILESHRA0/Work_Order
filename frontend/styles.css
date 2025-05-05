@@ -102,7 +102,6 @@ body {
 .top-bar {
     background-color: white;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    padding: 0.5rem 0;
     position: fixed;
     width: 100%;
     top: 0;
@@ -120,6 +119,14 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.logo-container a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: inherit;
 }
 
 .logo-img {
@@ -152,6 +159,11 @@ body {
 
 .nav-item:hover {
     color: #007bff;
+}
+
+.nav-item.active {
+    color: var(--primary-color);
+    font-weight: 600;
 }
 
 /* Hero Section */

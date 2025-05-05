@@ -30,7 +30,7 @@ app.use(bodyParser.json());
 // API routes
 app.use(authRouter);
 app.use(adminRouter);
-app.use(workOrderRouter);
+app.use('/api/workorders', workOrderRouter);
 app.use(technicianRouter);
 
 app.get("/api", (req, res) => {

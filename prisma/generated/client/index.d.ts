@@ -19,6 +19,11 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model Session
+ * 
+ */
+export type Session = $Result.DefaultSelection<Prisma.$SessionPayload>
+/**
  * Model WorkOrder
  * 
  */
@@ -43,6 +48,16 @@ export type Comment = $Result.DefaultSelection<Prisma.$CommentPayload>
  * 
  */
 export type Attachment = $Result.DefaultSelection<Prisma.$AttachmentPayload>
+/**
+ * Model History
+ * 
+ */
+export type History = $Result.DefaultSelection<Prisma.$HistoryPayload>
+/**
+ * Model MaintenanceDetails
+ * 
+ */
+export type MaintenanceDetails = $Result.DefaultSelection<Prisma.$MaintenanceDetailsPayload>
 
 /**
  * Enums
@@ -217,6 +232,16 @@ export class PrismaClient<
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.session`: Exposes CRUD operations for the **Session** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sessions
+    * const sessions = await prisma.session.findMany()
+    * ```
+    */
+  get session(): Prisma.SessionDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.workOrder`: Exposes CRUD operations for the **WorkOrder** model.
     * Example usage:
     * ```ts
@@ -265,6 +290,26 @@ export class PrismaClient<
     * ```
     */
   get attachment(): Prisma.AttachmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.history`: Exposes CRUD operations for the **History** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Histories
+    * const histories = await prisma.history.findMany()
+    * ```
+    */
+  get history(): Prisma.HistoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.maintenanceDetails`: Exposes CRUD operations for the **MaintenanceDetails** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MaintenanceDetails
+    * const maintenanceDetails = await prisma.maintenanceDetails.findMany()
+    * ```
+    */
+  get maintenanceDetails(): Prisma.MaintenanceDetailsDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -706,11 +751,14 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    Session: 'Session',
     WorkOrder: 'WorkOrder',
     Vehicle: 'Vehicle',
     Task: 'Task',
     Comment: 'Comment',
-    Attachment: 'Attachment'
+    Attachment: 'Attachment',
+    History: 'History',
+    MaintenanceDetails: 'MaintenanceDetails'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -729,7 +777,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "workOrder" | "vehicle" | "task" | "comment" | "attachment"
+      modelProps: "user" | "session" | "workOrder" | "vehicle" | "task" | "comment" | "attachment" | "history" | "maintenanceDetails"
       txIsolationLevel: never
     }
     model: {
@@ -804,6 +852,80 @@ export namespace Prisma {
           count: {
             args: Prisma.UserCountArgs<ExtArgs>
             result: $Utils.Optional<UserCountAggregateOutputType> | number
+          }
+        }
+      }
+      Session: {
+        payload: Prisma.$SessionPayload<ExtArgs>
+        fields: Prisma.SessionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SessionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SessionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+          }
+          findFirst: {
+            args: Prisma.SessionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SessionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+          }
+          findMany: {
+            args: Prisma.SessionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionPayload>[]
+          }
+          create: {
+            args: Prisma.SessionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+          }
+          createMany: {
+            args: Prisma.SessionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.SessionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+          }
+          update: {
+            args: Prisma.SessionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+          }
+          deleteMany: {
+            args: Prisma.SessionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SessionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.SessionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SessionPayload>
+          }
+          aggregate: {
+            args: Prisma.SessionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSession>
+          }
+          groupBy: {
+            args: Prisma.SessionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SessionGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.SessionFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.SessionAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.SessionCountArgs<ExtArgs>
+            result: $Utils.Optional<SessionCountAggregateOutputType> | number
           }
         }
       }
@@ -1177,6 +1299,154 @@ export namespace Prisma {
           }
         }
       }
+      History: {
+        payload: Prisma.$HistoryPayload<ExtArgs>
+        fields: Prisma.HistoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.HistoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HistoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.HistoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HistoryPayload>
+          }
+          findFirst: {
+            args: Prisma.HistoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HistoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.HistoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HistoryPayload>
+          }
+          findMany: {
+            args: Prisma.HistoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HistoryPayload>[]
+          }
+          create: {
+            args: Prisma.HistoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HistoryPayload>
+          }
+          createMany: {
+            args: Prisma.HistoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.HistoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HistoryPayload>
+          }
+          update: {
+            args: Prisma.HistoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HistoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.HistoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.HistoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.HistoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$HistoryPayload>
+          }
+          aggregate: {
+            args: Prisma.HistoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateHistory>
+          }
+          groupBy: {
+            args: Prisma.HistoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<HistoryGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.HistoryFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.HistoryAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.HistoryCountArgs<ExtArgs>
+            result: $Utils.Optional<HistoryCountAggregateOutputType> | number
+          }
+        }
+      }
+      MaintenanceDetails: {
+        payload: Prisma.$MaintenanceDetailsPayload<ExtArgs>
+        fields: Prisma.MaintenanceDetailsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MaintenanceDetailsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MaintenanceDetailsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MaintenanceDetailsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MaintenanceDetailsPayload>
+          }
+          findFirst: {
+            args: Prisma.MaintenanceDetailsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MaintenanceDetailsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MaintenanceDetailsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MaintenanceDetailsPayload>
+          }
+          findMany: {
+            args: Prisma.MaintenanceDetailsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MaintenanceDetailsPayload>[]
+          }
+          create: {
+            args: Prisma.MaintenanceDetailsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MaintenanceDetailsPayload>
+          }
+          createMany: {
+            args: Prisma.MaintenanceDetailsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.MaintenanceDetailsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MaintenanceDetailsPayload>
+          }
+          update: {
+            args: Prisma.MaintenanceDetailsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MaintenanceDetailsPayload>
+          }
+          deleteMany: {
+            args: Prisma.MaintenanceDetailsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MaintenanceDetailsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.MaintenanceDetailsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MaintenanceDetailsPayload>
+          }
+          aggregate: {
+            args: Prisma.MaintenanceDetailsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMaintenanceDetails>
+          }
+          groupBy: {
+            args: Prisma.MaintenanceDetailsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MaintenanceDetailsGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.MaintenanceDetailsFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.MaintenanceDetailsAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.MaintenanceDetailsCountArgs<ExtArgs>
+            result: $Utils.Optional<MaintenanceDetailsCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1249,11 +1519,14 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    session?: SessionOmit
     workOrder?: WorkOrderOmit
     vehicle?: VehicleOmit
     task?: TaskOmit
     comment?: CommentOmit
     attachment?: AttachmentOmit
+    history?: HistoryOmit
+    maintenanceDetails?: MaintenanceDetailsOmit
   }
 
   /* Types for Logging */
@@ -1348,15 +1621,23 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
+    sessions: number
     createdOrders: number
     assignedOrders: number
     supervisedOrders: number
+    assignedTasks: number
+    comments: number
+    history: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     createdOrders?: boolean | UserCountOutputTypeCountCreatedOrdersArgs
     assignedOrders?: boolean | UserCountOutputTypeCountAssignedOrdersArgs
     supervisedOrders?: boolean | UserCountOutputTypeCountSupervisedOrdersArgs
+    assignedTasks?: boolean | UserCountOutputTypeCountAssignedTasksArgs
+    comments?: boolean | UserCountOutputTypeCountCommentsArgs
+    history?: boolean | UserCountOutputTypeCountHistoryArgs
   }
 
   // Custom InputTypes
@@ -1368,6 +1649,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the UserCountOutputType
      */
     select?: UserCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SessionWhereInput
   }
 
   /**
@@ -1391,6 +1679,27 @@ export namespace Prisma {
     where?: WorkOrderWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAssignedTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TaskWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HistoryWhereInput
+  }
+
 
   /**
    * Count Type WorkOrderCountOutputType
@@ -1400,12 +1709,14 @@ export namespace Prisma {
     tasks: number
     comments: number
     attachments: number
+    history: number
   }
 
   export type WorkOrderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     tasks?: boolean | WorkOrderCountOutputTypeCountTasksArgs
     comments?: boolean | WorkOrderCountOutputTypeCountCommentsArgs
     attachments?: boolean | WorkOrderCountOutputTypeCountAttachmentsArgs
+    history?: boolean | WorkOrderCountOutputTypeCountHistoryArgs
   }
 
   // Custom InputTypes
@@ -1438,6 +1749,13 @@ export namespace Prisma {
    */
   export type WorkOrderCountOutputTypeCountAttachmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AttachmentWhereInput
+  }
+
+  /**
+   * WorkOrderCountOutputType without action
+   */
+  export type WorkOrderCountOutputTypeCountHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HistoryWhereInput
   }
 
 
@@ -1680,9 +1998,13 @@ export namespace Prisma {
     lastLogin?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     createdOrders?: boolean | User$createdOrdersArgs<ExtArgs>
     assignedOrders?: boolean | User$assignedOrdersArgs<ExtArgs>
     supervisedOrders?: boolean | User$supervisedOrdersArgs<ExtArgs>
+    assignedTasks?: boolean | User$assignedTasksArgs<ExtArgs>
+    comments?: boolean | User$commentsArgs<ExtArgs>
+    history?: boolean | User$historyArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1703,18 +2025,26 @@ export namespace Prisma {
 
   export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "name" | "password" | "role" | "department" | "isActive" | "lastLogin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    sessions?: boolean | User$sessionsArgs<ExtArgs>
     createdOrders?: boolean | User$createdOrdersArgs<ExtArgs>
     assignedOrders?: boolean | User$assignedOrdersArgs<ExtArgs>
     supervisedOrders?: boolean | User$supervisedOrdersArgs<ExtArgs>
+    assignedTasks?: boolean | User$assignedTasksArgs<ExtArgs>
+    comments?: boolean | User$commentsArgs<ExtArgs>
+    history?: boolean | User$historyArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
 
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
+      sessions: Prisma.$SessionPayload<ExtArgs>[]
       createdOrders: Prisma.$WorkOrderPayload<ExtArgs>[]
       assignedOrders: Prisma.$WorkOrderPayload<ExtArgs>[]
       supervisedOrders: Prisma.$WorkOrderPayload<ExtArgs>[]
+      assignedTasks: Prisma.$TaskPayload<ExtArgs>[]
+      comments: Prisma.$CommentPayload<ExtArgs>[]
+      history: Prisma.$HistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2090,9 +2420,13 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     createdOrders<T extends User$createdOrdersArgs<ExtArgs> = {}>(args?: Subset<T, User$createdOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     assignedOrders<T extends User$assignedOrdersArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     supervisedOrders<T extends User$supervisedOrdersArgs<ExtArgs> = {}>(args?: Subset<T, User$supervisedOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    assignedTasks<T extends User$assignedTasksArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedTasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    history<T extends User$historyArgs<ExtArgs> = {}>(args?: Subset<T, User$historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2502,6 +2836,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.sessions
+   */
+  export type User$sessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    where?: SessionWhereInput
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    cursor?: SessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+  }
+
+  /**
    * User.createdOrders
    */
   export type User$createdOrdersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2574,6 +2932,78 @@ export namespace Prisma {
   }
 
   /**
+   * User.assignedTasks
+   */
+  export type User$assignedTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Task
+     */
+    select?: TaskSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Task
+     */
+    omit?: TaskOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TaskInclude<ExtArgs> | null
+    where?: TaskWhereInput
+    orderBy?: TaskOrderByWithRelationInput | TaskOrderByWithRelationInput[]
+    cursor?: TaskWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TaskScalarFieldEnum | TaskScalarFieldEnum[]
+  }
+
+  /**
+   * User.comments
+   */
+  export type User$commentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Comment
+     */
+    select?: CommentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Comment
+     */
+    omit?: CommentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommentInclude<ExtArgs> | null
+    where?: CommentWhereInput
+    orderBy?: CommentOrderByWithRelationInput | CommentOrderByWithRelationInput[]
+    cursor?: CommentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * User.history
+   */
+  export type User$historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    where?: HistoryWhereInput
+    orderBy?: HistoryOrderByWithRelationInput | HistoryOrderByWithRelationInput[]
+    cursor?: HistoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HistoryScalarFieldEnum | HistoryScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2593,13 +3023,1006 @@ export namespace Prisma {
 
 
   /**
+   * Model Session
+   */
+
+  export type AggregateSession = {
+    _count: SessionCountAggregateOutputType | null
+    _min: SessionMinAggregateOutputType | null
+    _max: SessionMaxAggregateOutputType | null
+  }
+
+  export type SessionMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    token: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type SessionMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    token: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+  }
+
+  export type SessionCountAggregateOutputType = {
+    id: number
+    userId: number
+    token: number
+    expiresAt: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type SessionMinAggregateInputType = {
+    id?: true
+    userId?: true
+    token?: true
+    expiresAt?: true
+    createdAt?: true
+  }
+
+  export type SessionMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    token?: true
+    expiresAt?: true
+    createdAt?: true
+  }
+
+  export type SessionCountAggregateInputType = {
+    id?: true
+    userId?: true
+    token?: true
+    expiresAt?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type SessionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Session to aggregate.
+     */
+    where?: SessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sessions to fetch.
+     */
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Sessions
+    **/
+    _count?: true | SessionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SessionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SessionMaxAggregateInputType
+  }
+
+  export type GetSessionAggregateType<T extends SessionAggregateArgs> = {
+        [P in keyof T & keyof AggregateSession]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSession[P]>
+      : GetScalarType<T[P], AggregateSession[P]>
+  }
+
+
+
+
+  export type SessionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SessionWhereInput
+    orderBy?: SessionOrderByWithAggregationInput | SessionOrderByWithAggregationInput[]
+    by: SessionScalarFieldEnum[] | SessionScalarFieldEnum
+    having?: SessionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SessionCountAggregateInputType | true
+    _min?: SessionMinAggregateInputType
+    _max?: SessionMaxAggregateInputType
+  }
+
+  export type SessionGroupByOutputType = {
+    id: string
+    userId: string
+    token: string
+    expiresAt: Date
+    createdAt: Date
+    _count: SessionCountAggregateOutputType | null
+    _min: SessionMinAggregateOutputType | null
+    _max: SessionMaxAggregateOutputType | null
+  }
+
+  type GetSessionGroupByPayload<T extends SessionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SessionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SessionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SessionGroupByOutputType[P]>
+            : GetScalarType<T[P], SessionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    token?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["session"]>
+
+
+
+  export type SessionSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    token?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+  }
+
+  export type SessionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "token" | "expiresAt" | "createdAt", ExtArgs["result"]["session"]>
+  export type SessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $SessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Session"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      token: string
+      expiresAt: Date
+      createdAt: Date
+    }, ExtArgs["result"]["session"]>
+    composites: {}
+  }
+
+  type SessionGetPayload<S extends boolean | null | undefined | SessionDefaultArgs> = $Result.GetResult<Prisma.$SessionPayload, S>
+
+  type SessionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SessionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SessionCountAggregateInputType | true
+    }
+
+  export interface SessionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Session'], meta: { name: 'Session' } }
+    /**
+     * Find zero or one Session that matches the filter.
+     * @param {SessionFindUniqueArgs} args - Arguments to find a Session
+     * @example
+     * // Get one Session
+     * const session = await prisma.session.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SessionFindUniqueArgs>(args: SelectSubset<T, SessionFindUniqueArgs<ExtArgs>>): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Session that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SessionFindUniqueOrThrowArgs} args - Arguments to find a Session
+     * @example
+     * // Get one Session
+     * const session = await prisma.session.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SessionFindUniqueOrThrowArgs>(args: SelectSubset<T, SessionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Session that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionFindFirstArgs} args - Arguments to find a Session
+     * @example
+     * // Get one Session
+     * const session = await prisma.session.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SessionFindFirstArgs>(args?: SelectSubset<T, SessionFindFirstArgs<ExtArgs>>): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Session that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionFindFirstOrThrowArgs} args - Arguments to find a Session
+     * @example
+     * // Get one Session
+     * const session = await prisma.session.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SessionFindFirstOrThrowArgs>(args?: SelectSubset<T, SessionFindFirstOrThrowArgs<ExtArgs>>): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sessions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sessions
+     * const sessions = await prisma.session.findMany()
+     * 
+     * // Get first 10 Sessions
+     * const sessions = await prisma.session.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sessionWithIdOnly = await prisma.session.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SessionFindManyArgs>(args?: SelectSubset<T, SessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Session.
+     * @param {SessionCreateArgs} args - Arguments to create a Session.
+     * @example
+     * // Create one Session
+     * const Session = await prisma.session.create({
+     *   data: {
+     *     // ... data to create a Session
+     *   }
+     * })
+     * 
+     */
+    create<T extends SessionCreateArgs>(args: SelectSubset<T, SessionCreateArgs<ExtArgs>>): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sessions.
+     * @param {SessionCreateManyArgs} args - Arguments to create many Sessions.
+     * @example
+     * // Create many Sessions
+     * const session = await prisma.session.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SessionCreateManyArgs>(args?: SelectSubset<T, SessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a Session.
+     * @param {SessionDeleteArgs} args - Arguments to delete one Session.
+     * @example
+     * // Delete one Session
+     * const Session = await prisma.session.delete({
+     *   where: {
+     *     // ... filter to delete one Session
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SessionDeleteArgs>(args: SelectSubset<T, SessionDeleteArgs<ExtArgs>>): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Session.
+     * @param {SessionUpdateArgs} args - Arguments to update one Session.
+     * @example
+     * // Update one Session
+     * const session = await prisma.session.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SessionUpdateArgs>(args: SelectSubset<T, SessionUpdateArgs<ExtArgs>>): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sessions.
+     * @param {SessionDeleteManyArgs} args - Arguments to filter Sessions to delete.
+     * @example
+     * // Delete a few Sessions
+     * const { count } = await prisma.session.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SessionDeleteManyArgs>(args?: SelectSubset<T, SessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sessions
+     * const session = await prisma.session.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SessionUpdateManyArgs>(args: SelectSubset<T, SessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one Session.
+     * @param {SessionUpsertArgs} args - Arguments to update or create a Session.
+     * @example
+     * // Update or create a Session
+     * const session = await prisma.session.upsert({
+     *   create: {
+     *     // ... data to create a Session
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Session we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SessionUpsertArgs>(args: SelectSubset<T, SessionUpsertArgs<ExtArgs>>): Prisma__SessionClient<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sessions that matches the filter.
+     * @param {SessionFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const session = await prisma.session.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: SessionFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a Session.
+     * @param {SessionAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const session = await prisma.session.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: SessionAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of Sessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionCountArgs} args - Arguments to filter Sessions to count.
+     * @example
+     * // Count the number of Sessions
+     * const count = await prisma.session.count({
+     *   where: {
+     *     // ... the filter for the Sessions we want to count
+     *   }
+     * })
+    **/
+    count<T extends SessionCountArgs>(
+      args?: Subset<T, SessionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SessionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Session.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SessionAggregateArgs>(args: Subset<T, SessionAggregateArgs>): Prisma.PrismaPromise<GetSessionAggregateType<T>>
+
+    /**
+     * Group by Session.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SessionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SessionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SessionGroupByArgs['orderBy'] }
+        : { orderBy?: SessionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SessionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSessionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Session model
+   */
+  readonly fields: SessionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Session.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Session model
+   */
+  interface SessionFieldRefs {
+    readonly id: FieldRef<"Session", 'String'>
+    readonly userId: FieldRef<"Session", 'String'>
+    readonly token: FieldRef<"Session", 'String'>
+    readonly expiresAt: FieldRef<"Session", 'DateTime'>
+    readonly createdAt: FieldRef<"Session", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Session findUnique
+   */
+  export type SessionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    /**
+     * Filter, which Session to fetch.
+     */
+    where: SessionWhereUniqueInput
+  }
+
+  /**
+   * Session findUniqueOrThrow
+   */
+  export type SessionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    /**
+     * Filter, which Session to fetch.
+     */
+    where: SessionWhereUniqueInput
+  }
+
+  /**
+   * Session findFirst
+   */
+  export type SessionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    /**
+     * Filter, which Session to fetch.
+     */
+    where?: SessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sessions to fetch.
+     */
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Sessions.
+     */
+    cursor?: SessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sessions.
+     */
+    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+  }
+
+  /**
+   * Session findFirstOrThrow
+   */
+  export type SessionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    /**
+     * Filter, which Session to fetch.
+     */
+    where?: SessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sessions to fetch.
+     */
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Sessions.
+     */
+    cursor?: SessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sessions.
+     */
+    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+  }
+
+  /**
+   * Session findMany
+   */
+  export type SessionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    /**
+     * Filter, which Sessions to fetch.
+     */
+    where?: SessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sessions to fetch.
+     */
+    orderBy?: SessionOrderByWithRelationInput | SessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Sessions.
+     */
+    cursor?: SessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sessions.
+     */
+    skip?: number
+    distinct?: SessionScalarFieldEnum | SessionScalarFieldEnum[]
+  }
+
+  /**
+   * Session create
+   */
+  export type SessionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Session.
+     */
+    data: XOR<SessionCreateInput, SessionUncheckedCreateInput>
+  }
+
+  /**
+   * Session createMany
+   */
+  export type SessionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Sessions.
+     */
+    data: SessionCreateManyInput | SessionCreateManyInput[]
+  }
+
+  /**
+   * Session update
+   */
+  export type SessionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Session.
+     */
+    data: XOR<SessionUpdateInput, SessionUncheckedUpdateInput>
+    /**
+     * Choose, which Session to update.
+     */
+    where: SessionWhereUniqueInput
+  }
+
+  /**
+   * Session updateMany
+   */
+  export type SessionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Sessions.
+     */
+    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyInput>
+    /**
+     * Filter which Sessions to update
+     */
+    where?: SessionWhereInput
+    /**
+     * Limit how many Sessions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Session upsert
+   */
+  export type SessionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Session to update in case it exists.
+     */
+    where: SessionWhereUniqueInput
+    /**
+     * In case the Session found by the `where` argument doesn't exist, create a new Session with this data.
+     */
+    create: XOR<SessionCreateInput, SessionUncheckedCreateInput>
+    /**
+     * In case the Session was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SessionUpdateInput, SessionUncheckedUpdateInput>
+  }
+
+  /**
+   * Session delete
+   */
+  export type SessionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+    /**
+     * Filter which Session to delete.
+     */
+    where: SessionWhereUniqueInput
+  }
+
+  /**
+   * Session deleteMany
+   */
+  export type SessionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Sessions to delete
+     */
+    where?: SessionWhereInput
+    /**
+     * Limit how many Sessions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Session findRaw
+   */
+  export type SessionFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Session aggregateRaw
+   */
+  export type SessionAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * Session without action
+   */
+  export type SessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Session
+     */
+    select?: SessionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Session
+     */
+    omit?: SessionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SessionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model WorkOrder
    */
 
   export type AggregateWorkOrder = {
     _count: WorkOrderCountAggregateOutputType | null
+    _avg: WorkOrderAvgAggregateOutputType | null
+    _sum: WorkOrderSumAggregateOutputType | null
     _min: WorkOrderMinAggregateOutputType | null
     _max: WorkOrderMaxAggregateOutputType | null
+  }
+
+  export type WorkOrderAvgAggregateOutputType = {
+    version: number | null
+    estimatedHours: number | null
+    actualHours: number | null
+  }
+
+  export type WorkOrderSumAggregateOutputType = {
+    version: number | null
+    estimatedHours: number | null
+    actualHours: number | null
   }
 
   export type WorkOrderMinAggregateOutputType = {
@@ -2607,18 +4030,20 @@ export namespace Prisma {
     orderNumber: string | null
     title: string | null
     description: string | null
+    department: $Enums.Department | null
     priority: $Enums.Priority | null
     status: $Enums.WorkOrderStatus | null
-    department: string | null
-    location: string | null
-    equipment: string | null
-    vehicleId: string | null
     startDate: Date | null
     dueDate: Date | null
     completedDate: Date | null
+    equipment: string | null
+    version: number | null
+    estimatedHours: number | null
+    actualHours: number | null
     createdById: string | null
     assignedToId: string | null
     supervisorId: string | null
+    vehicleId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2628,18 +4053,20 @@ export namespace Prisma {
     orderNumber: string | null
     title: string | null
     description: string | null
+    department: $Enums.Department | null
     priority: $Enums.Priority | null
     status: $Enums.WorkOrderStatus | null
-    department: string | null
-    location: string | null
-    equipment: string | null
-    vehicleId: string | null
     startDate: Date | null
     dueDate: Date | null
     completedDate: Date | null
+    equipment: string | null
+    version: number | null
+    estimatedHours: number | null
+    actualHours: number | null
     createdById: string | null
     assignedToId: string | null
     supervisorId: string | null
+    vehicleId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2649,41 +4076,57 @@ export namespace Prisma {
     orderNumber: number
     title: number
     description: number
+    department: number
     priority: number
     status: number
-    department: number
-    location: number
-    equipment: number
-    vehicleId: number
     startDate: number
     dueDate: number
     completedDate: number
+    equipment: number
+    version: number
+    estimatedHours: number
+    actualHours: number
     createdById: number
     assignedToId: number
     supervisorId: number
+    vehicleId: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
 
+  export type WorkOrderAvgAggregateInputType = {
+    version?: true
+    estimatedHours?: true
+    actualHours?: true
+  }
+
+  export type WorkOrderSumAggregateInputType = {
+    version?: true
+    estimatedHours?: true
+    actualHours?: true
+  }
+
   export type WorkOrderMinAggregateInputType = {
     id?: true
     orderNumber?: true
     title?: true
     description?: true
+    department?: true
     priority?: true
     status?: true
-    department?: true
-    location?: true
-    equipment?: true
-    vehicleId?: true
     startDate?: true
     dueDate?: true
     completedDate?: true
+    equipment?: true
+    version?: true
+    estimatedHours?: true
+    actualHours?: true
     createdById?: true
     assignedToId?: true
     supervisorId?: true
+    vehicleId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2693,18 +4136,20 @@ export namespace Prisma {
     orderNumber?: true
     title?: true
     description?: true
+    department?: true
     priority?: true
     status?: true
-    department?: true
-    location?: true
-    equipment?: true
-    vehicleId?: true
     startDate?: true
     dueDate?: true
     completedDate?: true
+    equipment?: true
+    version?: true
+    estimatedHours?: true
+    actualHours?: true
     createdById?: true
     assignedToId?: true
     supervisorId?: true
+    vehicleId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2714,18 +4159,20 @@ export namespace Prisma {
     orderNumber?: true
     title?: true
     description?: true
+    department?: true
     priority?: true
     status?: true
-    department?: true
-    location?: true
-    equipment?: true
-    vehicleId?: true
     startDate?: true
     dueDate?: true
     completedDate?: true
+    equipment?: true
+    version?: true
+    estimatedHours?: true
+    actualHours?: true
     createdById?: true
     assignedToId?: true
     supervisorId?: true
+    vehicleId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2769,6 +4216,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: WorkOrderAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: WorkOrderSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: WorkOrderMinAggregateInputType
@@ -2799,6 +4258,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: WorkOrderCountAggregateInputType | true
+    _avg?: WorkOrderAvgAggregateInputType
+    _sum?: WorkOrderSumAggregateInputType
     _min?: WorkOrderMinAggregateInputType
     _max?: WorkOrderMaxAggregateInputType
   }
@@ -2808,21 +4269,25 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority: $Enums.Priority
     status: $Enums.WorkOrderStatus
-    department: string
-    location: string | null
-    equipment: string | null
-    vehicleId: string | null
-    startDate: Date | null
-    dueDate: Date | null
+    startDate: Date
+    dueDate: Date
     completedDate: Date | null
+    equipment: string | null
+    version: number
+    estimatedHours: number | null
+    actualHours: number | null
     createdById: string
     assignedToId: string | null
     supervisorId: string | null
+    vehicleId: string | null
     createdAt: Date
     updatedAt: Date
     _count: WorkOrderCountAggregateOutputType | null
+    _avg: WorkOrderAvgAggregateOutputType | null
+    _sum: WorkOrderSumAggregateOutputType | null
     _min: WorkOrderMinAggregateOutputType | null
     _max: WorkOrderMaxAggregateOutputType | null
   }
@@ -2846,27 +4311,31 @@ export namespace Prisma {
     orderNumber?: boolean
     title?: boolean
     description?: boolean
+    department?: boolean
     priority?: boolean
     status?: boolean
-    department?: boolean
-    location?: boolean
-    equipment?: boolean
-    vehicleId?: boolean
     startDate?: boolean
     dueDate?: boolean
     completedDate?: boolean
+    equipment?: boolean
+    version?: boolean
+    estimatedHours?: boolean
+    actualHours?: boolean
     createdById?: boolean
     assignedToId?: boolean
     supervisorId?: boolean
+    vehicleId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    vehicle?: boolean | WorkOrder$vehicleArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     assignedTo?: boolean | WorkOrder$assignedToArgs<ExtArgs>
     supervisedBy?: boolean | WorkOrder$supervisedByArgs<ExtArgs>
+    vehicle?: boolean | WorkOrder$vehicleArgs<ExtArgs>
     tasks?: boolean | WorkOrder$tasksArgs<ExtArgs>
     comments?: boolean | WorkOrder$commentsArgs<ExtArgs>
     attachments?: boolean | WorkOrder$attachmentsArgs<ExtArgs>
+    history?: boolean | WorkOrder$historyArgs<ExtArgs>
+    maintenanceDetails?: boolean | WorkOrder$maintenanceDetailsArgs<ExtArgs>
     _count?: boolean | WorkOrderCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workOrder"]>
 
@@ -2877,62 +4346,70 @@ export namespace Prisma {
     orderNumber?: boolean
     title?: boolean
     description?: boolean
+    department?: boolean
     priority?: boolean
     status?: boolean
-    department?: boolean
-    location?: boolean
-    equipment?: boolean
-    vehicleId?: boolean
     startDate?: boolean
     dueDate?: boolean
     completedDate?: boolean
+    equipment?: boolean
+    version?: boolean
+    estimatedHours?: boolean
+    actualHours?: boolean
     createdById?: boolean
     assignedToId?: boolean
     supervisorId?: boolean
+    vehicleId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type WorkOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "title" | "description" | "priority" | "status" | "department" | "location" | "equipment" | "vehicleId" | "startDate" | "dueDate" | "completedDate" | "createdById" | "assignedToId" | "supervisorId" | "createdAt" | "updatedAt", ExtArgs["result"]["workOrder"]>
+  export type WorkOrderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "orderNumber" | "title" | "description" | "department" | "priority" | "status" | "startDate" | "dueDate" | "completedDate" | "equipment" | "version" | "estimatedHours" | "actualHours" | "createdById" | "assignedToId" | "supervisorId" | "vehicleId" | "createdAt" | "updatedAt", ExtArgs["result"]["workOrder"]>
   export type WorkOrderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    vehicle?: boolean | WorkOrder$vehicleArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
     assignedTo?: boolean | WorkOrder$assignedToArgs<ExtArgs>
     supervisedBy?: boolean | WorkOrder$supervisedByArgs<ExtArgs>
+    vehicle?: boolean | WorkOrder$vehicleArgs<ExtArgs>
     tasks?: boolean | WorkOrder$tasksArgs<ExtArgs>
     comments?: boolean | WorkOrder$commentsArgs<ExtArgs>
     attachments?: boolean | WorkOrder$attachmentsArgs<ExtArgs>
+    history?: boolean | WorkOrder$historyArgs<ExtArgs>
+    maintenanceDetails?: boolean | WorkOrder$maintenanceDetailsArgs<ExtArgs>
     _count?: boolean | WorkOrderCountOutputTypeDefaultArgs<ExtArgs>
   }
 
   export type $WorkOrderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "WorkOrder"
     objects: {
-      vehicle: Prisma.$VehiclePayload<ExtArgs> | null
       createdBy: Prisma.$UserPayload<ExtArgs>
       assignedTo: Prisma.$UserPayload<ExtArgs> | null
       supervisedBy: Prisma.$UserPayload<ExtArgs> | null
+      vehicle: Prisma.$VehiclePayload<ExtArgs> | null
       tasks: Prisma.$TaskPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       attachments: Prisma.$AttachmentPayload<ExtArgs>[]
+      history: Prisma.$HistoryPayload<ExtArgs>[]
+      maintenanceDetails: Prisma.$MaintenanceDetailsPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       orderNumber: string
       title: string
       description: string
+      department: $Enums.Department
       priority: $Enums.Priority
       status: $Enums.WorkOrderStatus
-      department: string
-      location: string | null
-      equipment: string | null
-      vehicleId: string | null
-      startDate: Date | null
-      dueDate: Date | null
+      startDate: Date
+      dueDate: Date
       completedDate: Date | null
+      equipment: string | null
+      version: number
+      estimatedHours: number | null
+      actualHours: number | null
       createdById: string
       assignedToId: string | null
       supervisorId: string | null
+      vehicleId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["workOrder"]>
@@ -3298,13 +4775,15 @@ export namespace Prisma {
    */
   export interface Prisma__WorkOrderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    vehicle<T extends WorkOrder$vehicleArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$vehicleArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     assignedTo<T extends WorkOrder$assignedToArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$assignedToArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     supervisedBy<T extends WorkOrder$supervisedByArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$supervisedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    vehicle<T extends WorkOrder$vehicleArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$vehicleArgs<ExtArgs>>): Prisma__VehicleClient<$Result.GetResult<Prisma.$VehiclePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     tasks<T extends WorkOrder$tasksArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends WorkOrder$commentsArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     attachments<T extends WorkOrder$attachmentsArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    history<T extends WorkOrder$historyArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    maintenanceDetails<T extends WorkOrder$maintenanceDetailsArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$maintenanceDetailsArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3338,18 +4817,20 @@ export namespace Prisma {
     readonly orderNumber: FieldRef<"WorkOrder", 'String'>
     readonly title: FieldRef<"WorkOrder", 'String'>
     readonly description: FieldRef<"WorkOrder", 'String'>
+    readonly department: FieldRef<"WorkOrder", 'Department'>
     readonly priority: FieldRef<"WorkOrder", 'Priority'>
     readonly status: FieldRef<"WorkOrder", 'WorkOrderStatus'>
-    readonly department: FieldRef<"WorkOrder", 'String'>
-    readonly location: FieldRef<"WorkOrder", 'String'>
-    readonly equipment: FieldRef<"WorkOrder", 'String'>
-    readonly vehicleId: FieldRef<"WorkOrder", 'String'>
     readonly startDate: FieldRef<"WorkOrder", 'DateTime'>
     readonly dueDate: FieldRef<"WorkOrder", 'DateTime'>
     readonly completedDate: FieldRef<"WorkOrder", 'DateTime'>
+    readonly equipment: FieldRef<"WorkOrder", 'String'>
+    readonly version: FieldRef<"WorkOrder", 'Int'>
+    readonly estimatedHours: FieldRef<"WorkOrder", 'Float'>
+    readonly actualHours: FieldRef<"WorkOrder", 'Float'>
     readonly createdById: FieldRef<"WorkOrder", 'String'>
     readonly assignedToId: FieldRef<"WorkOrder", 'String'>
     readonly supervisorId: FieldRef<"WorkOrder", 'String'>
+    readonly vehicleId: FieldRef<"WorkOrder", 'String'>
     readonly createdAt: FieldRef<"WorkOrder", 'DateTime'>
     readonly updatedAt: FieldRef<"WorkOrder", 'DateTime'>
   }
@@ -3722,25 +5203,6 @@ export namespace Prisma {
   }
 
   /**
-   * WorkOrder.vehicle
-   */
-  export type WorkOrder$vehicleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Vehicle
-     */
-    select?: VehicleSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Vehicle
-     */
-    omit?: VehicleOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: VehicleInclude<ExtArgs> | null
-    where?: VehicleWhereInput
-  }
-
-  /**
    * WorkOrder.assignedTo
    */
   export type WorkOrder$assignedToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3776,6 +5238,25 @@ export namespace Prisma {
      */
     include?: UserInclude<ExtArgs> | null
     where?: UserWhereInput
+  }
+
+  /**
+   * WorkOrder.vehicle
+   */
+  export type WorkOrder$vehicleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Vehicle
+     */
+    select?: VehicleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Vehicle
+     */
+    omit?: VehicleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VehicleInclude<ExtArgs> | null
+    where?: VehicleWhereInput
   }
 
   /**
@@ -3848,6 +5329,49 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AttachmentScalarFieldEnum | AttachmentScalarFieldEnum[]
+  }
+
+  /**
+   * WorkOrder.history
+   */
+  export type WorkOrder$historyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    where?: HistoryWhereInput
+    orderBy?: HistoryOrderByWithRelationInput | HistoryOrderByWithRelationInput[]
+    cursor?: HistoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: HistoryScalarFieldEnum | HistoryScalarFieldEnum[]
+  }
+
+  /**
+   * WorkOrder.maintenanceDetails
+   */
+  export type WorkOrder$maintenanceDetailsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    where?: MaintenanceDetailsWhereInput
   }
 
   /**
@@ -4880,16 +6404,32 @@ export namespace Prisma {
 
   export type AggregateTask = {
     _count: TaskCountAggregateOutputType | null
+    _avg: TaskAvgAggregateOutputType | null
+    _sum: TaskSumAggregateOutputType | null
     _min: TaskMinAggregateOutputType | null
     _max: TaskMaxAggregateOutputType | null
+  }
+
+  export type TaskAvgAggregateOutputType = {
+    estimatedTime: number | null
+    actualTime: number | null
+  }
+
+  export type TaskSumAggregateOutputType = {
+    estimatedTime: number | null
+    actualTime: number | null
   }
 
   export type TaskMinAggregateOutputType = {
     id: string | null
     workOrderId: string | null
     description: string | null
-    status: string | null
+    status: $Enums.WorkOrderStatus | null
+    priority: $Enums.Priority | null
+    estimatedTime: number | null
+    actualTime: number | null
     completedAt: Date | null
+    assignedToId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4898,8 +6438,12 @@ export namespace Prisma {
     id: string | null
     workOrderId: string | null
     description: string | null
-    status: string | null
+    status: $Enums.WorkOrderStatus | null
+    priority: $Enums.Priority | null
+    estimatedTime: number | null
+    actualTime: number | null
     completedAt: Date | null
+    assignedToId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4909,19 +6453,37 @@ export namespace Prisma {
     workOrderId: number
     description: number
     status: number
+    priority: number
+    estimatedTime: number
+    actualTime: number
     completedAt: number
+    assignedToId: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
 
+  export type TaskAvgAggregateInputType = {
+    estimatedTime?: true
+    actualTime?: true
+  }
+
+  export type TaskSumAggregateInputType = {
+    estimatedTime?: true
+    actualTime?: true
+  }
+
   export type TaskMinAggregateInputType = {
     id?: true
     workOrderId?: true
     description?: true
     status?: true
+    priority?: true
+    estimatedTime?: true
+    actualTime?: true
     completedAt?: true
+    assignedToId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4931,7 +6493,11 @@ export namespace Prisma {
     workOrderId?: true
     description?: true
     status?: true
+    priority?: true
+    estimatedTime?: true
+    actualTime?: true
     completedAt?: true
+    assignedToId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4941,7 +6507,11 @@ export namespace Prisma {
     workOrderId?: true
     description?: true
     status?: true
+    priority?: true
+    estimatedTime?: true
+    actualTime?: true
     completedAt?: true
+    assignedToId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -4985,6 +6555,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: TaskAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TaskSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: TaskMinAggregateInputType
@@ -5015,6 +6597,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: TaskCountAggregateInputType | true
+    _avg?: TaskAvgAggregateInputType
+    _sum?: TaskSumAggregateInputType
     _min?: TaskMinAggregateInputType
     _max?: TaskMaxAggregateInputType
   }
@@ -5023,11 +6607,17 @@ export namespace Prisma {
     id: string
     workOrderId: string
     description: string
-    status: string
+    status: $Enums.WorkOrderStatus
+    priority: $Enums.Priority
+    estimatedTime: number | null
+    actualTime: number | null
     completedAt: Date | null
+    assignedToId: string | null
     createdAt: Date
     updatedAt: Date
     _count: TaskCountAggregateOutputType | null
+    _avg: TaskAvgAggregateOutputType | null
+    _sum: TaskSumAggregateOutputType | null
     _min: TaskMinAggregateOutputType | null
     _max: TaskMaxAggregateOutputType | null
   }
@@ -5051,10 +6641,15 @@ export namespace Prisma {
     workOrderId?: boolean
     description?: boolean
     status?: boolean
+    priority?: boolean
+    estimatedTime?: boolean
+    actualTime?: boolean
     completedAt?: boolean
+    assignedToId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+    assignedTo?: boolean | Task$assignedToArgs<ExtArgs>
   }, ExtArgs["result"]["task"]>
 
 
@@ -5064,27 +6659,37 @@ export namespace Prisma {
     workOrderId?: boolean
     description?: boolean
     status?: boolean
+    priority?: boolean
+    estimatedTime?: boolean
+    actualTime?: boolean
     completedAt?: boolean
+    assignedToId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workOrderId" | "description" | "status" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
+  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workOrderId" | "description" | "status" | "priority" | "estimatedTime" | "actualTime" | "completedAt" | "assignedToId" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
   export type TaskInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+    assignedTo?: boolean | Task$assignedToArgs<ExtArgs>
   }
 
   export type $TaskPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Task"
     objects: {
       workOrder: Prisma.$WorkOrderPayload<ExtArgs>
+      assignedTo: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       workOrderId: string
       description: string
-      status: string
+      status: $Enums.WorkOrderStatus
+      priority: $Enums.Priority
+      estimatedTime: number | null
+      actualTime: number | null
       completedAt: Date | null
+      assignedToId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["task"]>
@@ -5451,6 +7056,7 @@ export namespace Prisma {
   export interface Prisma__TaskClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     workOrder<T extends WorkOrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrderDefaultArgs<ExtArgs>>): Prisma__WorkOrderClient<$Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    assignedTo<T extends Task$assignedToArgs<ExtArgs> = {}>(args?: Subset<T, Task$assignedToArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5483,8 +7089,12 @@ export namespace Prisma {
     readonly id: FieldRef<"Task", 'String'>
     readonly workOrderId: FieldRef<"Task", 'String'>
     readonly description: FieldRef<"Task", 'String'>
-    readonly status: FieldRef<"Task", 'String'>
+    readonly status: FieldRef<"Task", 'WorkOrderStatus'>
+    readonly priority: FieldRef<"Task", 'Priority'>
+    readonly estimatedTime: FieldRef<"Task", 'Float'>
+    readonly actualTime: FieldRef<"Task", 'Float'>
     readonly completedAt: FieldRef<"Task", 'DateTime'>
+    readonly assignedToId: FieldRef<"Task", 'String'>
     readonly createdAt: FieldRef<"Task", 'DateTime'>
     readonly updatedAt: FieldRef<"Task", 'DateTime'>
   }
@@ -5857,6 +7467,25 @@ export namespace Prisma {
   }
 
   /**
+   * Task.assignedTo
+   */
+  export type Task$assignedToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * Task without action
    */
   export type TaskDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5889,6 +7518,7 @@ export namespace Prisma {
     id: string | null
     workOrderId: string | null
     content: string | null
+    authorId: string | null
     createdAt: Date | null
   }
 
@@ -5896,6 +7526,7 @@ export namespace Prisma {
     id: string | null
     workOrderId: string | null
     content: string | null
+    authorId: string | null
     createdAt: Date | null
   }
 
@@ -5903,6 +7534,7 @@ export namespace Prisma {
     id: number
     workOrderId: number
     content: number
+    authorId: number
     createdAt: number
     _all: number
   }
@@ -5912,6 +7544,7 @@ export namespace Prisma {
     id?: true
     workOrderId?: true
     content?: true
+    authorId?: true
     createdAt?: true
   }
 
@@ -5919,6 +7552,7 @@ export namespace Prisma {
     id?: true
     workOrderId?: true
     content?: true
+    authorId?: true
     createdAt?: true
   }
 
@@ -5926,6 +7560,7 @@ export namespace Prisma {
     id?: true
     workOrderId?: true
     content?: true
+    authorId?: true
     createdAt?: true
     _all?: true
   }
@@ -6006,6 +7641,7 @@ export namespace Prisma {
     id: string
     workOrderId: string
     content: string
+    authorId: string
     createdAt: Date
     _count: CommentCountAggregateOutputType | null
     _min: CommentMinAggregateOutputType | null
@@ -6030,8 +7666,10 @@ export namespace Prisma {
     id?: boolean
     workOrderId?: boolean
     content?: boolean
+    authorId?: boolean
     createdAt?: boolean
     workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["comment"]>
 
 
@@ -6040,23 +7678,27 @@ export namespace Prisma {
     id?: boolean
     workOrderId?: boolean
     content?: boolean
+    authorId?: boolean
     createdAt?: boolean
   }
 
-  export type CommentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workOrderId" | "content" | "createdAt", ExtArgs["result"]["comment"]>
+  export type CommentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workOrderId" | "content" | "authorId" | "createdAt", ExtArgs["result"]["comment"]>
   export type CommentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
   }
 
   export type $CommentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Comment"
     objects: {
       workOrder: Prisma.$WorkOrderPayload<ExtArgs>
+      author: Prisma.$UserPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       workOrderId: string
       content: string
+      authorId: string
       createdAt: Date
     }, ExtArgs["result"]["comment"]>
     composites: {}
@@ -6422,6 +8064,7 @@ export namespace Prisma {
   export interface Prisma__CommentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     workOrder<T extends WorkOrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrderDefaultArgs<ExtArgs>>): Prisma__WorkOrderClient<$Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6454,6 +8097,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Comment", 'String'>
     readonly workOrderId: FieldRef<"Comment", 'String'>
     readonly content: FieldRef<"Comment", 'String'>
+    readonly authorId: FieldRef<"Comment", 'String'>
     readonly createdAt: FieldRef<"Comment", 'DateTime'>
   }
     
@@ -6849,8 +8493,18 @@ export namespace Prisma {
 
   export type AggregateAttachment = {
     _count: AttachmentCountAggregateOutputType | null
+    _avg: AttachmentAvgAggregateOutputType | null
+    _sum: AttachmentSumAggregateOutputType | null
     _min: AttachmentMinAggregateOutputType | null
     _max: AttachmentMaxAggregateOutputType | null
+  }
+
+  export type AttachmentAvgAggregateOutputType = {
+    size: number | null
+  }
+
+  export type AttachmentSumAggregateOutputType = {
+    size: number | null
   }
 
   export type AttachmentMinAggregateOutputType = {
@@ -6858,6 +8512,8 @@ export namespace Prisma {
     workOrderId: string | null
     filename: string | null
     path: string | null
+    type: string | null
+    size: number | null
     uploadedAt: Date | null
   }
 
@@ -6866,6 +8522,8 @@ export namespace Prisma {
     workOrderId: string | null
     filename: string | null
     path: string | null
+    type: string | null
+    size: number | null
     uploadedAt: Date | null
   }
 
@@ -6874,16 +8532,28 @@ export namespace Prisma {
     workOrderId: number
     filename: number
     path: number
+    type: number
+    size: number
     uploadedAt: number
     _all: number
   }
 
+
+  export type AttachmentAvgAggregateInputType = {
+    size?: true
+  }
+
+  export type AttachmentSumAggregateInputType = {
+    size?: true
+  }
 
   export type AttachmentMinAggregateInputType = {
     id?: true
     workOrderId?: true
     filename?: true
     path?: true
+    type?: true
+    size?: true
     uploadedAt?: true
   }
 
@@ -6892,6 +8562,8 @@ export namespace Prisma {
     workOrderId?: true
     filename?: true
     path?: true
+    type?: true
+    size?: true
     uploadedAt?: true
   }
 
@@ -6900,6 +8572,8 @@ export namespace Prisma {
     workOrderId?: true
     filename?: true
     path?: true
+    type?: true
+    size?: true
     uploadedAt?: true
     _all?: true
   }
@@ -6942,6 +8616,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: AttachmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AttachmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: AttachmentMinAggregateInputType
@@ -6972,6 +8658,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: AttachmentCountAggregateInputType | true
+    _avg?: AttachmentAvgAggregateInputType
+    _sum?: AttachmentSumAggregateInputType
     _min?: AttachmentMinAggregateInputType
     _max?: AttachmentMaxAggregateInputType
   }
@@ -6981,8 +8669,12 @@ export namespace Prisma {
     workOrderId: string
     filename: string
     path: string
+    type: string
+    size: number
     uploadedAt: Date
     _count: AttachmentCountAggregateOutputType | null
+    _avg: AttachmentAvgAggregateOutputType | null
+    _sum: AttachmentSumAggregateOutputType | null
     _min: AttachmentMinAggregateOutputType | null
     _max: AttachmentMaxAggregateOutputType | null
   }
@@ -7006,6 +8698,8 @@ export namespace Prisma {
     workOrderId?: boolean
     filename?: boolean
     path?: boolean
+    type?: boolean
+    size?: boolean
     uploadedAt?: boolean
     workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["attachment"]>
@@ -7017,10 +8711,12 @@ export namespace Prisma {
     workOrderId?: boolean
     filename?: boolean
     path?: boolean
+    type?: boolean
+    size?: boolean
     uploadedAt?: boolean
   }
 
-  export type AttachmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workOrderId" | "filename" | "path" | "uploadedAt", ExtArgs["result"]["attachment"]>
+  export type AttachmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workOrderId" | "filename" | "path" | "type" | "size" | "uploadedAt", ExtArgs["result"]["attachment"]>
   export type AttachmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
   }
@@ -7035,6 +8731,8 @@ export namespace Prisma {
       workOrderId: string
       filename: string
       path: string
+      type: string
+      size: number
       uploadedAt: Date
     }, ExtArgs["result"]["attachment"]>
     composites: {}
@@ -7433,6 +9131,8 @@ export namespace Prisma {
     readonly workOrderId: FieldRef<"Attachment", 'String'>
     readonly filename: FieldRef<"Attachment", 'String'>
     readonly path: FieldRef<"Attachment", 'String'>
+    readonly type: FieldRef<"Attachment", 'String'>
+    readonly size: FieldRef<"Attachment", 'Int'>
     readonly uploadedAt: FieldRef<"Attachment", 'DateTime'>
   }
     
@@ -7823,6 +9523,1963 @@ export namespace Prisma {
 
 
   /**
+   * Model History
+   */
+
+  export type AggregateHistory = {
+    _count: HistoryCountAggregateOutputType | null
+    _min: HistoryMinAggregateOutputType | null
+    _max: HistoryMaxAggregateOutputType | null
+  }
+
+  export type HistoryMinAggregateOutputType = {
+    id: string | null
+    workOrderId: string | null
+    authorId: string | null
+    action: string | null
+    createdAt: Date | null
+  }
+
+  export type HistoryMaxAggregateOutputType = {
+    id: string | null
+    workOrderId: string | null
+    authorId: string | null
+    action: string | null
+    createdAt: Date | null
+  }
+
+  export type HistoryCountAggregateOutputType = {
+    id: number
+    workOrderId: number
+    authorId: number
+    action: number
+    changes: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type HistoryMinAggregateInputType = {
+    id?: true
+    workOrderId?: true
+    authorId?: true
+    action?: true
+    createdAt?: true
+  }
+
+  export type HistoryMaxAggregateInputType = {
+    id?: true
+    workOrderId?: true
+    authorId?: true
+    action?: true
+    createdAt?: true
+  }
+
+  export type HistoryCountAggregateInputType = {
+    id?: true
+    workOrderId?: true
+    authorId?: true
+    action?: true
+    changes?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type HistoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which History to aggregate.
+     */
+    where?: HistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Histories to fetch.
+     */
+    orderBy?: HistoryOrderByWithRelationInput | HistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: HistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Histories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Histories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Histories
+    **/
+    _count?: true | HistoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: HistoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: HistoryMaxAggregateInputType
+  }
+
+  export type GetHistoryAggregateType<T extends HistoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateHistory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateHistory[P]>
+      : GetScalarType<T[P], AggregateHistory[P]>
+  }
+
+
+
+
+  export type HistoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: HistoryWhereInput
+    orderBy?: HistoryOrderByWithAggregationInput | HistoryOrderByWithAggregationInput[]
+    by: HistoryScalarFieldEnum[] | HistoryScalarFieldEnum
+    having?: HistoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: HistoryCountAggregateInputType | true
+    _min?: HistoryMinAggregateInputType
+    _max?: HistoryMaxAggregateInputType
+  }
+
+  export type HistoryGroupByOutputType = {
+    id: string
+    workOrderId: string
+    authorId: string
+    action: string
+    changes: JsonValue
+    createdAt: Date
+    _count: HistoryCountAggregateOutputType | null
+    _min: HistoryMinAggregateOutputType | null
+    _max: HistoryMaxAggregateOutputType | null
+  }
+
+  type GetHistoryGroupByPayload<T extends HistoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<HistoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof HistoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], HistoryGroupByOutputType[P]>
+            : GetScalarType<T[P], HistoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type HistorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workOrderId?: boolean
+    authorId?: boolean
+    action?: boolean
+    changes?: boolean
+    createdAt?: boolean
+    workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["history"]>
+
+
+
+  export type HistorySelectScalar = {
+    id?: boolean
+    workOrderId?: boolean
+    authorId?: boolean
+    action?: boolean
+    changes?: boolean
+    createdAt?: boolean
+  }
+
+  export type HistoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workOrderId" | "authorId" | "action" | "changes" | "createdAt", ExtArgs["result"]["history"]>
+  export type HistoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $HistoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "History"
+    objects: {
+      workOrder: Prisma.$WorkOrderPayload<ExtArgs>
+      author: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workOrderId: string
+      authorId: string
+      action: string
+      changes: Prisma.JsonValue
+      createdAt: Date
+    }, ExtArgs["result"]["history"]>
+    composites: {}
+  }
+
+  type HistoryGetPayload<S extends boolean | null | undefined | HistoryDefaultArgs> = $Result.GetResult<Prisma.$HistoryPayload, S>
+
+  type HistoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<HistoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: HistoryCountAggregateInputType | true
+    }
+
+  export interface HistoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['History'], meta: { name: 'History' } }
+    /**
+     * Find zero or one History that matches the filter.
+     * @param {HistoryFindUniqueArgs} args - Arguments to find a History
+     * @example
+     * // Get one History
+     * const history = await prisma.history.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends HistoryFindUniqueArgs>(args: SelectSubset<T, HistoryFindUniqueArgs<ExtArgs>>): Prisma__HistoryClient<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one History that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {HistoryFindUniqueOrThrowArgs} args - Arguments to find a History
+     * @example
+     * // Get one History
+     * const history = await prisma.history.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends HistoryFindUniqueOrThrowArgs>(args: SelectSubset<T, HistoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__HistoryClient<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first History that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HistoryFindFirstArgs} args - Arguments to find a History
+     * @example
+     * // Get one History
+     * const history = await prisma.history.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends HistoryFindFirstArgs>(args?: SelectSubset<T, HistoryFindFirstArgs<ExtArgs>>): Prisma__HistoryClient<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first History that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HistoryFindFirstOrThrowArgs} args - Arguments to find a History
+     * @example
+     * // Get one History
+     * const history = await prisma.history.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends HistoryFindFirstOrThrowArgs>(args?: SelectSubset<T, HistoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__HistoryClient<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Histories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HistoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Histories
+     * const histories = await prisma.history.findMany()
+     * 
+     * // Get first 10 Histories
+     * const histories = await prisma.history.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const historyWithIdOnly = await prisma.history.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends HistoryFindManyArgs>(args?: SelectSubset<T, HistoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a History.
+     * @param {HistoryCreateArgs} args - Arguments to create a History.
+     * @example
+     * // Create one History
+     * const History = await prisma.history.create({
+     *   data: {
+     *     // ... data to create a History
+     *   }
+     * })
+     * 
+     */
+    create<T extends HistoryCreateArgs>(args: SelectSubset<T, HistoryCreateArgs<ExtArgs>>): Prisma__HistoryClient<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Histories.
+     * @param {HistoryCreateManyArgs} args - Arguments to create many Histories.
+     * @example
+     * // Create many Histories
+     * const history = await prisma.history.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends HistoryCreateManyArgs>(args?: SelectSubset<T, HistoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a History.
+     * @param {HistoryDeleteArgs} args - Arguments to delete one History.
+     * @example
+     * // Delete one History
+     * const History = await prisma.history.delete({
+     *   where: {
+     *     // ... filter to delete one History
+     *   }
+     * })
+     * 
+     */
+    delete<T extends HistoryDeleteArgs>(args: SelectSubset<T, HistoryDeleteArgs<ExtArgs>>): Prisma__HistoryClient<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one History.
+     * @param {HistoryUpdateArgs} args - Arguments to update one History.
+     * @example
+     * // Update one History
+     * const history = await prisma.history.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends HistoryUpdateArgs>(args: SelectSubset<T, HistoryUpdateArgs<ExtArgs>>): Prisma__HistoryClient<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Histories.
+     * @param {HistoryDeleteManyArgs} args - Arguments to filter Histories to delete.
+     * @example
+     * // Delete a few Histories
+     * const { count } = await prisma.history.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends HistoryDeleteManyArgs>(args?: SelectSubset<T, HistoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Histories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HistoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Histories
+     * const history = await prisma.history.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends HistoryUpdateManyArgs>(args: SelectSubset<T, HistoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one History.
+     * @param {HistoryUpsertArgs} args - Arguments to update or create a History.
+     * @example
+     * // Update or create a History
+     * const history = await prisma.history.upsert({
+     *   create: {
+     *     // ... data to create a History
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the History we want to update
+     *   }
+     * })
+     */
+    upsert<T extends HistoryUpsertArgs>(args: SelectSubset<T, HistoryUpsertArgs<ExtArgs>>): Prisma__HistoryClient<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Histories that matches the filter.
+     * @param {HistoryFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const history = await prisma.history.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: HistoryFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a History.
+     * @param {HistoryAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const history = await prisma.history.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: HistoryAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of Histories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HistoryCountArgs} args - Arguments to filter Histories to count.
+     * @example
+     * // Count the number of Histories
+     * const count = await prisma.history.count({
+     *   where: {
+     *     // ... the filter for the Histories we want to count
+     *   }
+     * })
+    **/
+    count<T extends HistoryCountArgs>(
+      args?: Subset<T, HistoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], HistoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a History.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HistoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends HistoryAggregateArgs>(args: Subset<T, HistoryAggregateArgs>): Prisma.PrismaPromise<GetHistoryAggregateType<T>>
+
+    /**
+     * Group by History.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {HistoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends HistoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: HistoryGroupByArgs['orderBy'] }
+        : { orderBy?: HistoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, HistoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetHistoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the History model
+   */
+  readonly fields: HistoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for History.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__HistoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workOrder<T extends WorkOrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrderDefaultArgs<ExtArgs>>): Prisma__WorkOrderClient<$Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the History model
+   */
+  interface HistoryFieldRefs {
+    readonly id: FieldRef<"History", 'String'>
+    readonly workOrderId: FieldRef<"History", 'String'>
+    readonly authorId: FieldRef<"History", 'String'>
+    readonly action: FieldRef<"History", 'String'>
+    readonly changes: FieldRef<"History", 'Json'>
+    readonly createdAt: FieldRef<"History", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * History findUnique
+   */
+  export type HistoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which History to fetch.
+     */
+    where: HistoryWhereUniqueInput
+  }
+
+  /**
+   * History findUniqueOrThrow
+   */
+  export type HistoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which History to fetch.
+     */
+    where: HistoryWhereUniqueInput
+  }
+
+  /**
+   * History findFirst
+   */
+  export type HistoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which History to fetch.
+     */
+    where?: HistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Histories to fetch.
+     */
+    orderBy?: HistoryOrderByWithRelationInput | HistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Histories.
+     */
+    cursor?: HistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Histories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Histories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Histories.
+     */
+    distinct?: HistoryScalarFieldEnum | HistoryScalarFieldEnum[]
+  }
+
+  /**
+   * History findFirstOrThrow
+   */
+  export type HistoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which History to fetch.
+     */
+    where?: HistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Histories to fetch.
+     */
+    orderBy?: HistoryOrderByWithRelationInput | HistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Histories.
+     */
+    cursor?: HistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Histories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Histories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Histories.
+     */
+    distinct?: HistoryScalarFieldEnum | HistoryScalarFieldEnum[]
+  }
+
+  /**
+   * History findMany
+   */
+  export type HistoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which Histories to fetch.
+     */
+    where?: HistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Histories to fetch.
+     */
+    orderBy?: HistoryOrderByWithRelationInput | HistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Histories.
+     */
+    cursor?: HistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Histories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Histories.
+     */
+    skip?: number
+    distinct?: HistoryScalarFieldEnum | HistoryScalarFieldEnum[]
+  }
+
+  /**
+   * History create
+   */
+  export type HistoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a History.
+     */
+    data: XOR<HistoryCreateInput, HistoryUncheckedCreateInput>
+  }
+
+  /**
+   * History createMany
+   */
+  export type HistoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Histories.
+     */
+    data: HistoryCreateManyInput | HistoryCreateManyInput[]
+  }
+
+  /**
+   * History update
+   */
+  export type HistoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a History.
+     */
+    data: XOR<HistoryUpdateInput, HistoryUncheckedUpdateInput>
+    /**
+     * Choose, which History to update.
+     */
+    where: HistoryWhereUniqueInput
+  }
+
+  /**
+   * History updateMany
+   */
+  export type HistoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Histories.
+     */
+    data: XOR<HistoryUpdateManyMutationInput, HistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which Histories to update
+     */
+    where?: HistoryWhereInput
+    /**
+     * Limit how many Histories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * History upsert
+   */
+  export type HistoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the History to update in case it exists.
+     */
+    where: HistoryWhereUniqueInput
+    /**
+     * In case the History found by the `where` argument doesn't exist, create a new History with this data.
+     */
+    create: XOR<HistoryCreateInput, HistoryUncheckedCreateInput>
+    /**
+     * In case the History was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<HistoryUpdateInput, HistoryUncheckedUpdateInput>
+  }
+
+  /**
+   * History delete
+   */
+  export type HistoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+    /**
+     * Filter which History to delete.
+     */
+    where: HistoryWhereUniqueInput
+  }
+
+  /**
+   * History deleteMany
+   */
+  export type HistoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Histories to delete
+     */
+    where?: HistoryWhereInput
+    /**
+     * Limit how many Histories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * History findRaw
+   */
+  export type HistoryFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * History aggregateRaw
+   */
+  export type HistoryAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * History without action
+   */
+  export type HistoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the History
+     */
+    select?: HistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the History
+     */
+    omit?: HistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: HistoryInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MaintenanceDetails
+   */
+
+  export type AggregateMaintenanceDetails = {
+    _count: MaintenanceDetailsCountAggregateOutputType | null
+    _min: MaintenanceDetailsMinAggregateOutputType | null
+    _max: MaintenanceDetailsMaxAggregateOutputType | null
+  }
+
+  export type MaintenanceDetailsMinAggregateOutputType = {
+    id: string | null
+    workOrderId: string | null
+  }
+
+  export type MaintenanceDetailsMaxAggregateOutputType = {
+    id: string | null
+    workOrderId: string | null
+  }
+
+  export type MaintenanceDetailsCountAggregateOutputType = {
+    id: number
+    workOrderId: number
+    requiredParts: number
+    safetyTools: number
+    procedures: number
+    _all: number
+  }
+
+
+  export type MaintenanceDetailsMinAggregateInputType = {
+    id?: true
+    workOrderId?: true
+  }
+
+  export type MaintenanceDetailsMaxAggregateInputType = {
+    id?: true
+    workOrderId?: true
+  }
+
+  export type MaintenanceDetailsCountAggregateInputType = {
+    id?: true
+    workOrderId?: true
+    requiredParts?: true
+    safetyTools?: true
+    procedures?: true
+    _all?: true
+  }
+
+  export type MaintenanceDetailsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MaintenanceDetails to aggregate.
+     */
+    where?: MaintenanceDetailsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MaintenanceDetails to fetch.
+     */
+    orderBy?: MaintenanceDetailsOrderByWithRelationInput | MaintenanceDetailsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MaintenanceDetailsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MaintenanceDetails from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MaintenanceDetails.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MaintenanceDetails
+    **/
+    _count?: true | MaintenanceDetailsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MaintenanceDetailsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MaintenanceDetailsMaxAggregateInputType
+  }
+
+  export type GetMaintenanceDetailsAggregateType<T extends MaintenanceDetailsAggregateArgs> = {
+        [P in keyof T & keyof AggregateMaintenanceDetails]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMaintenanceDetails[P]>
+      : GetScalarType<T[P], AggregateMaintenanceDetails[P]>
+  }
+
+
+
+
+  export type MaintenanceDetailsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MaintenanceDetailsWhereInput
+    orderBy?: MaintenanceDetailsOrderByWithAggregationInput | MaintenanceDetailsOrderByWithAggregationInput[]
+    by: MaintenanceDetailsScalarFieldEnum[] | MaintenanceDetailsScalarFieldEnum
+    having?: MaintenanceDetailsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MaintenanceDetailsCountAggregateInputType | true
+    _min?: MaintenanceDetailsMinAggregateInputType
+    _max?: MaintenanceDetailsMaxAggregateInputType
+  }
+
+  export type MaintenanceDetailsGroupByOutputType = {
+    id: string
+    workOrderId: string
+    requiredParts: string[]
+    safetyTools: string[]
+    procedures: string[]
+    _count: MaintenanceDetailsCountAggregateOutputType | null
+    _min: MaintenanceDetailsMinAggregateOutputType | null
+    _max: MaintenanceDetailsMaxAggregateOutputType | null
+  }
+
+  type GetMaintenanceDetailsGroupByPayload<T extends MaintenanceDetailsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MaintenanceDetailsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MaintenanceDetailsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MaintenanceDetailsGroupByOutputType[P]>
+            : GetScalarType<T[P], MaintenanceDetailsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MaintenanceDetailsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workOrderId?: boolean
+    requiredParts?: boolean
+    safetyTools?: boolean
+    procedures?: boolean
+    workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["maintenanceDetails"]>
+
+
+
+  export type MaintenanceDetailsSelectScalar = {
+    id?: boolean
+    workOrderId?: boolean
+    requiredParts?: boolean
+    safetyTools?: boolean
+    procedures?: boolean
+  }
+
+  export type MaintenanceDetailsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workOrderId" | "requiredParts" | "safetyTools" | "procedures", ExtArgs["result"]["maintenanceDetails"]>
+  export type MaintenanceDetailsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+  }
+
+  export type $MaintenanceDetailsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MaintenanceDetails"
+    objects: {
+      workOrder: Prisma.$WorkOrderPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workOrderId: string
+      requiredParts: string[]
+      safetyTools: string[]
+      procedures: string[]
+    }, ExtArgs["result"]["maintenanceDetails"]>
+    composites: {}
+  }
+
+  type MaintenanceDetailsGetPayload<S extends boolean | null | undefined | MaintenanceDetailsDefaultArgs> = $Result.GetResult<Prisma.$MaintenanceDetailsPayload, S>
+
+  type MaintenanceDetailsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MaintenanceDetailsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MaintenanceDetailsCountAggregateInputType | true
+    }
+
+  export interface MaintenanceDetailsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MaintenanceDetails'], meta: { name: 'MaintenanceDetails' } }
+    /**
+     * Find zero or one MaintenanceDetails that matches the filter.
+     * @param {MaintenanceDetailsFindUniqueArgs} args - Arguments to find a MaintenanceDetails
+     * @example
+     * // Get one MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MaintenanceDetailsFindUniqueArgs>(args: SelectSubset<T, MaintenanceDetailsFindUniqueArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MaintenanceDetails that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MaintenanceDetailsFindUniqueOrThrowArgs} args - Arguments to find a MaintenanceDetails
+     * @example
+     * // Get one MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MaintenanceDetailsFindUniqueOrThrowArgs>(args: SelectSubset<T, MaintenanceDetailsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MaintenanceDetails that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MaintenanceDetailsFindFirstArgs} args - Arguments to find a MaintenanceDetails
+     * @example
+     * // Get one MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MaintenanceDetailsFindFirstArgs>(args?: SelectSubset<T, MaintenanceDetailsFindFirstArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MaintenanceDetails that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MaintenanceDetailsFindFirstOrThrowArgs} args - Arguments to find a MaintenanceDetails
+     * @example
+     * // Get one MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MaintenanceDetailsFindFirstOrThrowArgs>(args?: SelectSubset<T, MaintenanceDetailsFindFirstOrThrowArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MaintenanceDetails that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MaintenanceDetailsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.findMany()
+     * 
+     * // Get first 10 MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const maintenanceDetailsWithIdOnly = await prisma.maintenanceDetails.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MaintenanceDetailsFindManyArgs>(args?: SelectSubset<T, MaintenanceDetailsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MaintenanceDetails.
+     * @param {MaintenanceDetailsCreateArgs} args - Arguments to create a MaintenanceDetails.
+     * @example
+     * // Create one MaintenanceDetails
+     * const MaintenanceDetails = await prisma.maintenanceDetails.create({
+     *   data: {
+     *     // ... data to create a MaintenanceDetails
+     *   }
+     * })
+     * 
+     */
+    create<T extends MaintenanceDetailsCreateArgs>(args: SelectSubset<T, MaintenanceDetailsCreateArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MaintenanceDetails.
+     * @param {MaintenanceDetailsCreateManyArgs} args - Arguments to create many MaintenanceDetails.
+     * @example
+     * // Create many MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MaintenanceDetailsCreateManyArgs>(args?: SelectSubset<T, MaintenanceDetailsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a MaintenanceDetails.
+     * @param {MaintenanceDetailsDeleteArgs} args - Arguments to delete one MaintenanceDetails.
+     * @example
+     * // Delete one MaintenanceDetails
+     * const MaintenanceDetails = await prisma.maintenanceDetails.delete({
+     *   where: {
+     *     // ... filter to delete one MaintenanceDetails
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MaintenanceDetailsDeleteArgs>(args: SelectSubset<T, MaintenanceDetailsDeleteArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MaintenanceDetails.
+     * @param {MaintenanceDetailsUpdateArgs} args - Arguments to update one MaintenanceDetails.
+     * @example
+     * // Update one MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MaintenanceDetailsUpdateArgs>(args: SelectSubset<T, MaintenanceDetailsUpdateArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MaintenanceDetails.
+     * @param {MaintenanceDetailsDeleteManyArgs} args - Arguments to filter MaintenanceDetails to delete.
+     * @example
+     * // Delete a few MaintenanceDetails
+     * const { count } = await prisma.maintenanceDetails.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MaintenanceDetailsDeleteManyArgs>(args?: SelectSubset<T, MaintenanceDetailsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MaintenanceDetails.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MaintenanceDetailsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MaintenanceDetailsUpdateManyArgs>(args: SelectSubset<T, MaintenanceDetailsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one MaintenanceDetails.
+     * @param {MaintenanceDetailsUpsertArgs} args - Arguments to update or create a MaintenanceDetails.
+     * @example
+     * // Update or create a MaintenanceDetails
+     * const maintenanceDetails = await prisma.maintenanceDetails.upsert({
+     *   create: {
+     *     // ... data to create a MaintenanceDetails
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MaintenanceDetails we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MaintenanceDetailsUpsertArgs>(args: SelectSubset<T, MaintenanceDetailsUpsertArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MaintenanceDetails that matches the filter.
+     * @param {MaintenanceDetailsFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const maintenanceDetails = await prisma.maintenanceDetails.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: MaintenanceDetailsFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a MaintenanceDetails.
+     * @param {MaintenanceDetailsAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const maintenanceDetails = await prisma.maintenanceDetails.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: MaintenanceDetailsAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of MaintenanceDetails.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MaintenanceDetailsCountArgs} args - Arguments to filter MaintenanceDetails to count.
+     * @example
+     * // Count the number of MaintenanceDetails
+     * const count = await prisma.maintenanceDetails.count({
+     *   where: {
+     *     // ... the filter for the MaintenanceDetails we want to count
+     *   }
+     * })
+    **/
+    count<T extends MaintenanceDetailsCountArgs>(
+      args?: Subset<T, MaintenanceDetailsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MaintenanceDetailsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MaintenanceDetails.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MaintenanceDetailsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MaintenanceDetailsAggregateArgs>(args: Subset<T, MaintenanceDetailsAggregateArgs>): Prisma.PrismaPromise<GetMaintenanceDetailsAggregateType<T>>
+
+    /**
+     * Group by MaintenanceDetails.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MaintenanceDetailsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MaintenanceDetailsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MaintenanceDetailsGroupByArgs['orderBy'] }
+        : { orderBy?: MaintenanceDetailsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MaintenanceDetailsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMaintenanceDetailsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MaintenanceDetails model
+   */
+  readonly fields: MaintenanceDetailsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MaintenanceDetails.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MaintenanceDetailsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workOrder<T extends WorkOrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrderDefaultArgs<ExtArgs>>): Prisma__WorkOrderClient<$Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MaintenanceDetails model
+   */
+  interface MaintenanceDetailsFieldRefs {
+    readonly id: FieldRef<"MaintenanceDetails", 'String'>
+    readonly workOrderId: FieldRef<"MaintenanceDetails", 'String'>
+    readonly requiredParts: FieldRef<"MaintenanceDetails", 'String[]'>
+    readonly safetyTools: FieldRef<"MaintenanceDetails", 'String[]'>
+    readonly procedures: FieldRef<"MaintenanceDetails", 'String[]'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MaintenanceDetails findUnique
+   */
+  export type MaintenanceDetailsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    /**
+     * Filter, which MaintenanceDetails to fetch.
+     */
+    where: MaintenanceDetailsWhereUniqueInput
+  }
+
+  /**
+   * MaintenanceDetails findUniqueOrThrow
+   */
+  export type MaintenanceDetailsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    /**
+     * Filter, which MaintenanceDetails to fetch.
+     */
+    where: MaintenanceDetailsWhereUniqueInput
+  }
+
+  /**
+   * MaintenanceDetails findFirst
+   */
+  export type MaintenanceDetailsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    /**
+     * Filter, which MaintenanceDetails to fetch.
+     */
+    where?: MaintenanceDetailsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MaintenanceDetails to fetch.
+     */
+    orderBy?: MaintenanceDetailsOrderByWithRelationInput | MaintenanceDetailsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MaintenanceDetails.
+     */
+    cursor?: MaintenanceDetailsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MaintenanceDetails from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MaintenanceDetails.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MaintenanceDetails.
+     */
+    distinct?: MaintenanceDetailsScalarFieldEnum | MaintenanceDetailsScalarFieldEnum[]
+  }
+
+  /**
+   * MaintenanceDetails findFirstOrThrow
+   */
+  export type MaintenanceDetailsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    /**
+     * Filter, which MaintenanceDetails to fetch.
+     */
+    where?: MaintenanceDetailsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MaintenanceDetails to fetch.
+     */
+    orderBy?: MaintenanceDetailsOrderByWithRelationInput | MaintenanceDetailsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MaintenanceDetails.
+     */
+    cursor?: MaintenanceDetailsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MaintenanceDetails from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MaintenanceDetails.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MaintenanceDetails.
+     */
+    distinct?: MaintenanceDetailsScalarFieldEnum | MaintenanceDetailsScalarFieldEnum[]
+  }
+
+  /**
+   * MaintenanceDetails findMany
+   */
+  export type MaintenanceDetailsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    /**
+     * Filter, which MaintenanceDetails to fetch.
+     */
+    where?: MaintenanceDetailsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MaintenanceDetails to fetch.
+     */
+    orderBy?: MaintenanceDetailsOrderByWithRelationInput | MaintenanceDetailsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MaintenanceDetails.
+     */
+    cursor?: MaintenanceDetailsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MaintenanceDetails from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MaintenanceDetails.
+     */
+    skip?: number
+    distinct?: MaintenanceDetailsScalarFieldEnum | MaintenanceDetailsScalarFieldEnum[]
+  }
+
+  /**
+   * MaintenanceDetails create
+   */
+  export type MaintenanceDetailsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MaintenanceDetails.
+     */
+    data: XOR<MaintenanceDetailsCreateInput, MaintenanceDetailsUncheckedCreateInput>
+  }
+
+  /**
+   * MaintenanceDetails createMany
+   */
+  export type MaintenanceDetailsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MaintenanceDetails.
+     */
+    data: MaintenanceDetailsCreateManyInput | MaintenanceDetailsCreateManyInput[]
+  }
+
+  /**
+   * MaintenanceDetails update
+   */
+  export type MaintenanceDetailsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MaintenanceDetails.
+     */
+    data: XOR<MaintenanceDetailsUpdateInput, MaintenanceDetailsUncheckedUpdateInput>
+    /**
+     * Choose, which MaintenanceDetails to update.
+     */
+    where: MaintenanceDetailsWhereUniqueInput
+  }
+
+  /**
+   * MaintenanceDetails updateMany
+   */
+  export type MaintenanceDetailsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MaintenanceDetails.
+     */
+    data: XOR<MaintenanceDetailsUpdateManyMutationInput, MaintenanceDetailsUncheckedUpdateManyInput>
+    /**
+     * Filter which MaintenanceDetails to update
+     */
+    where?: MaintenanceDetailsWhereInput
+    /**
+     * Limit how many MaintenanceDetails to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MaintenanceDetails upsert
+   */
+  export type MaintenanceDetailsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MaintenanceDetails to update in case it exists.
+     */
+    where: MaintenanceDetailsWhereUniqueInput
+    /**
+     * In case the MaintenanceDetails found by the `where` argument doesn't exist, create a new MaintenanceDetails with this data.
+     */
+    create: XOR<MaintenanceDetailsCreateInput, MaintenanceDetailsUncheckedCreateInput>
+    /**
+     * In case the MaintenanceDetails was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MaintenanceDetailsUpdateInput, MaintenanceDetailsUncheckedUpdateInput>
+  }
+
+  /**
+   * MaintenanceDetails delete
+   */
+  export type MaintenanceDetailsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+    /**
+     * Filter which MaintenanceDetails to delete.
+     */
+    where: MaintenanceDetailsWhereUniqueInput
+  }
+
+  /**
+   * MaintenanceDetails deleteMany
+   */
+  export type MaintenanceDetailsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MaintenanceDetails to delete
+     */
+    where?: MaintenanceDetailsWhereInput
+    /**
+     * Limit how many MaintenanceDetails to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MaintenanceDetails findRaw
+   */
+  export type MaintenanceDetailsFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * MaintenanceDetails aggregateRaw
+   */
+  export type MaintenanceDetailsAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * MaintenanceDetails without action
+   */
+  export type MaintenanceDetailsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MaintenanceDetails
+     */
+    select?: MaintenanceDetailsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MaintenanceDetails
+     */
+    omit?: MaintenanceDetailsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MaintenanceDetailsInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -7842,23 +11499,36 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const SessionScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    token: 'token',
+    expiresAt: 'expiresAt',
+    createdAt: 'createdAt'
+  };
+
+  export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
   export const WorkOrderScalarFieldEnum: {
     id: 'id',
     orderNumber: 'orderNumber',
     title: 'title',
     description: 'description',
+    department: 'department',
     priority: 'priority',
     status: 'status',
-    department: 'department',
-    location: 'location',
-    equipment: 'equipment',
-    vehicleId: 'vehicleId',
     startDate: 'startDate',
     dueDate: 'dueDate',
     completedDate: 'completedDate',
+    equipment: 'equipment',
+    version: 'version',
+    estimatedHours: 'estimatedHours',
+    actualHours: 'actualHours',
     createdById: 'createdById',
     assignedToId: 'assignedToId',
     supervisorId: 'supervisorId',
+    vehicleId: 'vehicleId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -7882,7 +11552,11 @@ export namespace Prisma {
     workOrderId: 'workOrderId',
     description: 'description',
     status: 'status',
+    priority: 'priority',
+    estimatedTime: 'estimatedTime',
+    actualTime: 'actualTime',
     completedAt: 'completedAt',
+    assignedToId: 'assignedToId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -7894,6 +11568,7 @@ export namespace Prisma {
     id: 'id',
     workOrderId: 'workOrderId',
     content: 'content',
+    authorId: 'authorId',
     createdAt: 'createdAt'
   };
 
@@ -7905,10 +11580,35 @@ export namespace Prisma {
     workOrderId: 'workOrderId',
     filename: 'filename',
     path: 'path',
+    type: 'type',
+    size: 'size',
     uploadedAt: 'uploadedAt'
   };
 
   export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
+
+
+  export const HistoryScalarFieldEnum: {
+    id: 'id',
+    workOrderId: 'workOrderId',
+    authorId: 'authorId',
+    action: 'action',
+    changes: 'changes',
+    createdAt: 'createdAt'
+  };
+
+  export type HistoryScalarFieldEnum = (typeof HistoryScalarFieldEnum)[keyof typeof HistoryScalarFieldEnum]
+
+
+  export const MaintenanceDetailsScalarFieldEnum: {
+    id: 'id',
+    workOrderId: 'workOrderId',
+    requiredParts: 'requiredParts',
+    safetyTools: 'safetyTools',
+    procedures: 'procedures'
+  };
+
+  export type MaintenanceDetailsScalarFieldEnum = (typeof MaintenanceDetailsScalarFieldEnum)[keyof typeof MaintenanceDetailsScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -8035,6 +11735,27 @@ export namespace Prisma {
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
   /**
    * Deep Input Types
    */
@@ -8054,9 +11775,13 @@ export namespace Prisma {
     lastLogin?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    sessions?: SessionListRelationFilter
     createdOrders?: WorkOrderListRelationFilter
     assignedOrders?: WorkOrderListRelationFilter
     supervisedOrders?: WorkOrderListRelationFilter
+    assignedTasks?: TaskListRelationFilter
+    comments?: CommentListRelationFilter
+    history?: HistoryListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8070,9 +11795,13 @@ export namespace Prisma {
     lastLogin?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    sessions?: SessionOrderByRelationAggregateInput
     createdOrders?: WorkOrderOrderByRelationAggregateInput
     assignedOrders?: WorkOrderOrderByRelationAggregateInput
     supervisedOrders?: WorkOrderOrderByRelationAggregateInput
+    assignedTasks?: TaskOrderByRelationAggregateInput
+    comments?: CommentOrderByRelationAggregateInput
+    history?: HistoryOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -8089,9 +11818,13 @@ export namespace Prisma {
     lastLogin?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    sessions?: SessionListRelationFilter
     createdOrders?: WorkOrderListRelationFilter
     assignedOrders?: WorkOrderListRelationFilter
     supervisedOrders?: WorkOrderListRelationFilter
+    assignedTasks?: TaskListRelationFilter
+    comments?: CommentListRelationFilter
+    history?: HistoryListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -8126,6 +11859,61 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
 
+  export type SessionWhereInput = {
+    AND?: SessionWhereInput | SessionWhereInput[]
+    OR?: SessionWhereInput[]
+    NOT?: SessionWhereInput | SessionWhereInput[]
+    id?: StringFilter<"Session"> | string
+    userId?: StringFilter<"Session"> | string
+    token?: StringFilter<"Session"> | string
+    expiresAt?: DateTimeFilter<"Session"> | Date | string
+    createdAt?: DateTimeFilter<"Session"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type SessionOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type SessionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    token?: string
+    AND?: SessionWhereInput | SessionWhereInput[]
+    OR?: SessionWhereInput[]
+    NOT?: SessionWhereInput | SessionWhereInput[]
+    userId?: StringFilter<"Session"> | string
+    expiresAt?: DateTimeFilter<"Session"> | Date | string
+    createdAt?: DateTimeFilter<"Session"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "token">
+
+  export type SessionOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    _count?: SessionCountOrderByAggregateInput
+    _max?: SessionMaxOrderByAggregateInput
+    _min?: SessionMinOrderByAggregateInput
+  }
+
+  export type SessionScalarWhereWithAggregatesInput = {
+    AND?: SessionScalarWhereWithAggregatesInput | SessionScalarWhereWithAggregatesInput[]
+    OR?: SessionScalarWhereWithAggregatesInput[]
+    NOT?: SessionScalarWhereWithAggregatesInput | SessionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Session"> | string
+    userId?: StringWithAggregatesFilter<"Session"> | string
+    token?: StringWithAggregatesFilter<"Session"> | string
+    expiresAt?: DateTimeWithAggregatesFilter<"Session"> | Date | string
+    createdAt?: DateTimeWithAggregatesFilter<"Session"> | Date | string
+  }
+
   export type WorkOrderWhereInput = {
     AND?: WorkOrderWhereInput | WorkOrderWhereInput[]
     OR?: WorkOrderWhereInput[]
@@ -8134,27 +11922,31 @@ export namespace Prisma {
     orderNumber?: StringFilter<"WorkOrder"> | string
     title?: StringFilter<"WorkOrder"> | string
     description?: StringFilter<"WorkOrder"> | string
+    department?: EnumDepartmentFilter<"WorkOrder"> | $Enums.Department
     priority?: EnumPriorityFilter<"WorkOrder"> | $Enums.Priority
     status?: EnumWorkOrderStatusFilter<"WorkOrder"> | $Enums.WorkOrderStatus
-    department?: StringFilter<"WorkOrder"> | string
-    location?: StringNullableFilter<"WorkOrder"> | string | null
-    equipment?: StringNullableFilter<"WorkOrder"> | string | null
-    vehicleId?: StringNullableFilter<"WorkOrder"> | string | null
-    startDate?: DateTimeNullableFilter<"WorkOrder"> | Date | string | null
-    dueDate?: DateTimeNullableFilter<"WorkOrder"> | Date | string | null
+    startDate?: DateTimeFilter<"WorkOrder"> | Date | string
+    dueDate?: DateTimeFilter<"WorkOrder"> | Date | string
     completedDate?: DateTimeNullableFilter<"WorkOrder"> | Date | string | null
+    equipment?: StringNullableFilter<"WorkOrder"> | string | null
+    version?: IntFilter<"WorkOrder"> | number
+    estimatedHours?: FloatNullableFilter<"WorkOrder"> | number | null
+    actualHours?: FloatNullableFilter<"WorkOrder"> | number | null
     createdById?: StringFilter<"WorkOrder"> | string
     assignedToId?: StringNullableFilter<"WorkOrder"> | string | null
     supervisorId?: StringNullableFilter<"WorkOrder"> | string | null
+    vehicleId?: StringNullableFilter<"WorkOrder"> | string | null
     createdAt?: DateTimeFilter<"WorkOrder"> | Date | string
     updatedAt?: DateTimeFilter<"WorkOrder"> | Date | string
-    vehicle?: XOR<VehicleNullableScalarRelationFilter, VehicleWhereInput> | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     assignedTo?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     supervisedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    vehicle?: XOR<VehicleNullableScalarRelationFilter, VehicleWhereInput> | null
     tasks?: TaskListRelationFilter
     comments?: CommentListRelationFilter
     attachments?: AttachmentListRelationFilter
+    history?: HistoryListRelationFilter
+    maintenanceDetails?: XOR<MaintenanceDetailsNullableScalarRelationFilter, MaintenanceDetailsWhereInput> | null
   }
 
   export type WorkOrderOrderByWithRelationInput = {
@@ -8162,27 +11954,31 @@ export namespace Prisma {
     orderNumber?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    department?: SortOrder
     priority?: SortOrder
     status?: SortOrder
-    department?: SortOrder
-    location?: SortOrder
-    equipment?: SortOrder
-    vehicleId?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     completedDate?: SortOrder
+    equipment?: SortOrder
+    version?: SortOrder
+    estimatedHours?: SortOrder
+    actualHours?: SortOrder
     createdById?: SortOrder
     assignedToId?: SortOrder
     supervisorId?: SortOrder
+    vehicleId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    vehicle?: VehicleOrderByWithRelationInput
     createdBy?: UserOrderByWithRelationInput
     assignedTo?: UserOrderByWithRelationInput
     supervisedBy?: UserOrderByWithRelationInput
+    vehicle?: VehicleOrderByWithRelationInput
     tasks?: TaskOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     attachments?: AttachmentOrderByRelationAggregateInput
+    history?: HistoryOrderByRelationAggregateInput
+    maintenanceDetails?: MaintenanceDetailsOrderByWithRelationInput
   }
 
   export type WorkOrderWhereUniqueInput = Prisma.AtLeast<{
@@ -8193,27 +11989,31 @@ export namespace Prisma {
     NOT?: WorkOrderWhereInput | WorkOrderWhereInput[]
     title?: StringFilter<"WorkOrder"> | string
     description?: StringFilter<"WorkOrder"> | string
+    department?: EnumDepartmentFilter<"WorkOrder"> | $Enums.Department
     priority?: EnumPriorityFilter<"WorkOrder"> | $Enums.Priority
     status?: EnumWorkOrderStatusFilter<"WorkOrder"> | $Enums.WorkOrderStatus
-    department?: StringFilter<"WorkOrder"> | string
-    location?: StringNullableFilter<"WorkOrder"> | string | null
-    equipment?: StringNullableFilter<"WorkOrder"> | string | null
-    vehicleId?: StringNullableFilter<"WorkOrder"> | string | null
-    startDate?: DateTimeNullableFilter<"WorkOrder"> | Date | string | null
-    dueDate?: DateTimeNullableFilter<"WorkOrder"> | Date | string | null
+    startDate?: DateTimeFilter<"WorkOrder"> | Date | string
+    dueDate?: DateTimeFilter<"WorkOrder"> | Date | string
     completedDate?: DateTimeNullableFilter<"WorkOrder"> | Date | string | null
+    equipment?: StringNullableFilter<"WorkOrder"> | string | null
+    version?: IntFilter<"WorkOrder"> | number
+    estimatedHours?: FloatNullableFilter<"WorkOrder"> | number | null
+    actualHours?: FloatNullableFilter<"WorkOrder"> | number | null
     createdById?: StringFilter<"WorkOrder"> | string
     assignedToId?: StringNullableFilter<"WorkOrder"> | string | null
     supervisorId?: StringNullableFilter<"WorkOrder"> | string | null
+    vehicleId?: StringNullableFilter<"WorkOrder"> | string | null
     createdAt?: DateTimeFilter<"WorkOrder"> | Date | string
     updatedAt?: DateTimeFilter<"WorkOrder"> | Date | string
-    vehicle?: XOR<VehicleNullableScalarRelationFilter, VehicleWhereInput> | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
     assignedTo?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     supervisedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    vehicle?: XOR<VehicleNullableScalarRelationFilter, VehicleWhereInput> | null
     tasks?: TaskListRelationFilter
     comments?: CommentListRelationFilter
     attachments?: AttachmentListRelationFilter
+    history?: HistoryListRelationFilter
+    maintenanceDetails?: XOR<MaintenanceDetailsNullableScalarRelationFilter, MaintenanceDetailsWhereInput> | null
   }, "id" | "orderNumber">
 
   export type WorkOrderOrderByWithAggregationInput = {
@@ -8221,23 +12021,27 @@ export namespace Prisma {
     orderNumber?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    department?: SortOrder
     priority?: SortOrder
     status?: SortOrder
-    department?: SortOrder
-    location?: SortOrder
-    equipment?: SortOrder
-    vehicleId?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     completedDate?: SortOrder
+    equipment?: SortOrder
+    version?: SortOrder
+    estimatedHours?: SortOrder
+    actualHours?: SortOrder
     createdById?: SortOrder
     assignedToId?: SortOrder
     supervisorId?: SortOrder
+    vehicleId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: WorkOrderCountOrderByAggregateInput
+    _avg?: WorkOrderAvgOrderByAggregateInput
     _max?: WorkOrderMaxOrderByAggregateInput
     _min?: WorkOrderMinOrderByAggregateInput
+    _sum?: WorkOrderSumOrderByAggregateInput
   }
 
   export type WorkOrderScalarWhereWithAggregatesInput = {
@@ -8248,18 +12052,20 @@ export namespace Prisma {
     orderNumber?: StringWithAggregatesFilter<"WorkOrder"> | string
     title?: StringWithAggregatesFilter<"WorkOrder"> | string
     description?: StringWithAggregatesFilter<"WorkOrder"> | string
+    department?: EnumDepartmentWithAggregatesFilter<"WorkOrder"> | $Enums.Department
     priority?: EnumPriorityWithAggregatesFilter<"WorkOrder"> | $Enums.Priority
     status?: EnumWorkOrderStatusWithAggregatesFilter<"WorkOrder"> | $Enums.WorkOrderStatus
-    department?: StringWithAggregatesFilter<"WorkOrder"> | string
-    location?: StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
-    equipment?: StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
-    vehicleId?: StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
-    startDate?: DateTimeNullableWithAggregatesFilter<"WorkOrder"> | Date | string | null
-    dueDate?: DateTimeNullableWithAggregatesFilter<"WorkOrder"> | Date | string | null
+    startDate?: DateTimeWithAggregatesFilter<"WorkOrder"> | Date | string
+    dueDate?: DateTimeWithAggregatesFilter<"WorkOrder"> | Date | string
     completedDate?: DateTimeNullableWithAggregatesFilter<"WorkOrder"> | Date | string | null
+    equipment?: StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
+    version?: IntWithAggregatesFilter<"WorkOrder"> | number
+    estimatedHours?: FloatNullableWithAggregatesFilter<"WorkOrder"> | number | null
+    actualHours?: FloatNullableWithAggregatesFilter<"WorkOrder"> | number | null
     createdById?: StringWithAggregatesFilter<"WorkOrder"> | string
     assignedToId?: StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
     supervisorId?: StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
+    vehicleId?: StringNullableWithAggregatesFilter<"WorkOrder"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"WorkOrder"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"WorkOrder"> | Date | string
   }
@@ -8326,11 +12132,16 @@ export namespace Prisma {
     id?: StringFilter<"Task"> | string
     workOrderId?: StringFilter<"Task"> | string
     description?: StringFilter<"Task"> | string
-    status?: StringFilter<"Task"> | string
+    status?: EnumWorkOrderStatusFilter<"Task"> | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFilter<"Task"> | $Enums.Priority
+    estimatedTime?: FloatNullableFilter<"Task"> | number | null
+    actualTime?: FloatNullableFilter<"Task"> | number | null
     completedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
+    assignedToId?: StringNullableFilter<"Task"> | string | null
     createdAt?: DateTimeFilter<"Task"> | Date | string
     updatedAt?: DateTimeFilter<"Task"> | Date | string
     workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+    assignedTo?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type TaskOrderByWithRelationInput = {
@@ -8338,10 +12149,15 @@ export namespace Prisma {
     workOrderId?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    priority?: SortOrder
+    estimatedTime?: SortOrder
+    actualTime?: SortOrder
     completedAt?: SortOrder
+    assignedToId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     workOrder?: WorkOrderOrderByWithRelationInput
+    assignedTo?: UserOrderByWithRelationInput
   }
 
   export type TaskWhereUniqueInput = Prisma.AtLeast<{
@@ -8351,11 +12167,16 @@ export namespace Prisma {
     NOT?: TaskWhereInput | TaskWhereInput[]
     workOrderId?: StringFilter<"Task"> | string
     description?: StringFilter<"Task"> | string
-    status?: StringFilter<"Task"> | string
+    status?: EnumWorkOrderStatusFilter<"Task"> | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFilter<"Task"> | $Enums.Priority
+    estimatedTime?: FloatNullableFilter<"Task"> | number | null
+    actualTime?: FloatNullableFilter<"Task"> | number | null
     completedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
+    assignedToId?: StringNullableFilter<"Task"> | string | null
     createdAt?: DateTimeFilter<"Task"> | Date | string
     updatedAt?: DateTimeFilter<"Task"> | Date | string
     workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+    assignedTo?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
 
   export type TaskOrderByWithAggregationInput = {
@@ -8363,12 +12184,18 @@ export namespace Prisma {
     workOrderId?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    priority?: SortOrder
+    estimatedTime?: SortOrder
+    actualTime?: SortOrder
     completedAt?: SortOrder
+    assignedToId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: TaskCountOrderByAggregateInput
+    _avg?: TaskAvgOrderByAggregateInput
     _max?: TaskMaxOrderByAggregateInput
     _min?: TaskMinOrderByAggregateInput
+    _sum?: TaskSumOrderByAggregateInput
   }
 
   export type TaskScalarWhereWithAggregatesInput = {
@@ -8378,8 +12205,12 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Task"> | string
     workOrderId?: StringWithAggregatesFilter<"Task"> | string
     description?: StringWithAggregatesFilter<"Task"> | string
-    status?: StringWithAggregatesFilter<"Task"> | string
+    status?: EnumWorkOrderStatusWithAggregatesFilter<"Task"> | $Enums.WorkOrderStatus
+    priority?: EnumPriorityWithAggregatesFilter<"Task"> | $Enums.Priority
+    estimatedTime?: FloatNullableWithAggregatesFilter<"Task"> | number | null
+    actualTime?: FloatNullableWithAggregatesFilter<"Task"> | number | null
     completedAt?: DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
+    assignedToId?: StringNullableWithAggregatesFilter<"Task"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Task"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Task"> | Date | string
   }
@@ -8391,16 +12222,20 @@ export namespace Prisma {
     id?: StringFilter<"Comment"> | string
     workOrderId?: StringFilter<"Comment"> | string
     content?: StringFilter<"Comment"> | string
+    authorId?: StringFilter<"Comment"> | string
     createdAt?: DateTimeFilter<"Comment"> | Date | string
     workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type CommentOrderByWithRelationInput = {
     id?: SortOrder
     workOrderId?: SortOrder
     content?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
     workOrder?: WorkOrderOrderByWithRelationInput
+    author?: UserOrderByWithRelationInput
   }
 
   export type CommentWhereUniqueInput = Prisma.AtLeast<{
@@ -8410,14 +12245,17 @@ export namespace Prisma {
     NOT?: CommentWhereInput | CommentWhereInput[]
     workOrderId?: StringFilter<"Comment"> | string
     content?: StringFilter<"Comment"> | string
+    authorId?: StringFilter<"Comment"> | string
     createdAt?: DateTimeFilter<"Comment"> | Date | string
     workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type CommentOrderByWithAggregationInput = {
     id?: SortOrder
     workOrderId?: SortOrder
     content?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
     _count?: CommentCountOrderByAggregateInput
     _max?: CommentMaxOrderByAggregateInput
@@ -8431,6 +12269,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Comment"> | string
     workOrderId?: StringWithAggregatesFilter<"Comment"> | string
     content?: StringWithAggregatesFilter<"Comment"> | string
+    authorId?: StringWithAggregatesFilter<"Comment"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
   }
 
@@ -8442,6 +12281,8 @@ export namespace Prisma {
     workOrderId?: StringFilter<"Attachment"> | string
     filename?: StringFilter<"Attachment"> | string
     path?: StringFilter<"Attachment"> | string
+    type?: StringFilter<"Attachment"> | string
+    size?: IntFilter<"Attachment"> | number
     uploadedAt?: DateTimeFilter<"Attachment"> | Date | string
     workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
   }
@@ -8451,6 +12292,8 @@ export namespace Prisma {
     workOrderId?: SortOrder
     filename?: SortOrder
     path?: SortOrder
+    type?: SortOrder
+    size?: SortOrder
     uploadedAt?: SortOrder
     workOrder?: WorkOrderOrderByWithRelationInput
   }
@@ -8463,6 +12306,8 @@ export namespace Prisma {
     workOrderId?: StringFilter<"Attachment"> | string
     filename?: StringFilter<"Attachment"> | string
     path?: StringFilter<"Attachment"> | string
+    type?: StringFilter<"Attachment"> | string
+    size?: IntFilter<"Attachment"> | number
     uploadedAt?: DateTimeFilter<"Attachment"> | Date | string
     workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
   }, "id">
@@ -8472,10 +12317,14 @@ export namespace Prisma {
     workOrderId?: SortOrder
     filename?: SortOrder
     path?: SortOrder
+    type?: SortOrder
+    size?: SortOrder
     uploadedAt?: SortOrder
     _count?: AttachmentCountOrderByAggregateInput
+    _avg?: AttachmentAvgOrderByAggregateInput
     _max?: AttachmentMaxOrderByAggregateInput
     _min?: AttachmentMinOrderByAggregateInput
+    _sum?: AttachmentSumOrderByAggregateInput
   }
 
   export type AttachmentScalarWhereWithAggregatesInput = {
@@ -8486,7 +12335,127 @@ export namespace Prisma {
     workOrderId?: StringWithAggregatesFilter<"Attachment"> | string
     filename?: StringWithAggregatesFilter<"Attachment"> | string
     path?: StringWithAggregatesFilter<"Attachment"> | string
+    type?: StringWithAggregatesFilter<"Attachment"> | string
+    size?: IntWithAggregatesFilter<"Attachment"> | number
     uploadedAt?: DateTimeWithAggregatesFilter<"Attachment"> | Date | string
+  }
+
+  export type HistoryWhereInput = {
+    AND?: HistoryWhereInput | HistoryWhereInput[]
+    OR?: HistoryWhereInput[]
+    NOT?: HistoryWhereInput | HistoryWhereInput[]
+    id?: StringFilter<"History"> | string
+    workOrderId?: StringFilter<"History"> | string
+    authorId?: StringFilter<"History"> | string
+    action?: StringFilter<"History"> | string
+    changes?: JsonFilter<"History">
+    createdAt?: DateTimeFilter<"History"> | Date | string
+    workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type HistoryOrderByWithRelationInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    authorId?: SortOrder
+    action?: SortOrder
+    changes?: SortOrder
+    createdAt?: SortOrder
+    workOrder?: WorkOrderOrderByWithRelationInput
+    author?: UserOrderByWithRelationInput
+  }
+
+  export type HistoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: HistoryWhereInput | HistoryWhereInput[]
+    OR?: HistoryWhereInput[]
+    NOT?: HistoryWhereInput | HistoryWhereInput[]
+    workOrderId?: StringFilter<"History"> | string
+    authorId?: StringFilter<"History"> | string
+    action?: StringFilter<"History"> | string
+    changes?: JsonFilter<"History">
+    createdAt?: DateTimeFilter<"History"> | Date | string
+    workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type HistoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    authorId?: SortOrder
+    action?: SortOrder
+    changes?: SortOrder
+    createdAt?: SortOrder
+    _count?: HistoryCountOrderByAggregateInput
+    _max?: HistoryMaxOrderByAggregateInput
+    _min?: HistoryMinOrderByAggregateInput
+  }
+
+  export type HistoryScalarWhereWithAggregatesInput = {
+    AND?: HistoryScalarWhereWithAggregatesInput | HistoryScalarWhereWithAggregatesInput[]
+    OR?: HistoryScalarWhereWithAggregatesInput[]
+    NOT?: HistoryScalarWhereWithAggregatesInput | HistoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"History"> | string
+    workOrderId?: StringWithAggregatesFilter<"History"> | string
+    authorId?: StringWithAggregatesFilter<"History"> | string
+    action?: StringWithAggregatesFilter<"History"> | string
+    changes?: JsonWithAggregatesFilter<"History">
+    createdAt?: DateTimeWithAggregatesFilter<"History"> | Date | string
+  }
+
+  export type MaintenanceDetailsWhereInput = {
+    AND?: MaintenanceDetailsWhereInput | MaintenanceDetailsWhereInput[]
+    OR?: MaintenanceDetailsWhereInput[]
+    NOT?: MaintenanceDetailsWhereInput | MaintenanceDetailsWhereInput[]
+    id?: StringFilter<"MaintenanceDetails"> | string
+    workOrderId?: StringFilter<"MaintenanceDetails"> | string
+    requiredParts?: StringNullableListFilter<"MaintenanceDetails">
+    safetyTools?: StringNullableListFilter<"MaintenanceDetails">
+    procedures?: StringNullableListFilter<"MaintenanceDetails">
+    workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+  }
+
+  export type MaintenanceDetailsOrderByWithRelationInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    requiredParts?: SortOrder
+    safetyTools?: SortOrder
+    procedures?: SortOrder
+    workOrder?: WorkOrderOrderByWithRelationInput
+  }
+
+  export type MaintenanceDetailsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    workOrderId?: string
+    AND?: MaintenanceDetailsWhereInput | MaintenanceDetailsWhereInput[]
+    OR?: MaintenanceDetailsWhereInput[]
+    NOT?: MaintenanceDetailsWhereInput | MaintenanceDetailsWhereInput[]
+    requiredParts?: StringNullableListFilter<"MaintenanceDetails">
+    safetyTools?: StringNullableListFilter<"MaintenanceDetails">
+    procedures?: StringNullableListFilter<"MaintenanceDetails">
+    workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+  }, "id" | "workOrderId">
+
+  export type MaintenanceDetailsOrderByWithAggregationInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    requiredParts?: SortOrder
+    safetyTools?: SortOrder
+    procedures?: SortOrder
+    _count?: MaintenanceDetailsCountOrderByAggregateInput
+    _max?: MaintenanceDetailsMaxOrderByAggregateInput
+    _min?: MaintenanceDetailsMinOrderByAggregateInput
+  }
+
+  export type MaintenanceDetailsScalarWhereWithAggregatesInput = {
+    AND?: MaintenanceDetailsScalarWhereWithAggregatesInput | MaintenanceDetailsScalarWhereWithAggregatesInput[]
+    OR?: MaintenanceDetailsScalarWhereWithAggregatesInput[]
+    NOT?: MaintenanceDetailsScalarWhereWithAggregatesInput | MaintenanceDetailsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MaintenanceDetails"> | string
+    workOrderId?: StringWithAggregatesFilter<"MaintenanceDetails"> | string
+    requiredParts?: StringNullableListFilter<"MaintenanceDetails">
+    safetyTools?: StringNullableListFilter<"MaintenanceDetails">
+    procedures?: StringNullableListFilter<"MaintenanceDetails">
   }
 
   export type UserCreateInput = {
@@ -8500,9 +12469,13 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
     createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
     assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
     supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    history?: HistoryCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -8516,9 +12489,13 @@ export namespace Prisma {
     lastLogin?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
     assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
     supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUpdateInput = {
@@ -8531,9 +12508,13 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
     createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
     assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
     supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -8546,9 +12527,13 @@ export namespace Prisma {
     lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
     assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
     supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -8588,28 +12573,83 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SessionCreateInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+    user: UserCreateNestedOneWithoutSessionsInput
+  }
+
+  export type SessionUncheckedCreateInput = {
+    id?: string
+    userId: string
+    token: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type SessionUpdateInput = {
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSessionsNestedInput
+  }
+
+  export type SessionUncheckedUpdateInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionCreateManyInput = {
+    id?: string
+    userId: string
+    token: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type SessionUpdateManyMutationInput = {
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUncheckedUpdateManyInput = {
+    userId?: StringFieldUpdateOperationsInput | string
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type WorkOrderCreateInput = {
     id?: string
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
     assignedTo?: UserCreateNestedOneWithoutAssignedOrdersInput
     supervisedBy?: UserCreateNestedOneWithoutSupervisedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     tasks?: TaskCreateNestedManyWithoutWorkOrderInput
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateInput = {
@@ -8617,69 +12657,81 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     assignedToId?: string | null
     supervisorId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderUpdateInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedOrdersNestedInput
     supervisedBy?: UserUpdateOneWithoutSupervisedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderCreateManyInput = {
@@ -8687,18 +12739,20 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     assignedToId?: string | null
     supervisorId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -8707,14 +12761,16 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8723,18 +12779,20 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8798,37 +12856,53 @@ export namespace Prisma {
   export type TaskCreateInput = {
     id?: string
     description: string
-    status?: string
+    status?: $Enums.WorkOrderStatus
+    priority?: $Enums.Priority
+    estimatedTime?: number | null
+    actualTime?: number | null
     completedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     workOrder: WorkOrderCreateNestedOneWithoutTasksInput
+    assignedTo?: UserCreateNestedOneWithoutAssignedTasksInput
   }
 
   export type TaskUncheckedCreateInput = {
     id?: string
     workOrderId: string
     description: string
-    status?: string
+    status?: $Enums.WorkOrderStatus
+    priority?: $Enums.Priority
+    estimatedTime?: number | null
+    actualTime?: number | null
     completedAt?: Date | string | null
+    assignedToId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type TaskUpdateInput = {
     description?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workOrder?: WorkOrderUpdateOneRequiredWithoutTasksNestedInput
+    assignedTo?: UserUpdateOneWithoutAssignedTasksNestedInput
   }
 
   export type TaskUncheckedUpdateInput = {
     workOrderId?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8837,15 +12911,22 @@ export namespace Prisma {
     id?: string
     workOrderId: string
     description: string
-    status?: string
+    status?: $Enums.WorkOrderStatus
+    priority?: $Enums.Priority
+    estimatedTime?: number | null
+    actualTime?: number | null
     completedAt?: Date | string | null
+    assignedToId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
   export type TaskUpdateManyMutationInput = {
     description?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8854,8 +12935,12 @@ export namespace Prisma {
   export type TaskUncheckedUpdateManyInput = {
     workOrderId?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8865,12 +12950,14 @@ export namespace Prisma {
     content: string
     createdAt?: Date | string
     workOrder: WorkOrderCreateNestedOneWithoutCommentsInput
+    author: UserCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentUncheckedCreateInput = {
     id?: string
     workOrderId: string
     content: string
+    authorId: string
     createdAt?: Date | string
   }
 
@@ -8878,11 +12965,13 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workOrder?: WorkOrderUpdateOneRequiredWithoutCommentsNestedInput
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
   }
 
   export type CommentUncheckedUpdateInput = {
     workOrderId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8890,6 +12979,7 @@ export namespace Prisma {
     id?: string
     workOrderId: string
     content: string
+    authorId: string
     createdAt?: Date | string
   }
 
@@ -8901,6 +12991,7 @@ export namespace Prisma {
   export type CommentUncheckedUpdateManyInput = {
     workOrderId?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8908,6 +12999,8 @@ export namespace Prisma {
     id?: string
     filename: string
     path: string
+    type: string
+    size: number
     uploadedAt?: Date | string
     workOrder: WorkOrderCreateNestedOneWithoutAttachmentsInput
   }
@@ -8917,12 +13010,16 @@ export namespace Prisma {
     workOrderId: string
     filename: string
     path: string
+    type: string
+    size: number
     uploadedAt?: Date | string
   }
 
   export type AttachmentUpdateInput = {
     filename?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     workOrder?: WorkOrderUpdateOneRequiredWithoutAttachmentsNestedInput
   }
@@ -8931,6 +13028,8 @@ export namespace Prisma {
     workOrderId?: StringFieldUpdateOperationsInput | string
     filename?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8939,12 +13038,16 @@ export namespace Prisma {
     workOrderId: string
     filename: string
     path: string
+    type: string
+    size: number
     uploadedAt?: Date | string
   }
 
   export type AttachmentUpdateManyMutationInput = {
     filename?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -8952,7 +13055,117 @@ export namespace Prisma {
     workOrderId?: StringFieldUpdateOperationsInput | string
     filename?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HistoryCreateInput = {
+    id?: string
+    action: string
+    changes: InputJsonValue
+    createdAt?: Date | string
+    workOrder: WorkOrderCreateNestedOneWithoutHistoryInput
+    author: UserCreateNestedOneWithoutHistoryInput
+  }
+
+  export type HistoryUncheckedCreateInput = {
+    id?: string
+    workOrderId: string
+    authorId: string
+    action: string
+    changes: InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type HistoryUpdateInput = {
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workOrder?: WorkOrderUpdateOneRequiredWithoutHistoryNestedInput
+    author?: UserUpdateOneRequiredWithoutHistoryNestedInput
+  }
+
+  export type HistoryUncheckedUpdateInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HistoryCreateManyInput = {
+    id?: string
+    workOrderId: string
+    authorId: string
+    action: string
+    changes: InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type HistoryUpdateManyMutationInput = {
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HistoryUncheckedUpdateManyInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MaintenanceDetailsCreateInput = {
+    id?: string
+    requiredParts?: MaintenanceDetailsCreaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsCreatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsCreateproceduresInput | string[]
+    workOrder: WorkOrderCreateNestedOneWithoutMaintenanceDetailsInput
+  }
+
+  export type MaintenanceDetailsUncheckedCreateInput = {
+    id?: string
+    workOrderId: string
+    requiredParts?: MaintenanceDetailsCreaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsCreatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsCreateproceduresInput | string[]
+  }
+
+  export type MaintenanceDetailsUpdateInput = {
+    requiredParts?: MaintenanceDetailsUpdaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsUpdatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsUpdateproceduresInput | string[]
+    workOrder?: WorkOrderUpdateOneRequiredWithoutMaintenanceDetailsNestedInput
+  }
+
+  export type MaintenanceDetailsUncheckedUpdateInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    requiredParts?: MaintenanceDetailsUpdaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsUpdatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsUpdateproceduresInput | string[]
+  }
+
+  export type MaintenanceDetailsCreateManyInput = {
+    id?: string
+    workOrderId: string
+    requiredParts?: MaintenanceDetailsCreaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsCreatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsCreateproceduresInput | string[]
+  }
+
+  export type MaintenanceDetailsUpdateManyMutationInput = {
+    requiredParts?: MaintenanceDetailsUpdaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsUpdatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsUpdateproceduresInput | string[]
+  }
+
+  export type MaintenanceDetailsUncheckedUpdateManyInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    requiredParts?: MaintenanceDetailsUpdaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsUpdatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsUpdateproceduresInput | string[]
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -9013,13 +13226,53 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type SessionListRelationFilter = {
+    every?: SessionWhereInput
+    some?: SessionWhereInput
+    none?: SessionWhereInput
+  }
+
   export type WorkOrderListRelationFilter = {
     every?: WorkOrderWhereInput
     some?: WorkOrderWhereInput
     none?: WorkOrderWhereInput
   }
 
+  export type TaskListRelationFilter = {
+    every?: TaskWhereInput
+    some?: TaskWhereInput
+    none?: TaskWhereInput
+  }
+
+  export type CommentListRelationFilter = {
+    every?: CommentWhereInput
+    some?: CommentWhereInput
+    none?: CommentWhereInput
+  }
+
+  export type HistoryListRelationFilter = {
+    every?: HistoryWhereInput
+    some?: HistoryWhereInput
+    none?: HistoryWhereInput
+  }
+
+  export type SessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type WorkOrderOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TaskOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type CommentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type HistoryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9138,6 +13391,42 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type UserScalarRelationFilter = {
+    is?: UserWhereInput
+    isNot?: UserWhereInput
+  }
+
+  export type SessionCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SessionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type SessionMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    token?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type EnumDepartmentFilter<$PrismaModel = never> = {
+    equals?: $Enums.Department | EnumDepartmentFieldRefInput<$PrismaModel>
+    in?: $Enums.Department[] | ListEnumDepartmentFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Department[] | ListEnumDepartmentFieldRefInput<$PrismaModel>
+    not?: NestedEnumDepartmentFilter<$PrismaModel> | $Enums.Department
+  }
+
   export type EnumPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.Priority | EnumPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
@@ -9168,14 +13457,27 @@ export namespace Prisma {
     isSet?: boolean
   }
 
-  export type VehicleNullableScalarRelationFilter = {
-    is?: VehicleWhereInput | null
-    isNot?: VehicleWhereInput | null
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type UserScalarRelationFilter = {
-    is?: UserWhereInput
-    isNot?: UserWhereInput
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
   }
 
   export type UserNullableScalarRelationFilter = {
@@ -9183,16 +13485,9 @@ export namespace Prisma {
     isNot?: UserWhereInput | null
   }
 
-  export type TaskListRelationFilter = {
-    every?: TaskWhereInput
-    some?: TaskWhereInput
-    none?: TaskWhereInput
-  }
-
-  export type CommentListRelationFilter = {
-    every?: CommentWhereInput
-    some?: CommentWhereInput
-    none?: CommentWhereInput
+  export type VehicleNullableScalarRelationFilter = {
+    is?: VehicleWhereInput | null
+    isNot?: VehicleWhereInput | null
   }
 
   export type AttachmentListRelationFilter = {
@@ -9201,12 +13496,9 @@ export namespace Prisma {
     none?: AttachmentWhereInput
   }
 
-  export type TaskOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type CommentOrderByRelationAggregateInput = {
-    _count?: SortOrder
+  export type MaintenanceDetailsNullableScalarRelationFilter = {
+    is?: MaintenanceDetailsWhereInput | null
+    isNot?: MaintenanceDetailsWhereInput | null
   }
 
   export type AttachmentOrderByRelationAggregateInput = {
@@ -9218,20 +13510,28 @@ export namespace Prisma {
     orderNumber?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    department?: SortOrder
     priority?: SortOrder
     status?: SortOrder
-    department?: SortOrder
-    location?: SortOrder
-    equipment?: SortOrder
-    vehicleId?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     completedDate?: SortOrder
+    equipment?: SortOrder
+    version?: SortOrder
+    estimatedHours?: SortOrder
+    actualHours?: SortOrder
     createdById?: SortOrder
     assignedToId?: SortOrder
     supervisorId?: SortOrder
+    vehicleId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type WorkOrderAvgOrderByAggregateInput = {
+    version?: SortOrder
+    estimatedHours?: SortOrder
+    actualHours?: SortOrder
   }
 
   export type WorkOrderMaxOrderByAggregateInput = {
@@ -9239,18 +13539,20 @@ export namespace Prisma {
     orderNumber?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    department?: SortOrder
     priority?: SortOrder
     status?: SortOrder
-    department?: SortOrder
-    location?: SortOrder
-    equipment?: SortOrder
-    vehicleId?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     completedDate?: SortOrder
+    equipment?: SortOrder
+    version?: SortOrder
+    estimatedHours?: SortOrder
+    actualHours?: SortOrder
     createdById?: SortOrder
     assignedToId?: SortOrder
     supervisorId?: SortOrder
+    vehicleId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -9260,20 +13562,38 @@ export namespace Prisma {
     orderNumber?: SortOrder
     title?: SortOrder
     description?: SortOrder
+    department?: SortOrder
     priority?: SortOrder
     status?: SortOrder
-    department?: SortOrder
-    location?: SortOrder
-    equipment?: SortOrder
-    vehicleId?: SortOrder
     startDate?: SortOrder
     dueDate?: SortOrder
     completedDate?: SortOrder
+    equipment?: SortOrder
+    version?: SortOrder
+    estimatedHours?: SortOrder
+    actualHours?: SortOrder
     createdById?: SortOrder
     assignedToId?: SortOrder
     supervisorId?: SortOrder
+    vehicleId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type WorkOrderSumOrderByAggregateInput = {
+    version?: SortOrder
+    estimatedHours?: SortOrder
+    actualHours?: SortOrder
+  }
+
+  export type EnumDepartmentWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Department | EnumDepartmentFieldRefInput<$PrismaModel>
+    in?: $Enums.Department[] | ListEnumDepartmentFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Department[] | ListEnumDepartmentFieldRefInput<$PrismaModel>
+    not?: NestedEnumDepartmentWithAggregatesFilter<$PrismaModel> | $Enums.Department
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDepartmentFilter<$PrismaModel>
+    _max?: NestedEnumDepartmentFilter<$PrismaModel>
   }
 
   export type EnumPriorityWithAggregatesFilter<$PrismaModel = never> = {
@@ -9315,6 +13635,39 @@ export namespace Prisma {
     isSet?: boolean
   }
 
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+
   export type VehicleCountOrderByAggregateInput = {
     id?: SortOrder
     model?: SortOrder
@@ -9349,9 +13702,18 @@ export namespace Prisma {
     workOrderId?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    priority?: SortOrder
+    estimatedTime?: SortOrder
+    actualTime?: SortOrder
     completedAt?: SortOrder
+    assignedToId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type TaskAvgOrderByAggregateInput = {
+    estimatedTime?: SortOrder
+    actualTime?: SortOrder
   }
 
   export type TaskMaxOrderByAggregateInput = {
@@ -9359,7 +13721,11 @@ export namespace Prisma {
     workOrderId?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    priority?: SortOrder
+    estimatedTime?: SortOrder
+    actualTime?: SortOrder
     completedAt?: SortOrder
+    assignedToId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -9369,15 +13735,25 @@ export namespace Prisma {
     workOrderId?: SortOrder
     description?: SortOrder
     status?: SortOrder
+    priority?: SortOrder
+    estimatedTime?: SortOrder
+    actualTime?: SortOrder
     completedAt?: SortOrder
+    assignedToId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type TaskSumOrderByAggregateInput = {
+    estimatedTime?: SortOrder
+    actualTime?: SortOrder
   }
 
   export type CommentCountOrderByAggregateInput = {
     id?: SortOrder
     workOrderId?: SortOrder
     content?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -9385,6 +13761,7 @@ export namespace Prisma {
     id?: SortOrder
     workOrderId?: SortOrder
     content?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -9392,6 +13769,7 @@ export namespace Prisma {
     id?: SortOrder
     workOrderId?: SortOrder
     content?: SortOrder
+    authorId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -9400,7 +13778,13 @@ export namespace Prisma {
     workOrderId?: SortOrder
     filename?: SortOrder
     path?: SortOrder
+    type?: SortOrder
+    size?: SortOrder
     uploadedAt?: SortOrder
+  }
+
+  export type AttachmentAvgOrderByAggregateInput = {
+    size?: SortOrder
   }
 
   export type AttachmentMaxOrderByAggregateInput = {
@@ -9408,6 +13792,8 @@ export namespace Prisma {
     workOrderId?: SortOrder
     filename?: SortOrder
     path?: SortOrder
+    type?: SortOrder
+    size?: SortOrder
     uploadedAt?: SortOrder
   }
 
@@ -9416,7 +13802,96 @@ export namespace Prisma {
     workOrderId?: SortOrder
     filename?: SortOrder
     path?: SortOrder
+    type?: SortOrder
+    size?: SortOrder
     uploadedAt?: SortOrder
+  }
+
+  export type AttachmentSumOrderByAggregateInput = {
+    size?: SortOrder
+  }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+  }
+
+  export type HistoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    authorId?: SortOrder
+    action?: SortOrder
+    changes?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type HistoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    authorId?: SortOrder
+    action?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type HistoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    authorId?: SortOrder
+    action?: SortOrder
+    createdAt?: SortOrder
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type MaintenanceDetailsCountOrderByAggregateInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    requiredParts?: SortOrder
+    safetyTools?: SortOrder
+    procedures?: SortOrder
+  }
+
+  export type MaintenanceDetailsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+  }
+
+  export type MaintenanceDetailsMinOrderByAggregateInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+  }
+
+  export type SessionCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
   }
 
   export type WorkOrderCreateNestedManyWithoutCreatedByInput = {
@@ -9440,6 +13915,34 @@ export namespace Prisma {
     connect?: WorkOrderWhereUniqueInput | WorkOrderWhereUniqueInput[]
   }
 
+  export type TaskCreateNestedManyWithoutAssignedToInput = {
+    create?: XOR<TaskCreateWithoutAssignedToInput, TaskUncheckedCreateWithoutAssignedToInput> | TaskCreateWithoutAssignedToInput[] | TaskUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutAssignedToInput | TaskCreateOrConnectWithoutAssignedToInput[]
+    createMany?: TaskCreateManyAssignedToInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
+  export type CommentCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type HistoryCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<HistoryCreateWithoutAuthorInput, HistoryUncheckedCreateWithoutAuthorInput> | HistoryCreateWithoutAuthorInput[] | HistoryUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: HistoryCreateOrConnectWithoutAuthorInput | HistoryCreateOrConnectWithoutAuthorInput[]
+    createMany?: HistoryCreateManyAuthorInputEnvelope
+    connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+  }
+
+  export type SessionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+  }
+
   export type WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<WorkOrderCreateWithoutCreatedByInput, WorkOrderUncheckedCreateWithoutCreatedByInput> | WorkOrderCreateWithoutCreatedByInput[] | WorkOrderUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: WorkOrderCreateOrConnectWithoutCreatedByInput | WorkOrderCreateOrConnectWithoutCreatedByInput[]
@@ -9459,6 +13962,27 @@ export namespace Prisma {
     connectOrCreate?: WorkOrderCreateOrConnectWithoutSupervisedByInput | WorkOrderCreateOrConnectWithoutSupervisedByInput[]
     createMany?: WorkOrderCreateManySupervisedByInputEnvelope
     connect?: WorkOrderWhereUniqueInput | WorkOrderWhereUniqueInput[]
+  }
+
+  export type TaskUncheckedCreateNestedManyWithoutAssignedToInput = {
+    create?: XOR<TaskCreateWithoutAssignedToInput, TaskUncheckedCreateWithoutAssignedToInput> | TaskCreateWithoutAssignedToInput[] | TaskUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutAssignedToInput | TaskCreateOrConnectWithoutAssignedToInput[]
+    createMany?: TaskCreateManyAssignedToInputEnvelope
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+  }
+
+  export type CommentUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type HistoryUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<HistoryCreateWithoutAuthorInput, HistoryUncheckedCreateWithoutAuthorInput> | HistoryCreateWithoutAuthorInput[] | HistoryUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: HistoryCreateOrConnectWithoutAuthorInput | HistoryCreateOrConnectWithoutAuthorInput[]
+    createMany?: HistoryCreateManyAuthorInputEnvelope
+    connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -9485,6 +14009,20 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type SessionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
   }
 
   export type WorkOrderUpdateManyWithoutCreatedByNestedInput = {
@@ -9529,6 +14067,62 @@ export namespace Prisma {
     deleteMany?: WorkOrderScalarWhereInput | WorkOrderScalarWhereInput[]
   }
 
+  export type TaskUpdateManyWithoutAssignedToNestedInput = {
+    create?: XOR<TaskCreateWithoutAssignedToInput, TaskUncheckedCreateWithoutAssignedToInput> | TaskCreateWithoutAssignedToInput[] | TaskUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutAssignedToInput | TaskCreateOrConnectWithoutAssignedToInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutAssignedToInput | TaskUpsertWithWhereUniqueWithoutAssignedToInput[]
+    createMany?: TaskCreateManyAssignedToInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutAssignedToInput | TaskUpdateWithWhereUniqueWithoutAssignedToInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutAssignedToInput | TaskUpdateManyWithWhereWithoutAssignedToInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
+  export type CommentUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutAuthorInput | CommentUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutAuthorInput | CommentUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutAuthorInput | CommentUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type HistoryUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<HistoryCreateWithoutAuthorInput, HistoryUncheckedCreateWithoutAuthorInput> | HistoryCreateWithoutAuthorInput[] | HistoryUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: HistoryCreateOrConnectWithoutAuthorInput | HistoryCreateOrConnectWithoutAuthorInput[]
+    upsert?: HistoryUpsertWithWhereUniqueWithoutAuthorInput | HistoryUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: HistoryCreateManyAuthorInputEnvelope
+    set?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    disconnect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    delete?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    update?: HistoryUpdateWithWhereUniqueWithoutAuthorInput | HistoryUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: HistoryUpdateManyWithWhereWithoutAuthorInput | HistoryUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: HistoryScalarWhereInput | HistoryScalarWhereInput[]
+  }
+
+  export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
+    upsert?: SessionUpsertWithWhereUniqueWithoutUserInput | SessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SessionCreateManyUserInputEnvelope
+    set?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    disconnect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    delete?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    connect?: SessionWhereUniqueInput | SessionWhereUniqueInput[]
+    update?: SessionUpdateWithWhereUniqueWithoutUserInput | SessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SessionUpdateManyWithWhereWithoutUserInput | SessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SessionScalarWhereInput | SessionScalarWhereInput[]
+  }
+
   export type WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<WorkOrderCreateWithoutCreatedByInput, WorkOrderUncheckedCreateWithoutCreatedByInput> | WorkOrderCreateWithoutCreatedByInput[] | WorkOrderUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: WorkOrderCreateOrConnectWithoutCreatedByInput | WorkOrderCreateOrConnectWithoutCreatedByInput[]
@@ -9571,10 +14165,60 @@ export namespace Prisma {
     deleteMany?: WorkOrderScalarWhereInput | WorkOrderScalarWhereInput[]
   }
 
-  export type VehicleCreateNestedOneWithoutWorkOrdersInput = {
-    create?: XOR<VehicleCreateWithoutWorkOrdersInput, VehicleUncheckedCreateWithoutWorkOrdersInput>
-    connectOrCreate?: VehicleCreateOrConnectWithoutWorkOrdersInput
-    connect?: VehicleWhereUniqueInput
+  export type TaskUncheckedUpdateManyWithoutAssignedToNestedInput = {
+    create?: XOR<TaskCreateWithoutAssignedToInput, TaskUncheckedCreateWithoutAssignedToInput> | TaskCreateWithoutAssignedToInput[] | TaskUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: TaskCreateOrConnectWithoutAssignedToInput | TaskCreateOrConnectWithoutAssignedToInput[]
+    upsert?: TaskUpsertWithWhereUniqueWithoutAssignedToInput | TaskUpsertWithWhereUniqueWithoutAssignedToInput[]
+    createMany?: TaskCreateManyAssignedToInputEnvelope
+    set?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    disconnect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    delete?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    connect?: TaskWhereUniqueInput | TaskWhereUniqueInput[]
+    update?: TaskUpdateWithWhereUniqueWithoutAssignedToInput | TaskUpdateWithWhereUniqueWithoutAssignedToInput[]
+    updateMany?: TaskUpdateManyWithWhereWithoutAssignedToInput | TaskUpdateManyWithWhereWithoutAssignedToInput[]
+    deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
+  }
+
+  export type CommentUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput> | CommentCreateWithoutAuthorInput[] | CommentUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: CommentCreateOrConnectWithoutAuthorInput | CommentCreateOrConnectWithoutAuthorInput[]
+    upsert?: CommentUpsertWithWhereUniqueWithoutAuthorInput | CommentUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: CommentCreateManyAuthorInputEnvelope
+    set?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    disconnect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    delete?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+    update?: CommentUpdateWithWhereUniqueWithoutAuthorInput | CommentUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: CommentUpdateManyWithWhereWithoutAuthorInput | CommentUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type HistoryUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<HistoryCreateWithoutAuthorInput, HistoryUncheckedCreateWithoutAuthorInput> | HistoryCreateWithoutAuthorInput[] | HistoryUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: HistoryCreateOrConnectWithoutAuthorInput | HistoryCreateOrConnectWithoutAuthorInput[]
+    upsert?: HistoryUpsertWithWhereUniqueWithoutAuthorInput | HistoryUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: HistoryCreateManyAuthorInputEnvelope
+    set?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    disconnect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    delete?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    update?: HistoryUpdateWithWhereUniqueWithoutAuthorInput | HistoryUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: HistoryUpdateManyWithWhereWithoutAuthorInput | HistoryUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: HistoryScalarWhereInput | HistoryScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutSessionsInput = {
+    create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
+    create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
+    upsert?: UserUpsertWithoutSessionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSessionsInput, UserUpdateWithoutSessionsInput>, UserUncheckedUpdateWithoutSessionsInput>
   }
 
   export type UserCreateNestedOneWithoutCreatedOrdersInput = {
@@ -9593,6 +14237,12 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutSupervisedOrdersInput, UserUncheckedCreateWithoutSupervisedOrdersInput>
     connectOrCreate?: UserCreateOrConnectWithoutSupervisedOrdersInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type VehicleCreateNestedOneWithoutWorkOrdersInput = {
+    create?: XOR<VehicleCreateWithoutWorkOrdersInput, VehicleUncheckedCreateWithoutWorkOrdersInput>
+    connectOrCreate?: VehicleCreateOrConnectWithoutWorkOrdersInput
+    connect?: VehicleWhereUniqueInput
   }
 
   export type TaskCreateNestedManyWithoutWorkOrderInput = {
@@ -9616,6 +14266,19 @@ export namespace Prisma {
     connect?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
   }
 
+  export type HistoryCreateNestedManyWithoutWorkOrderInput = {
+    create?: XOR<HistoryCreateWithoutWorkOrderInput, HistoryUncheckedCreateWithoutWorkOrderInput> | HistoryCreateWithoutWorkOrderInput[] | HistoryUncheckedCreateWithoutWorkOrderInput[]
+    connectOrCreate?: HistoryCreateOrConnectWithoutWorkOrderInput | HistoryCreateOrConnectWithoutWorkOrderInput[]
+    createMany?: HistoryCreateManyWorkOrderInputEnvelope
+    connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+  }
+
+  export type MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput = {
+    create?: XOR<MaintenanceDetailsCreateWithoutWorkOrderInput, MaintenanceDetailsUncheckedCreateWithoutWorkOrderInput>
+    connectOrCreate?: MaintenanceDetailsCreateOrConnectWithoutWorkOrderInput
+    connect?: MaintenanceDetailsWhereUniqueInput
+  }
+
   export type TaskUncheckedCreateNestedManyWithoutWorkOrderInput = {
     create?: XOR<TaskCreateWithoutWorkOrderInput, TaskUncheckedCreateWithoutWorkOrderInput> | TaskCreateWithoutWorkOrderInput[] | TaskUncheckedCreateWithoutWorkOrderInput[]
     connectOrCreate?: TaskCreateOrConnectWithoutWorkOrderInput | TaskCreateOrConnectWithoutWorkOrderInput[]
@@ -9637,6 +14300,23 @@ export namespace Prisma {
     connect?: AttachmentWhereUniqueInput | AttachmentWhereUniqueInput[]
   }
 
+  export type HistoryUncheckedCreateNestedManyWithoutWorkOrderInput = {
+    create?: XOR<HistoryCreateWithoutWorkOrderInput, HistoryUncheckedCreateWithoutWorkOrderInput> | HistoryCreateWithoutWorkOrderInput[] | HistoryUncheckedCreateWithoutWorkOrderInput[]
+    connectOrCreate?: HistoryCreateOrConnectWithoutWorkOrderInput | HistoryCreateOrConnectWithoutWorkOrderInput[]
+    createMany?: HistoryCreateManyWorkOrderInputEnvelope
+    connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+  }
+
+  export type MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput = {
+    create?: XOR<MaintenanceDetailsCreateWithoutWorkOrderInput, MaintenanceDetailsUncheckedCreateWithoutWorkOrderInput>
+    connectOrCreate?: MaintenanceDetailsCreateOrConnectWithoutWorkOrderInput
+    connect?: MaintenanceDetailsWhereUniqueInput
+  }
+
+  export type EnumDepartmentFieldUpdateOperationsInput = {
+    set?: $Enums.Department
+  }
+
   export type EnumPriorityFieldUpdateOperationsInput = {
     set?: $Enums.Priority
   }
@@ -9650,14 +14330,21 @@ export namespace Prisma {
     unset?: boolean
   }
 
-  export type VehicleUpdateOneWithoutWorkOrdersNestedInput = {
-    create?: XOR<VehicleCreateWithoutWorkOrdersInput, VehicleUncheckedCreateWithoutWorkOrdersInput>
-    connectOrCreate?: VehicleCreateOrConnectWithoutWorkOrdersInput
-    upsert?: VehicleUpsertWithoutWorkOrdersInput
-    disconnect?: boolean
-    delete?: VehicleWhereInput | boolean
-    connect?: VehicleWhereUniqueInput
-    update?: XOR<XOR<VehicleUpdateToOneWithWhereWithoutWorkOrdersInput, VehicleUpdateWithoutWorkOrdersInput>, VehicleUncheckedUpdateWithoutWorkOrdersInput>
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+    unset?: boolean
   }
 
   export type UserUpdateOneRequiredWithoutCreatedOrdersNestedInput = {
@@ -9686,6 +14373,16 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSupervisedOrdersInput, UserUpdateWithoutSupervisedOrdersInput>, UserUncheckedUpdateWithoutSupervisedOrdersInput>
+  }
+
+  export type VehicleUpdateOneWithoutWorkOrdersNestedInput = {
+    create?: XOR<VehicleCreateWithoutWorkOrdersInput, VehicleUncheckedCreateWithoutWorkOrdersInput>
+    connectOrCreate?: VehicleCreateOrConnectWithoutWorkOrdersInput
+    upsert?: VehicleUpsertWithoutWorkOrdersInput
+    disconnect?: boolean
+    delete?: VehicleWhereInput | boolean
+    connect?: VehicleWhereUniqueInput
+    update?: XOR<XOR<VehicleUpdateToOneWithWhereWithoutWorkOrdersInput, VehicleUpdateWithoutWorkOrdersInput>, VehicleUncheckedUpdateWithoutWorkOrdersInput>
   }
 
   export type TaskUpdateManyWithoutWorkOrderNestedInput = {
@@ -9730,6 +14427,30 @@ export namespace Prisma {
     deleteMany?: AttachmentScalarWhereInput | AttachmentScalarWhereInput[]
   }
 
+  export type HistoryUpdateManyWithoutWorkOrderNestedInput = {
+    create?: XOR<HistoryCreateWithoutWorkOrderInput, HistoryUncheckedCreateWithoutWorkOrderInput> | HistoryCreateWithoutWorkOrderInput[] | HistoryUncheckedCreateWithoutWorkOrderInput[]
+    connectOrCreate?: HistoryCreateOrConnectWithoutWorkOrderInput | HistoryCreateOrConnectWithoutWorkOrderInput[]
+    upsert?: HistoryUpsertWithWhereUniqueWithoutWorkOrderInput | HistoryUpsertWithWhereUniqueWithoutWorkOrderInput[]
+    createMany?: HistoryCreateManyWorkOrderInputEnvelope
+    set?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    disconnect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    delete?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    update?: HistoryUpdateWithWhereUniqueWithoutWorkOrderInput | HistoryUpdateWithWhereUniqueWithoutWorkOrderInput[]
+    updateMany?: HistoryUpdateManyWithWhereWithoutWorkOrderInput | HistoryUpdateManyWithWhereWithoutWorkOrderInput[]
+    deleteMany?: HistoryScalarWhereInput | HistoryScalarWhereInput[]
+  }
+
+  export type MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput = {
+    create?: XOR<MaintenanceDetailsCreateWithoutWorkOrderInput, MaintenanceDetailsUncheckedCreateWithoutWorkOrderInput>
+    connectOrCreate?: MaintenanceDetailsCreateOrConnectWithoutWorkOrderInput
+    upsert?: MaintenanceDetailsUpsertWithoutWorkOrderInput
+    disconnect?: MaintenanceDetailsWhereInput | boolean
+    delete?: MaintenanceDetailsWhereInput | boolean
+    connect?: MaintenanceDetailsWhereUniqueInput
+    update?: XOR<XOR<MaintenanceDetailsUpdateToOneWithWhereWithoutWorkOrderInput, MaintenanceDetailsUpdateWithoutWorkOrderInput>, MaintenanceDetailsUncheckedUpdateWithoutWorkOrderInput>
+  }
+
   export type TaskUncheckedUpdateManyWithoutWorkOrderNestedInput = {
     create?: XOR<TaskCreateWithoutWorkOrderInput, TaskUncheckedCreateWithoutWorkOrderInput> | TaskCreateWithoutWorkOrderInput[] | TaskUncheckedCreateWithoutWorkOrderInput[]
     connectOrCreate?: TaskCreateOrConnectWithoutWorkOrderInput | TaskCreateOrConnectWithoutWorkOrderInput[]
@@ -9770,6 +14491,30 @@ export namespace Prisma {
     update?: AttachmentUpdateWithWhereUniqueWithoutWorkOrderInput | AttachmentUpdateWithWhereUniqueWithoutWorkOrderInput[]
     updateMany?: AttachmentUpdateManyWithWhereWithoutWorkOrderInput | AttachmentUpdateManyWithWhereWithoutWorkOrderInput[]
     deleteMany?: AttachmentScalarWhereInput | AttachmentScalarWhereInput[]
+  }
+
+  export type HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput = {
+    create?: XOR<HistoryCreateWithoutWorkOrderInput, HistoryUncheckedCreateWithoutWorkOrderInput> | HistoryCreateWithoutWorkOrderInput[] | HistoryUncheckedCreateWithoutWorkOrderInput[]
+    connectOrCreate?: HistoryCreateOrConnectWithoutWorkOrderInput | HistoryCreateOrConnectWithoutWorkOrderInput[]
+    upsert?: HistoryUpsertWithWhereUniqueWithoutWorkOrderInput | HistoryUpsertWithWhereUniqueWithoutWorkOrderInput[]
+    createMany?: HistoryCreateManyWorkOrderInputEnvelope
+    set?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    disconnect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    delete?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+    update?: HistoryUpdateWithWhereUniqueWithoutWorkOrderInput | HistoryUpdateWithWhereUniqueWithoutWorkOrderInput[]
+    updateMany?: HistoryUpdateManyWithWhereWithoutWorkOrderInput | HistoryUpdateManyWithWhereWithoutWorkOrderInput[]
+    deleteMany?: HistoryScalarWhereInput | HistoryScalarWhereInput[]
+  }
+
+  export type MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput = {
+    create?: XOR<MaintenanceDetailsCreateWithoutWorkOrderInput, MaintenanceDetailsUncheckedCreateWithoutWorkOrderInput>
+    connectOrCreate?: MaintenanceDetailsCreateOrConnectWithoutWorkOrderInput
+    upsert?: MaintenanceDetailsUpsertWithoutWorkOrderInput
+    disconnect?: MaintenanceDetailsWhereInput | boolean
+    delete?: MaintenanceDetailsWhereInput | boolean
+    connect?: MaintenanceDetailsWhereUniqueInput
+    update?: XOR<XOR<MaintenanceDetailsUpdateToOneWithWhereWithoutWorkOrderInput, MaintenanceDetailsUpdateWithoutWorkOrderInput>, MaintenanceDetailsUncheckedUpdateWithoutWorkOrderInput>
   }
 
   export type WorkOrderCreateNestedManyWithoutVehicleInput = {
@@ -9820,6 +14565,12 @@ export namespace Prisma {
     connect?: WorkOrderWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutAssignedTasksInput = {
+    create?: XOR<UserCreateWithoutAssignedTasksInput, UserUncheckedCreateWithoutAssignedTasksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedTasksInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type WorkOrderUpdateOneRequiredWithoutTasksNestedInput = {
     create?: XOR<WorkOrderCreateWithoutTasksInput, WorkOrderUncheckedCreateWithoutTasksInput>
     connectOrCreate?: WorkOrderCreateOrConnectWithoutTasksInput
@@ -9828,10 +14579,26 @@ export namespace Prisma {
     update?: XOR<XOR<WorkOrderUpdateToOneWithWhereWithoutTasksInput, WorkOrderUpdateWithoutTasksInput>, WorkOrderUncheckedUpdateWithoutTasksInput>
   }
 
+  export type UserUpdateOneWithoutAssignedTasksNestedInput = {
+    create?: XOR<UserCreateWithoutAssignedTasksInput, UserUncheckedCreateWithoutAssignedTasksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAssignedTasksInput
+    upsert?: UserUpsertWithoutAssignedTasksInput
+    disconnect?: boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAssignedTasksInput, UserUpdateWithoutAssignedTasksInput>, UserUncheckedUpdateWithoutAssignedTasksInput>
+  }
+
   export type WorkOrderCreateNestedOneWithoutCommentsInput = {
     create?: XOR<WorkOrderCreateWithoutCommentsInput, WorkOrderUncheckedCreateWithoutCommentsInput>
     connectOrCreate?: WorkOrderCreateOrConnectWithoutCommentsInput
     connect?: WorkOrderWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCommentsInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type WorkOrderUpdateOneRequiredWithoutCommentsNestedInput = {
@@ -9840,6 +14607,14 @@ export namespace Prisma {
     upsert?: WorkOrderUpsertWithoutCommentsInput
     connect?: WorkOrderWhereUniqueInput
     update?: XOR<XOR<WorkOrderUpdateToOneWithWhereWithoutCommentsInput, WorkOrderUpdateWithoutCommentsInput>, WorkOrderUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCommentsNestedInput = {
+    create?: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCommentsInput
+    upsert?: UserUpsertWithoutCommentsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCommentsInput, UserUpdateWithoutCommentsInput>, UserUncheckedUpdateWithoutCommentsInput>
   }
 
   export type WorkOrderCreateNestedOneWithoutAttachmentsInput = {
@@ -9854,6 +14629,75 @@ export namespace Prisma {
     upsert?: WorkOrderUpsertWithoutAttachmentsInput
     connect?: WorkOrderWhereUniqueInput
     update?: XOR<XOR<WorkOrderUpdateToOneWithWhereWithoutAttachmentsInput, WorkOrderUpdateWithoutAttachmentsInput>, WorkOrderUncheckedUpdateWithoutAttachmentsInput>
+  }
+
+  export type WorkOrderCreateNestedOneWithoutHistoryInput = {
+    create?: XOR<WorkOrderCreateWithoutHistoryInput, WorkOrderUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: WorkOrderCreateOrConnectWithoutHistoryInput
+    connect?: WorkOrderWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutHistoryInput = {
+    create?: XOR<UserCreateWithoutHistoryInput, UserUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: UserCreateOrConnectWithoutHistoryInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type WorkOrderUpdateOneRequiredWithoutHistoryNestedInput = {
+    create?: XOR<WorkOrderCreateWithoutHistoryInput, WorkOrderUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: WorkOrderCreateOrConnectWithoutHistoryInput
+    upsert?: WorkOrderUpsertWithoutHistoryInput
+    connect?: WorkOrderWhereUniqueInput
+    update?: XOR<XOR<WorkOrderUpdateToOneWithWhereWithoutHistoryInput, WorkOrderUpdateWithoutHistoryInput>, WorkOrderUncheckedUpdateWithoutHistoryInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutHistoryNestedInput = {
+    create?: XOR<UserCreateWithoutHistoryInput, UserUncheckedCreateWithoutHistoryInput>
+    connectOrCreate?: UserCreateOrConnectWithoutHistoryInput
+    upsert?: UserUpsertWithoutHistoryInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutHistoryInput, UserUpdateWithoutHistoryInput>, UserUncheckedUpdateWithoutHistoryInput>
+  }
+
+  export type MaintenanceDetailsCreaterequiredPartsInput = {
+    set: string[]
+  }
+
+  export type MaintenanceDetailsCreatesafetyToolsInput = {
+    set: string[]
+  }
+
+  export type MaintenanceDetailsCreateproceduresInput = {
+    set: string[]
+  }
+
+  export type WorkOrderCreateNestedOneWithoutMaintenanceDetailsInput = {
+    create?: XOR<WorkOrderCreateWithoutMaintenanceDetailsInput, WorkOrderUncheckedCreateWithoutMaintenanceDetailsInput>
+    connectOrCreate?: WorkOrderCreateOrConnectWithoutMaintenanceDetailsInput
+    connect?: WorkOrderWhereUniqueInput
+  }
+
+  export type MaintenanceDetailsUpdaterequiredPartsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MaintenanceDetailsUpdatesafetyToolsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type MaintenanceDetailsUpdateproceduresInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type WorkOrderUpdateOneRequiredWithoutMaintenanceDetailsNestedInput = {
+    create?: XOR<WorkOrderCreateWithoutMaintenanceDetailsInput, WorkOrderUncheckedCreateWithoutMaintenanceDetailsInput>
+    connectOrCreate?: WorkOrderCreateOrConnectWithoutMaintenanceDetailsInput
+    upsert?: WorkOrderUpsertWithoutMaintenanceDetailsInput
+    connect?: WorkOrderWhereUniqueInput
+    update?: XOR<XOR<WorkOrderUpdateToOneWithWhereWithoutMaintenanceDetailsInput, WorkOrderUpdateWithoutMaintenanceDetailsInput>, WorkOrderUncheckedUpdateWithoutMaintenanceDetailsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -10011,6 +14855,13 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumDepartmentFilter<$PrismaModel = never> = {
+    equals?: $Enums.Department | EnumDepartmentFieldRefInput<$PrismaModel>
+    in?: $Enums.Department[] | ListEnumDepartmentFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Department[] | ListEnumDepartmentFieldRefInput<$PrismaModel>
+    not?: NestedEnumDepartmentFilter<$PrismaModel> | $Enums.Department
+  }
+
   export type NestedEnumPriorityFilter<$PrismaModel = never> = {
     equals?: $Enums.Priority | EnumPriorityFieldRefInput<$PrismaModel>
     in?: $Enums.Priority[] | ListEnumPriorityFieldRefInput<$PrismaModel>
@@ -10038,6 +14889,28 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
     isSet?: boolean
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+    isSet?: boolean
+  }
+
+  export type NestedEnumDepartmentWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Department | EnumDepartmentFieldRefInput<$PrismaModel>
+    in?: $Enums.Department[] | ListEnumDepartmentFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Department[] | ListEnumDepartmentFieldRefInput<$PrismaModel>
+    not?: NestedEnumDepartmentWithAggregatesFilter<$PrismaModel> | $Enums.Department
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumDepartmentFilter<$PrismaModel>
+    _max?: NestedEnumDepartmentFilter<$PrismaModel>
   }
 
   export type NestedEnumPriorityWithAggregatesFilter<$PrismaModel = never> = {
@@ -10078,27 +14951,109 @@ export namespace Prisma {
     isSet?: boolean
   }
 
+  export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
+    isSet?: boolean
+  }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+  }
+
+  export type SessionCreateWithoutUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type SessionUncheckedCreateWithoutUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type SessionCreateOrConnectWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SessionCreateManyUserInputEnvelope = {
+    data: SessionCreateManyUserInput | SessionCreateManyUserInput[]
+  }
+
   export type WorkOrderCreateWithoutCreatedByInput = {
     id?: string
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     assignedTo?: UserCreateNestedOneWithoutAssignedOrdersInput
     supervisedBy?: UserCreateNestedOneWithoutSupervisedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     tasks?: TaskCreateNestedManyWithoutWorkOrderInput
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutCreatedByInput = {
@@ -10106,22 +15061,26 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     assignedToId?: string | null
     supervisorId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutCreatedByInput = {
@@ -10138,22 +15097,26 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
     supervisedBy?: UserCreateNestedOneWithoutSupervisedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     tasks?: TaskCreateNestedManyWithoutWorkOrderInput
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutAssignedToInput = {
@@ -10161,22 +15124,26 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     supervisorId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutAssignedToInput = {
@@ -10193,22 +15160,26 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
     assignedTo?: UserCreateNestedOneWithoutAssignedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     tasks?: TaskCreateNestedManyWithoutWorkOrderInput
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutSupervisedByInput = {
@@ -10216,22 +15187,26 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     assignedToId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutSupervisedByInput = {
@@ -10241,6 +15216,116 @@ export namespace Prisma {
 
   export type WorkOrderCreateManySupervisedByInputEnvelope = {
     data: WorkOrderCreateManySupervisedByInput | WorkOrderCreateManySupervisedByInput[]
+  }
+
+  export type TaskCreateWithoutAssignedToInput = {
+    id?: string
+    description: string
+    status?: $Enums.WorkOrderStatus
+    priority?: $Enums.Priority
+    estimatedTime?: number | null
+    actualTime?: number | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    workOrder: WorkOrderCreateNestedOneWithoutTasksInput
+  }
+
+  export type TaskUncheckedCreateWithoutAssignedToInput = {
+    id?: string
+    workOrderId: string
+    description: string
+    status?: $Enums.WorkOrderStatus
+    priority?: $Enums.Priority
+    estimatedTime?: number | null
+    actualTime?: number | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TaskCreateOrConnectWithoutAssignedToInput = {
+    where: TaskWhereUniqueInput
+    create: XOR<TaskCreateWithoutAssignedToInput, TaskUncheckedCreateWithoutAssignedToInput>
+  }
+
+  export type TaskCreateManyAssignedToInputEnvelope = {
+    data: TaskCreateManyAssignedToInput | TaskCreateManyAssignedToInput[]
+  }
+
+  export type CommentCreateWithoutAuthorInput = {
+    id?: string
+    content: string
+    createdAt?: Date | string
+    workOrder: WorkOrderCreateNestedOneWithoutCommentsInput
+  }
+
+  export type CommentUncheckedCreateWithoutAuthorInput = {
+    id?: string
+    workOrderId: string
+    content: string
+    createdAt?: Date | string
+  }
+
+  export type CommentCreateOrConnectWithoutAuthorInput = {
+    where: CommentWhereUniqueInput
+    create: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type CommentCreateManyAuthorInputEnvelope = {
+    data: CommentCreateManyAuthorInput | CommentCreateManyAuthorInput[]
+  }
+
+  export type HistoryCreateWithoutAuthorInput = {
+    id?: string
+    action: string
+    changes: InputJsonValue
+    createdAt?: Date | string
+    workOrder: WorkOrderCreateNestedOneWithoutHistoryInput
+  }
+
+  export type HistoryUncheckedCreateWithoutAuthorInput = {
+    id?: string
+    workOrderId: string
+    action: string
+    changes: InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type HistoryCreateOrConnectWithoutAuthorInput = {
+    where: HistoryWhereUniqueInput
+    create: XOR<HistoryCreateWithoutAuthorInput, HistoryUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type HistoryCreateManyAuthorInputEnvelope = {
+    data: HistoryCreateManyAuthorInput | HistoryCreateManyAuthorInput[]
+  }
+
+  export type SessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+    create: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: SessionWhereUniqueInput
+    data: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SessionUpdateManyWithWhereWithoutUserInput = {
+    where: SessionScalarWhereInput
+    data: XOR<SessionUpdateManyMutationInput, SessionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SessionScalarWhereInput = {
+    AND?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    OR?: SessionScalarWhereInput[]
+    NOT?: SessionScalarWhereInput | SessionScalarWhereInput[]
+    id?: StringFilter<"Session"> | string
+    userId?: StringFilter<"Session"> | string
+    token?: StringFilter<"Session"> | string
+    expiresAt?: DateTimeFilter<"Session"> | Date | string
+    createdAt?: DateTimeFilter<"Session"> | Date | string
   }
 
   export type WorkOrderUpsertWithWhereUniqueWithoutCreatedByInput = {
@@ -10267,18 +15352,20 @@ export namespace Prisma {
     orderNumber?: StringFilter<"WorkOrder"> | string
     title?: StringFilter<"WorkOrder"> | string
     description?: StringFilter<"WorkOrder"> | string
+    department?: EnumDepartmentFilter<"WorkOrder"> | $Enums.Department
     priority?: EnumPriorityFilter<"WorkOrder"> | $Enums.Priority
     status?: EnumWorkOrderStatusFilter<"WorkOrder"> | $Enums.WorkOrderStatus
-    department?: StringFilter<"WorkOrder"> | string
-    location?: StringNullableFilter<"WorkOrder"> | string | null
-    equipment?: StringNullableFilter<"WorkOrder"> | string | null
-    vehicleId?: StringNullableFilter<"WorkOrder"> | string | null
-    startDate?: DateTimeNullableFilter<"WorkOrder"> | Date | string | null
-    dueDate?: DateTimeNullableFilter<"WorkOrder"> | Date | string | null
+    startDate?: DateTimeFilter<"WorkOrder"> | Date | string
+    dueDate?: DateTimeFilter<"WorkOrder"> | Date | string
     completedDate?: DateTimeNullableFilter<"WorkOrder"> | Date | string | null
+    equipment?: StringNullableFilter<"WorkOrder"> | string | null
+    version?: IntFilter<"WorkOrder"> | number
+    estimatedHours?: FloatNullableFilter<"WorkOrder"> | number | null
+    actualHours?: FloatNullableFilter<"WorkOrder"> | number | null
     createdById?: StringFilter<"WorkOrder"> | string
     assignedToId?: StringNullableFilter<"WorkOrder"> | string | null
     supervisorId?: StringNullableFilter<"WorkOrder"> | string | null
+    vehicleId?: StringNullableFilter<"WorkOrder"> | string | null
     createdAt?: DateTimeFilter<"WorkOrder"> | Date | string
     updatedAt?: DateTimeFilter<"WorkOrder"> | Date | string
   }
@@ -10315,6 +15402,313 @@ export namespace Prisma {
     data: XOR<WorkOrderUpdateManyMutationInput, WorkOrderUncheckedUpdateManyWithoutSupervisedByInput>
   }
 
+  export type TaskUpsertWithWhereUniqueWithoutAssignedToInput = {
+    where: TaskWhereUniqueInput
+    update: XOR<TaskUpdateWithoutAssignedToInput, TaskUncheckedUpdateWithoutAssignedToInput>
+    create: XOR<TaskCreateWithoutAssignedToInput, TaskUncheckedCreateWithoutAssignedToInput>
+  }
+
+  export type TaskUpdateWithWhereUniqueWithoutAssignedToInput = {
+    where: TaskWhereUniqueInput
+    data: XOR<TaskUpdateWithoutAssignedToInput, TaskUncheckedUpdateWithoutAssignedToInput>
+  }
+
+  export type TaskUpdateManyWithWhereWithoutAssignedToInput = {
+    where: TaskScalarWhereInput
+    data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutAssignedToInput>
+  }
+
+  export type TaskScalarWhereInput = {
+    AND?: TaskScalarWhereInput | TaskScalarWhereInput[]
+    OR?: TaskScalarWhereInput[]
+    NOT?: TaskScalarWhereInput | TaskScalarWhereInput[]
+    id?: StringFilter<"Task"> | string
+    workOrderId?: StringFilter<"Task"> | string
+    description?: StringFilter<"Task"> | string
+    status?: EnumWorkOrderStatusFilter<"Task"> | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFilter<"Task"> | $Enums.Priority
+    estimatedTime?: FloatNullableFilter<"Task"> | number | null
+    actualTime?: FloatNullableFilter<"Task"> | number | null
+    completedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
+    assignedToId?: StringNullableFilter<"Task"> | string | null
+    createdAt?: DateTimeFilter<"Task"> | Date | string
+    updatedAt?: DateTimeFilter<"Task"> | Date | string
+  }
+
+  export type CommentUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: CommentWhereUniqueInput
+    update: XOR<CommentUpdateWithoutAuthorInput, CommentUncheckedUpdateWithoutAuthorInput>
+    create: XOR<CommentCreateWithoutAuthorInput, CommentUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type CommentUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: CommentWhereUniqueInput
+    data: XOR<CommentUpdateWithoutAuthorInput, CommentUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type CommentUpdateManyWithWhereWithoutAuthorInput = {
+    where: CommentScalarWhereInput
+    data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type CommentScalarWhereInput = {
+    AND?: CommentScalarWhereInput | CommentScalarWhereInput[]
+    OR?: CommentScalarWhereInput[]
+    NOT?: CommentScalarWhereInput | CommentScalarWhereInput[]
+    id?: StringFilter<"Comment"> | string
+    workOrderId?: StringFilter<"Comment"> | string
+    content?: StringFilter<"Comment"> | string
+    authorId?: StringFilter<"Comment"> | string
+    createdAt?: DateTimeFilter<"Comment"> | Date | string
+  }
+
+  export type HistoryUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: HistoryWhereUniqueInput
+    update: XOR<HistoryUpdateWithoutAuthorInput, HistoryUncheckedUpdateWithoutAuthorInput>
+    create: XOR<HistoryCreateWithoutAuthorInput, HistoryUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type HistoryUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: HistoryWhereUniqueInput
+    data: XOR<HistoryUpdateWithoutAuthorInput, HistoryUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type HistoryUpdateManyWithWhereWithoutAuthorInput = {
+    where: HistoryScalarWhereInput
+    data: XOR<HistoryUpdateManyMutationInput, HistoryUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type HistoryScalarWhereInput = {
+    AND?: HistoryScalarWhereInput | HistoryScalarWhereInput[]
+    OR?: HistoryScalarWhereInput[]
+    NOT?: HistoryScalarWhereInput | HistoryScalarWhereInput[]
+    id?: StringFilter<"History"> | string
+    workOrderId?: StringFilter<"History"> | string
+    authorId?: StringFilter<"History"> | string
+    action?: StringFilter<"History"> | string
+    changes?: JsonFilter<"History">
+    createdAt?: DateTimeFilter<"History"> | Date | string
+  }
+
+  export type UserCreateWithoutSessionsInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    history?: HistoryCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutSessionsInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutSessionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
+  }
+
+  export type UserUpsertWithoutSessionsInput = {
+    update: XOR<UserUpdateWithoutSessionsInput, UserUncheckedUpdateWithoutSessionsInput>
+    create: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSessionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSessionsInput, UserUncheckedUpdateWithoutSessionsInput>
+  }
+
+  export type UserUpdateWithoutSessionsInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSessionsInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserCreateWithoutCreatedOrdersInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    history?: HistoryCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutCreatedOrdersInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutCreatedOrdersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCreatedOrdersInput, UserUncheckedCreateWithoutCreatedOrdersInput>
+  }
+
+  export type UserCreateWithoutAssignedOrdersInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
+    supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    history?: HistoryCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutAssignedOrdersInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutAssignedOrdersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAssignedOrdersInput, UserUncheckedCreateWithoutAssignedOrdersInput>
+  }
+
+  export type UserCreateWithoutSupervisedOrdersInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    history?: HistoryCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutSupervisedOrdersInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutSupervisedOrdersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSupervisedOrdersInput, UserUncheckedCreateWithoutSupervisedOrdersInput>
+  }
+
   export type VehicleCreateWithoutWorkOrdersInput = {
     id?: string
     model: string
@@ -10336,125 +15730,28 @@ export namespace Prisma {
     create: XOR<VehicleCreateWithoutWorkOrdersInput, VehicleUncheckedCreateWithoutWorkOrdersInput>
   }
 
-  export type UserCreateWithoutCreatedOrdersInput = {
-    id?: string
-    email: string
-    name: string
-    password: string
-    role?: $Enums.Role
-    department?: $Enums.Department | null
-    isActive?: boolean
-    lastLogin?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
-    supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
-  }
-
-  export type UserUncheckedCreateWithoutCreatedOrdersInput = {
-    id?: string
-    email: string
-    name: string
-    password: string
-    role?: $Enums.Role
-    department?: $Enums.Department | null
-    isActive?: boolean
-    lastLogin?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
-    supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
-  }
-
-  export type UserCreateOrConnectWithoutCreatedOrdersInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutCreatedOrdersInput, UserUncheckedCreateWithoutCreatedOrdersInput>
-  }
-
-  export type UserCreateWithoutAssignedOrdersInput = {
-    id?: string
-    email: string
-    name: string
-    password: string
-    role?: $Enums.Role
-    department?: $Enums.Department | null
-    isActive?: boolean
-    lastLogin?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
-    supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
-  }
-
-  export type UserUncheckedCreateWithoutAssignedOrdersInput = {
-    id?: string
-    email: string
-    name: string
-    password: string
-    role?: $Enums.Role
-    department?: $Enums.Department | null
-    isActive?: boolean
-    lastLogin?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
-    supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
-  }
-
-  export type UserCreateOrConnectWithoutAssignedOrdersInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutAssignedOrdersInput, UserUncheckedCreateWithoutAssignedOrdersInput>
-  }
-
-  export type UserCreateWithoutSupervisedOrdersInput = {
-    id?: string
-    email: string
-    name: string
-    password: string
-    role?: $Enums.Role
-    department?: $Enums.Department | null
-    isActive?: boolean
-    lastLogin?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
-    assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
-  }
-
-  export type UserUncheckedCreateWithoutSupervisedOrdersInput = {
-    id?: string
-    email: string
-    name: string
-    password: string
-    role?: $Enums.Role
-    department?: $Enums.Department | null
-    isActive?: boolean
-    lastLogin?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
-    assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
-  }
-
-  export type UserCreateOrConnectWithoutSupervisedOrdersInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutSupervisedOrdersInput, UserUncheckedCreateWithoutSupervisedOrdersInput>
-  }
-
   export type TaskCreateWithoutWorkOrderInput = {
     id?: string
     description: string
-    status?: string
+    status?: $Enums.WorkOrderStatus
+    priority?: $Enums.Priority
+    estimatedTime?: number | null
+    actualTime?: number | null
     completedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    assignedTo?: UserCreateNestedOneWithoutAssignedTasksInput
   }
 
   export type TaskUncheckedCreateWithoutWorkOrderInput = {
     id?: string
     description: string
-    status?: string
+    status?: $Enums.WorkOrderStatus
+    priority?: $Enums.Priority
+    estimatedTime?: number | null
+    actualTime?: number | null
     completedAt?: Date | string | null
+    assignedToId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -10472,11 +15769,13 @@ export namespace Prisma {
     id?: string
     content: string
     createdAt?: Date | string
+    author: UserCreateNestedOneWithoutCommentsInput
   }
 
   export type CommentUncheckedCreateWithoutWorkOrderInput = {
     id?: string
     content: string
+    authorId: string
     createdAt?: Date | string
   }
 
@@ -10493,6 +15792,8 @@ export namespace Prisma {
     id?: string
     filename: string
     path: string
+    type: string
+    size: number
     uploadedAt?: Date | string
   }
 
@@ -10500,6 +15801,8 @@ export namespace Prisma {
     id?: string
     filename: string
     path: string
+    type: string
+    size: number
     uploadedAt?: Date | string
   }
 
@@ -10510,6 +15813,191 @@ export namespace Prisma {
 
   export type AttachmentCreateManyWorkOrderInputEnvelope = {
     data: AttachmentCreateManyWorkOrderInput | AttachmentCreateManyWorkOrderInput[]
+  }
+
+  export type HistoryCreateWithoutWorkOrderInput = {
+    id?: string
+    action: string
+    changes: InputJsonValue
+    createdAt?: Date | string
+    author: UserCreateNestedOneWithoutHistoryInput
+  }
+
+  export type HistoryUncheckedCreateWithoutWorkOrderInput = {
+    id?: string
+    authorId: string
+    action: string
+    changes: InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type HistoryCreateOrConnectWithoutWorkOrderInput = {
+    where: HistoryWhereUniqueInput
+    create: XOR<HistoryCreateWithoutWorkOrderInput, HistoryUncheckedCreateWithoutWorkOrderInput>
+  }
+
+  export type HistoryCreateManyWorkOrderInputEnvelope = {
+    data: HistoryCreateManyWorkOrderInput | HistoryCreateManyWorkOrderInput[]
+  }
+
+  export type MaintenanceDetailsCreateWithoutWorkOrderInput = {
+    id?: string
+    requiredParts?: MaintenanceDetailsCreaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsCreatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsCreateproceduresInput | string[]
+  }
+
+  export type MaintenanceDetailsUncheckedCreateWithoutWorkOrderInput = {
+    id?: string
+    requiredParts?: MaintenanceDetailsCreaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsCreatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsCreateproceduresInput | string[]
+  }
+
+  export type MaintenanceDetailsCreateOrConnectWithoutWorkOrderInput = {
+    where: MaintenanceDetailsWhereUniqueInput
+    create: XOR<MaintenanceDetailsCreateWithoutWorkOrderInput, MaintenanceDetailsUncheckedCreateWithoutWorkOrderInput>
+  }
+
+  export type UserUpsertWithoutCreatedOrdersInput = {
+    update: XOR<UserUpdateWithoutCreatedOrdersInput, UserUncheckedUpdateWithoutCreatedOrdersInput>
+    create: XOR<UserCreateWithoutCreatedOrdersInput, UserUncheckedCreateWithoutCreatedOrdersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCreatedOrdersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCreatedOrdersInput, UserUncheckedUpdateWithoutCreatedOrdersInput>
+  }
+
+  export type UserUpdateWithoutCreatedOrdersInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCreatedOrdersInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUpsertWithoutAssignedOrdersInput = {
+    update: XOR<UserUpdateWithoutAssignedOrdersInput, UserUncheckedUpdateWithoutAssignedOrdersInput>
+    create: XOR<UserCreateWithoutAssignedOrdersInput, UserUncheckedCreateWithoutAssignedOrdersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAssignedOrdersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAssignedOrdersInput, UserUncheckedUpdateWithoutAssignedOrdersInput>
+  }
+
+  export type UserUpdateWithoutAssignedOrdersInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
+    supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAssignedOrdersInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUpsertWithoutSupervisedOrdersInput = {
+    update: XOR<UserUpdateWithoutSupervisedOrdersInput, UserUncheckedUpdateWithoutSupervisedOrdersInput>
+    create: XOR<UserCreateWithoutSupervisedOrdersInput, UserUncheckedCreateWithoutSupervisedOrdersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSupervisedOrdersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSupervisedOrdersInput, UserUncheckedUpdateWithoutSupervisedOrdersInput>
+  }
+
+  export type UserUpdateWithoutSupervisedOrdersInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSupervisedOrdersInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type VehicleUpsertWithoutWorkOrdersInput = {
@@ -10537,123 +16025,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type UserUpsertWithoutCreatedOrdersInput = {
-    update: XOR<UserUpdateWithoutCreatedOrdersInput, UserUncheckedUpdateWithoutCreatedOrdersInput>
-    create: XOR<UserCreateWithoutCreatedOrdersInput, UserUncheckedCreateWithoutCreatedOrdersInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutCreatedOrdersInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutCreatedOrdersInput, UserUncheckedUpdateWithoutCreatedOrdersInput>
-  }
-
-  export type UserUpdateWithoutCreatedOrdersInput = {
-    email?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
-    supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutCreatedOrdersInput = {
-    email?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
-    supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
-  }
-
-  export type UserUpsertWithoutAssignedOrdersInput = {
-    update: XOR<UserUpdateWithoutAssignedOrdersInput, UserUncheckedUpdateWithoutAssignedOrdersInput>
-    create: XOR<UserCreateWithoutAssignedOrdersInput, UserUncheckedCreateWithoutAssignedOrdersInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutAssignedOrdersInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutAssignedOrdersInput, UserUncheckedUpdateWithoutAssignedOrdersInput>
-  }
-
-  export type UserUpdateWithoutAssignedOrdersInput = {
-    email?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
-    supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutAssignedOrdersInput = {
-    email?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
-    supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
-  }
-
-  export type UserUpsertWithoutSupervisedOrdersInput = {
-    update: XOR<UserUpdateWithoutSupervisedOrdersInput, UserUncheckedUpdateWithoutSupervisedOrdersInput>
-    create: XOR<UserCreateWithoutSupervisedOrdersInput, UserUncheckedCreateWithoutSupervisedOrdersInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutSupervisedOrdersInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutSupervisedOrdersInput, UserUncheckedUpdateWithoutSupervisedOrdersInput>
-  }
-
-  export type UserUpdateWithoutSupervisedOrdersInput = {
-    email?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
-    assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutSupervisedOrdersInput = {
-    email?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
-    assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
-  }
-
   export type TaskUpsertWithWhereUniqueWithoutWorkOrderInput = {
     where: TaskWhereUniqueInput
     update: XOR<TaskUpdateWithoutWorkOrderInput, TaskUncheckedUpdateWithoutWorkOrderInput>
@@ -10670,19 +16041,6 @@ export namespace Prisma {
     data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutWorkOrderInput>
   }
 
-  export type TaskScalarWhereInput = {
-    AND?: TaskScalarWhereInput | TaskScalarWhereInput[]
-    OR?: TaskScalarWhereInput[]
-    NOT?: TaskScalarWhereInput | TaskScalarWhereInput[]
-    id?: StringFilter<"Task"> | string
-    workOrderId?: StringFilter<"Task"> | string
-    description?: StringFilter<"Task"> | string
-    status?: StringFilter<"Task"> | string
-    completedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
-    createdAt?: DateTimeFilter<"Task"> | Date | string
-    updatedAt?: DateTimeFilter<"Task"> | Date | string
-  }
-
   export type CommentUpsertWithWhereUniqueWithoutWorkOrderInput = {
     where: CommentWhereUniqueInput
     update: XOR<CommentUpdateWithoutWorkOrderInput, CommentUncheckedUpdateWithoutWorkOrderInput>
@@ -10697,16 +16055,6 @@ export namespace Prisma {
   export type CommentUpdateManyWithWhereWithoutWorkOrderInput = {
     where: CommentScalarWhereInput
     data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutWorkOrderInput>
-  }
-
-  export type CommentScalarWhereInput = {
-    AND?: CommentScalarWhereInput | CommentScalarWhereInput[]
-    OR?: CommentScalarWhereInput[]
-    NOT?: CommentScalarWhereInput | CommentScalarWhereInput[]
-    id?: StringFilter<"Comment"> | string
-    workOrderId?: StringFilter<"Comment"> | string
-    content?: StringFilter<"Comment"> | string
-    createdAt?: DateTimeFilter<"Comment"> | Date | string
   }
 
   export type AttachmentUpsertWithWhereUniqueWithoutWorkOrderInput = {
@@ -10733,7 +16081,48 @@ export namespace Prisma {
     workOrderId?: StringFilter<"Attachment"> | string
     filename?: StringFilter<"Attachment"> | string
     path?: StringFilter<"Attachment"> | string
+    type?: StringFilter<"Attachment"> | string
+    size?: IntFilter<"Attachment"> | number
     uploadedAt?: DateTimeFilter<"Attachment"> | Date | string
+  }
+
+  export type HistoryUpsertWithWhereUniqueWithoutWorkOrderInput = {
+    where: HistoryWhereUniqueInput
+    update: XOR<HistoryUpdateWithoutWorkOrderInput, HistoryUncheckedUpdateWithoutWorkOrderInput>
+    create: XOR<HistoryCreateWithoutWorkOrderInput, HistoryUncheckedCreateWithoutWorkOrderInput>
+  }
+
+  export type HistoryUpdateWithWhereUniqueWithoutWorkOrderInput = {
+    where: HistoryWhereUniqueInput
+    data: XOR<HistoryUpdateWithoutWorkOrderInput, HistoryUncheckedUpdateWithoutWorkOrderInput>
+  }
+
+  export type HistoryUpdateManyWithWhereWithoutWorkOrderInput = {
+    where: HistoryScalarWhereInput
+    data: XOR<HistoryUpdateManyMutationInput, HistoryUncheckedUpdateManyWithoutWorkOrderInput>
+  }
+
+  export type MaintenanceDetailsUpsertWithoutWorkOrderInput = {
+    update: XOR<MaintenanceDetailsUpdateWithoutWorkOrderInput, MaintenanceDetailsUncheckedUpdateWithoutWorkOrderInput>
+    create: XOR<MaintenanceDetailsCreateWithoutWorkOrderInput, MaintenanceDetailsUncheckedCreateWithoutWorkOrderInput>
+    where?: MaintenanceDetailsWhereInput
+  }
+
+  export type MaintenanceDetailsUpdateToOneWithWhereWithoutWorkOrderInput = {
+    where?: MaintenanceDetailsWhereInput
+    data: XOR<MaintenanceDetailsUpdateWithoutWorkOrderInput, MaintenanceDetailsUncheckedUpdateWithoutWorkOrderInput>
+  }
+
+  export type MaintenanceDetailsUpdateWithoutWorkOrderInput = {
+    requiredParts?: MaintenanceDetailsUpdaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsUpdatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsUpdateproceduresInput | string[]
+  }
+
+  export type MaintenanceDetailsUncheckedUpdateWithoutWorkOrderInput = {
+    requiredParts?: MaintenanceDetailsUpdaterequiredPartsInput | string[]
+    safetyTools?: MaintenanceDetailsUpdatesafetyToolsInput | string[]
+    procedures?: MaintenanceDetailsUpdateproceduresInput | string[]
   }
 
   export type WorkOrderCreateWithoutVehicleInput = {
@@ -10741,14 +16130,16 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
     createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
@@ -10757,6 +16148,8 @@ export namespace Prisma {
     tasks?: TaskCreateNestedManyWithoutWorkOrderInput
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutVehicleInput = {
@@ -10764,14 +16157,16 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     assignedToId?: string | null
     supervisorId?: string | null
@@ -10780,6 +16175,8 @@ export namespace Prisma {
     tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutVehicleInput = {
@@ -10812,22 +16209,26 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
     assignedTo?: UserCreateNestedOneWithoutAssignedOrdersInput
     supervisedBy?: UserCreateNestedOneWithoutSupervisedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutTasksInput = {
@@ -10835,27 +16236,74 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     assignedToId?: string | null
     supervisorId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutTasksInput = {
     where: WorkOrderWhereUniqueInput
     create: XOR<WorkOrderCreateWithoutTasksInput, WorkOrderUncheckedCreateWithoutTasksInput>
+  }
+
+  export type UserCreateWithoutAssignedTasksInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    history?: HistoryCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutAssignedTasksInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutAssignedTasksInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAssignedTasksInput, UserUncheckedCreateWithoutAssignedTasksInput>
   }
 
   export type WorkOrderUpsertWithoutTasksInput = {
@@ -10873,44 +16321,99 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedOrdersNestedInput
     supervisedBy?: UserUpdateOneWithoutSupervisedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutTasksInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+  }
+
+  export type UserUpsertWithoutAssignedTasksInput = {
+    update: XOR<UserUpdateWithoutAssignedTasksInput, UserUncheckedUpdateWithoutAssignedTasksInput>
+    create: XOR<UserCreateWithoutAssignedTasksInput, UserUncheckedCreateWithoutAssignedTasksInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAssignedTasksInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAssignedTasksInput, UserUncheckedUpdateWithoutAssignedTasksInput>
+  }
+
+  export type UserUpdateWithoutAssignedTasksInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAssignedTasksInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type WorkOrderCreateWithoutCommentsInput = {
@@ -10918,22 +16421,26 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
     assignedTo?: UserCreateNestedOneWithoutAssignedOrdersInput
     supervisedBy?: UserCreateNestedOneWithoutSupervisedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     tasks?: TaskCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutCommentsInput = {
@@ -10941,27 +16448,74 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     assignedToId?: string | null
     supervisorId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutCommentsInput = {
     where: WorkOrderWhereUniqueInput
     create: XOR<WorkOrderCreateWithoutCommentsInput, WorkOrderUncheckedCreateWithoutCommentsInput>
+  }
+
+  export type UserCreateWithoutCommentsInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
+    history?: HistoryCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutCommentsInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
+    history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutCommentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
   }
 
   export type WorkOrderUpsertWithoutCommentsInput = {
@@ -10979,44 +16533,99 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedOrdersNestedInput
     supervisedBy?: UserUpdateOneWithoutSupervisedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutCommentsInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+  }
+
+  export type UserUpsertWithoutCommentsInput = {
+    update: XOR<UserUpdateWithoutCommentsInput, UserUncheckedUpdateWithoutCommentsInput>
+    create: XOR<UserCreateWithoutCommentsInput, UserUncheckedCreateWithoutCommentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCommentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCommentsInput, UserUncheckedUpdateWithoutCommentsInput>
+  }
+
+  export type UserUpdateWithoutCommentsInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
+    history?: HistoryUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCommentsInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type WorkOrderCreateWithoutAttachmentsInput = {
@@ -11024,22 +16633,26 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
     assignedTo?: UserCreateNestedOneWithoutAssignedOrdersInput
     supervisedBy?: UserCreateNestedOneWithoutSupervisedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
     tasks?: TaskCreateNestedManyWithoutWorkOrderInput
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutAttachmentsInput = {
@@ -11047,22 +16660,26 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     assignedToId?: string | null
     supervisorId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutAttachmentsInput = {
@@ -11085,44 +16702,393 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedOrdersNestedInput
     supervisedBy?: UserUpdateOneWithoutSupervisedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutAttachmentsInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+  }
+
+  export type WorkOrderCreateWithoutHistoryInput = {
+    id?: string
+    orderNumber: string
+    title: string
+    description: string
+    department: $Enums.Department
+    priority?: $Enums.Priority
+    status?: $Enums.WorkOrderStatus
+    startDate: Date | string
+    dueDate: Date | string
+    completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
+    assignedTo?: UserCreateNestedOneWithoutAssignedOrdersInput
+    supervisedBy?: UserCreateNestedOneWithoutSupervisedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
+    tasks?: TaskCreateNestedManyWithoutWorkOrderInput
+    comments?: CommentCreateNestedManyWithoutWorkOrderInput
+    attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+  }
+
+  export type WorkOrderUncheckedCreateWithoutHistoryInput = {
+    id?: string
+    orderNumber: string
+    title: string
+    description: string
+    department: $Enums.Department
+    priority?: $Enums.Priority
+    status?: $Enums.WorkOrderStatus
+    startDate: Date | string
+    dueDate: Date | string
+    completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
+    createdById: string
+    assignedToId?: string | null
+    supervisorId?: string | null
+    vehicleId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
+    comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
+    attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+  }
+
+  export type WorkOrderCreateOrConnectWithoutHistoryInput = {
+    where: WorkOrderWhereUniqueInput
+    create: XOR<WorkOrderCreateWithoutHistoryInput, WorkOrderUncheckedCreateWithoutHistoryInput>
+  }
+
+  export type UserCreateWithoutHistoryInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutHistoryInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutHistoryInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutHistoryInput, UserUncheckedCreateWithoutHistoryInput>
+  }
+
+  export type WorkOrderUpsertWithoutHistoryInput = {
+    update: XOR<WorkOrderUpdateWithoutHistoryInput, WorkOrderUncheckedUpdateWithoutHistoryInput>
+    create: XOR<WorkOrderCreateWithoutHistoryInput, WorkOrderUncheckedCreateWithoutHistoryInput>
+    where?: WorkOrderWhereInput
+  }
+
+  export type WorkOrderUpdateToOneWithWhereWithoutHistoryInput = {
+    where?: WorkOrderWhereInput
+    data: XOR<WorkOrderUpdateWithoutHistoryInput, WorkOrderUncheckedUpdateWithoutHistoryInput>
+  }
+
+  export type WorkOrderUpdateWithoutHistoryInput = {
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
+    assignedTo?: UserUpdateOneWithoutAssignedOrdersNestedInput
+    supervisedBy?: UserUpdateOneWithoutSupervisedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
+    tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
+    comments?: CommentUpdateManyWithoutWorkOrderNestedInput
+    attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+  }
+
+  export type WorkOrderUncheckedUpdateWithoutHistoryInput = {
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+  }
+
+  export type UserUpsertWithoutHistoryInput = {
+    update: XOR<UserUpdateWithoutHistoryInput, UserUncheckedUpdateWithoutHistoryInput>
+    create: XOR<UserCreateWithoutHistoryInput, UserUncheckedCreateWithoutHistoryInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutHistoryInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutHistoryInput, UserUncheckedUpdateWithoutHistoryInput>
+  }
+
+  export type UserUpdateWithoutHistoryInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutHistoryInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type WorkOrderCreateWithoutMaintenanceDetailsInput = {
+    id?: string
+    orderNumber: string
+    title: string
+    description: string
+    department: $Enums.Department
+    priority?: $Enums.Priority
+    status?: $Enums.WorkOrderStatus
+    startDate: Date | string
+    dueDate: Date | string
+    completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
+    assignedTo?: UserCreateNestedOneWithoutAssignedOrdersInput
+    supervisedBy?: UserCreateNestedOneWithoutSupervisedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
+    tasks?: TaskCreateNestedManyWithoutWorkOrderInput
+    comments?: CommentCreateNestedManyWithoutWorkOrderInput
+    attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+  }
+
+  export type WorkOrderUncheckedCreateWithoutMaintenanceDetailsInput = {
+    id?: string
+    orderNumber: string
+    title: string
+    description: string
+    department: $Enums.Department
+    priority?: $Enums.Priority
+    status?: $Enums.WorkOrderStatus
+    startDate: Date | string
+    dueDate: Date | string
+    completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
+    createdById: string
+    assignedToId?: string | null
+    supervisorId?: string | null
+    vehicleId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
+    comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
+    attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+  }
+
+  export type WorkOrderCreateOrConnectWithoutMaintenanceDetailsInput = {
+    where: WorkOrderWhereUniqueInput
+    create: XOR<WorkOrderCreateWithoutMaintenanceDetailsInput, WorkOrderUncheckedCreateWithoutMaintenanceDetailsInput>
+  }
+
+  export type WorkOrderUpsertWithoutMaintenanceDetailsInput = {
+    update: XOR<WorkOrderUpdateWithoutMaintenanceDetailsInput, WorkOrderUncheckedUpdateWithoutMaintenanceDetailsInput>
+    create: XOR<WorkOrderCreateWithoutMaintenanceDetailsInput, WorkOrderUncheckedCreateWithoutMaintenanceDetailsInput>
+    where?: WorkOrderWhereInput
+  }
+
+  export type WorkOrderUpdateToOneWithWhereWithoutMaintenanceDetailsInput = {
+    where?: WorkOrderWhereInput
+    data: XOR<WorkOrderUpdateWithoutMaintenanceDetailsInput, WorkOrderUncheckedUpdateWithoutMaintenanceDetailsInput>
+  }
+
+  export type WorkOrderUpdateWithoutMaintenanceDetailsInput = {
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
+    assignedTo?: UserUpdateOneWithoutAssignedOrdersNestedInput
+    supervisedBy?: UserUpdateOneWithoutSupervisedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
+    tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
+    comments?: CommentUpdateManyWithoutWorkOrderNestedInput
+    attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+  }
+
+  export type WorkOrderUncheckedUpdateWithoutMaintenanceDetailsInput = {
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+  }
+
+  export type SessionCreateManyUserInput = {
+    id?: string
+    token: string
+    expiresAt: Date | string
+    createdAt?: Date | string
   }
 
   export type WorkOrderCreateManyCreatedByInput = {
@@ -11130,17 +17096,19 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     assignedToId?: string | null
     supervisorId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11150,17 +17118,19 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     supervisorId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11170,80 +17140,138 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    vehicleId?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     assignedToId?: string | null
+    vehicleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type TaskCreateManyAssignedToInput = {
+    id?: string
+    workOrderId: string
+    description: string
+    status?: $Enums.WorkOrderStatus
+    priority?: $Enums.Priority
+    estimatedTime?: number | null
+    actualTime?: number | null
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommentCreateManyAuthorInput = {
+    id?: string
+    workOrderId: string
+    content: string
+    createdAt?: Date | string
+  }
+
+  export type HistoryCreateManyAuthorInput = {
+    id?: string
+    workOrderId: string
+    action: string
+    changes: InputJsonValue
+    createdAt?: Date | string
+  }
+
+  export type SessionUpdateWithoutUserInput = {
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUncheckedUpdateWithoutUserInput = {
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SessionUncheckedUpdateManyWithoutUserInput = {
+    token?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type WorkOrderUpdateWithoutCreatedByInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedOrdersNestedInput
     supervisedBy?: UserUpdateOneWithoutSupervisedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutCreatedByInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateManyWithoutCreatedByInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11252,61 +17280,71 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
     supervisedBy?: UserUpdateOneWithoutSupervisedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutAssignedToInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateManyWithoutAssignedToInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11315,70 +17353,159 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
     tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutSupervisedByInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateManyWithoutSupervisedByInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUpdateWithoutAssignedToInput = {
+    description?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workOrder?: WorkOrderUpdateOneRequiredWithoutTasksNestedInput
+  }
+
+  export type TaskUncheckedUpdateWithoutAssignedToInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TaskUncheckedUpdateManyWithoutAssignedToInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentUpdateWithoutAuthorInput = {
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workOrder?: WorkOrderUpdateOneRequiredWithoutCommentsNestedInput
+  }
+
+  export type CommentUncheckedUpdateWithoutAuthorInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommentUncheckedUpdateManyWithoutAuthorInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HistoryUpdateWithoutAuthorInput = {
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workOrder?: WorkOrderUpdateOneRequiredWithoutHistoryNestedInput
+  }
+
+  export type HistoryUncheckedUpdateWithoutAuthorInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HistoryUncheckedUpdateManyWithoutAuthorInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TaskCreateManyWorkOrderInput = {
     id?: string
     description: string
-    status?: string
+    status?: $Enums.WorkOrderStatus
+    priority?: $Enums.Priority
+    estimatedTime?: number | null
+    actualTime?: number | null
     completedAt?: Date | string | null
+    assignedToId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -11386,6 +17513,7 @@ export namespace Prisma {
   export type CommentCreateManyWorkOrderInput = {
     id?: string
     content: string
+    authorId: string
     createdAt?: Date | string
   }
 
@@ -11393,29 +17521,51 @@ export namespace Prisma {
     id?: string
     filename: string
     path: string
+    type: string
+    size: number
     uploadedAt?: Date | string
+  }
+
+  export type HistoryCreateManyWorkOrderInput = {
+    id?: string
+    authorId: string
+    action: string
+    changes: InputJsonValue
+    createdAt?: Date | string
   }
 
   export type TaskUpdateWithoutWorkOrderInput = {
     description?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    assignedTo?: UserUpdateOneWithoutAssignedTasksNestedInput
   }
 
   export type TaskUncheckedUpdateWithoutWorkOrderInput = {
     description?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type TaskUncheckedUpdateManyWithoutWorkOrderInput = {
     description?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    estimatedTime?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualTime?: NullableFloatFieldUpdateOperationsInput | number | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11423,34 +17573,64 @@ export namespace Prisma {
   export type CommentUpdateWithoutWorkOrderInput = {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutCommentsNestedInput
   }
 
   export type CommentUncheckedUpdateWithoutWorkOrderInput = {
     content?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommentUncheckedUpdateManyWithoutWorkOrderInput = {
     content?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AttachmentUpdateWithoutWorkOrderInput = {
     filename?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AttachmentUncheckedUpdateWithoutWorkOrderInput = {
     filename?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AttachmentUncheckedUpdateManyWithoutWorkOrderInput = {
     filename?: StringFieldUpdateOperationsInput | string
     path?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    size?: IntFieldUpdateOperationsInput | number
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HistoryUpdateWithoutWorkOrderInput = {
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutHistoryNestedInput
+  }
+
+  export type HistoryUncheckedUpdateWithoutWorkOrderInput = {
+    authorId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type HistoryUncheckedUpdateManyWithoutWorkOrderInput = {
+    authorId?: StringFieldUpdateOperationsInput | string
+    action?: StringFieldUpdateOperationsInput | string
+    changes?: InputJsonValue | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type WorkOrderCreateManyVehicleInput = {
@@ -11458,14 +17638,16 @@ export namespace Prisma {
     orderNumber: string
     title: string
     description: string
+    department: $Enums.Department
     priority?: $Enums.Priority
     status?: $Enums.WorkOrderStatus
-    department: string
-    location?: string | null
-    equipment?: string | null
-    startDate?: Date | string | null
-    dueDate?: Date | string | null
+    startDate: Date | string
+    dueDate: Date | string
     completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
     createdById: string
     assignedToId?: string | null
     supervisorId?: string | null
@@ -11477,14 +17659,16 @@ export namespace Prisma {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
@@ -11493,20 +17677,24 @@ export namespace Prisma {
     tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutVehicleInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11515,20 +17703,24 @@ export namespace Prisma {
     tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateManyWithoutVehicleInput = {
     orderNumber?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
     description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
     priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
     status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
-    department?: StringFieldUpdateOperationsInput | string
-    location?: NullableStringFieldUpdateOperationsInput | string | null
-    equipment?: NullableStringFieldUpdateOperationsInput | string | null
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
     createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
     supervisorId?: NullableStringFieldUpdateOperationsInput | string | null

@@ -44,7 +44,7 @@
             padding: 1rem;
         }
 
-        .workorder-form, .workorder-history {
+        .workorder-form, .workorder-history, .pending-orders {
             background: white;
             padding: 1.5rem;
             border-radius: 8px;
@@ -169,7 +169,9 @@
         <h1>Engineer Panel - Car Repair Work Order</h1>
         <div>
             <button id="logoutBtn">Logout</button>
-            <button id="toggleViewBtn">View Work Order History</button>
+            <button id="viewPendingBtn">View Pending Orders</button>
+            <button id="viewHistoryBtn">View Order History</button>
+            <button id="createOrderBtn">Create Order</button>
         </div>
     </header>
     
@@ -282,6 +284,36 @@
             </form>
         </section>
 
+        <section class="pending-orders" style="display: none;">
+            <h2>Pending Work Orders</h2>
+            <div class="table-controls">
+                <input type="text" id="pendingSearchInput" placeholder="Search pending orders...">
+                <select id="pendingPriorityFilter">
+                    <option value="">All Priorities</option>
+                    <option value="HIGH">High</option>
+                    <option value="MEDIUM">Medium</option>
+                    <option value="LOW">Low</option>
+                </select>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Title</th>
+                        <th>Car Model</th>
+                        <th>License Plate</th>
+                        <th>Repair Type</th>
+                        <th>Priority</th>
+                        <th>Assigned To</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="pendingTableBody"></tbody>
+            </table>
+        </section>
+
         <section class="workorder-history" style="display: none;">
             <h2>Work Order History</h2>
             <div class="table-controls">
@@ -322,6 +354,10 @@
             const historySection = document.querySelector('.workorder-history');
             const searchInput = document.getElementById('searchInput');
             const filterPriority = document.getElementById('filterPriority');
+            const pendingSection = document.querySelector('.pending-orders');
+            const viewPendingBtn = document.getElementById('viewPendingBtn');
+            const viewHistoryBtn = document.getElementById('viewHistoryBtn');
+            const createOrderBtn = document.getElementById('createOrderBtn');
 
             // Task and Resource Management
             function addNewInput(containerName, type) {
@@ -350,45 +386,7 @@
             // Form Submission
             workorderForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
-
-                // Validate required fields
-                const requiredFields = ['title', 'description', 'department', 'woNumber', 'carModel', 'licensePlate'];
-                for (const field of requiredFields) {
-                    const input = document.getElementById(field);
-                    if (!input.value.trim()) {
-                        alert(`Please fill in ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`);
-                        input.focus();
-                        return;
-                    }
-                }
-
-                const workOrder = {
-                    title: document.getElementById('title').value.trim(),
-                    description: document.getElementById('description').value.trim(),
-                    department: document.getElementById('department').value,
-                    orderNumber: document.getElementById('woNumber').value.trim(),
-                    priority: document.getElementById('priority').value || 'MEDIUM',
-                    vehicle: {
-                        model: document.getElementById('carModel').value.trim(),
-                        licensePlate: document.getElementById('licensePlate').value.trim()
-                    },
-                    assignedTo: document.getElementById('assignedTo').value || null,
-                    repairType: document.getElementById('repairType').value,
-                    startDate: document.getElementById('startDate').value,
-                    dueDate: document.getElementById('dueDate').value,
-                    maintenanceDetails: {
-                        requiredParts: Array.from(document.querySelectorAll('#partsRequired input:checked')).map(cb => cb.value),
-                        safetyTools: Array.from(document.querySelectorAll('#safetyTools input:checked')).map(cb => cb.value)
-                    },
-                    tasks: Array.from(document.querySelectorAll('.task-input'))
-                        .map(input => input.value.trim())
-                        .filter(Boolean)
-                        .map(description => ({
-                            description,
-                            status: 'PENDING'
-                        }))
-                };
-
+                
                 try {
                     const token = sessionStorage.getItem('token');
                     if (!token) {
@@ -396,35 +394,56 @@
                         return;
                     }
 
-                    const response = await fetch('/api/workorders/create', {
+                    const formData = {
+                        title: document.getElementById('title').value,
+                        description: document.getElementById('description').value,
+                        department: document.getElementById('department').value,
+                        orderNumber: document.getElementById('woNumber').value,
+                        priority: document.getElementById('priority').value,
+                        startDate: document.getElementById('startDate').value,
+                        dueDate: document.getElementById('dueDate').value,
+                        assignedToId: document.getElementById('assignedTo').value || null,
+                        vehicle: {
+                            model: document.getElementById('carModel').value,
+                            licensePlate: document.getElementById('licensePlate').value,
+                            repairType: document.getElementById('repairType').value
+                        },
+                        tasks: Array.from(document.querySelectorAll('.task-input'))
+                            .map(input => ({
+                                title: input.value,
+                                status: 'PENDING'
+                            }))
+                            .filter(task => task.title)
+                    };
+
+                    const response = await fetch('/api/workorders/create', {  // Changed from /api/work-order/create
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
                         },
-                        body: JSON.stringify(workOrder)
+                        body: JSON.stringify(formData)
                     });
 
-                    if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.message || 'Failed to create work order');
+                    let result;
+                    const contentType = response.headers.get('content-type');
+                    
+                    if (contentType && contentType.includes('application/json')) {
+                        result = await response.json().catch(e => {
+                            console.error('JSON parse error:', e);
+                            throw new Error('Invalid JSON response from server');
+                        });
+                    } else {
+                        throw new Error('Expected JSON response but got ' + contentType);
                     }
 
-                    const data = await response.json();
+                    if (!response.ok) {
+                        throw new Error(result.error || result.message || 'Failed to create work order');
+                    }
+
                     alert('Work order created successfully!');
                     this.reset();
-                    
-                    // Reset task list
-                    document.getElementById('taskList').innerHTML = `
-                        <div class="task-item">
-                            <input type="text" placeholder="Enter task" class="task-input">
-                            <button type="button" class="add-task">+</button>
-                        </div>
-                    `;
-
-                    // Uncheck all checkboxes
-                    document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-
                     await updateWorkOrderHistory();
 
                 } catch (error) {
@@ -434,12 +453,15 @@
             });
 
             // Toggle View
-            toggleViewBtn.addEventListener('click', function() {
-                const isShowingHistory = workorderSection.style.display === 'none';
-                workorderSection.style.display = isShowingHistory ? 'block' : 'none';
-                historySection.style.display = isShowingHistory ? 'none' : 'block';
-                toggleViewBtn.textContent = isShowingHistory ? 'View Work Order History' : 'Create Work Order';
-            });
+            function showSection(sectionName) {
+                workorderSection.style.display = sectionName === 'create' ? 'block' : 'none';
+                pendingSection.style.display = sectionName === 'pending' ? 'block' : 'none';
+                historySection.style.display = sectionName === 'history' ? 'block' : 'none';
+            }
+
+            viewPendingBtn.addEventListener('click', () => showSection('pending'));
+            viewHistoryBtn.addEventListener('click', () => showSection('history'));
+            createOrderBtn.addEventListener('click', () => showSection('create'));
 
             // Search and Filter
             searchInput.addEventListener('input', updateWorkOrderHistory);
@@ -448,7 +470,7 @@
             // Work Order Management Functions
             async function saveWorkOrder(workOrder) {
                 try {
-                    const response = await fetch("/api/work-order/create", {
+                    const response = await fetch("/api/workorders/create", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -473,26 +495,29 @@
                         return;
                     }
 
-                    const response = await fetch("/api/workorders", {
+                    const response = await fetch("/api/workorders/list", {
                         headers: {
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
                         }
                     });
 
                     if (!response.ok) {
-                        const errorData = await response.json().catch(() => ({}));
-                        throw new Error(errorData.message || 'Failed to fetch work orders');
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
-                    const workOrders = await response.json();
+                    const data = await response.json();
+                    // Ensure workOrders is always an array
+                    const workOrders = Array.isArray(data) ? data : data.workOrders || [];
+
                     const searchTerm = searchInput.value.toLowerCase();
                     const priorityFilter = filterPriority.value;
 
                     const filteredOrders = workOrders.filter(wo => {
                         const matchesSearch = 
-                            wo.vehicle?.model?.toLowerCase().includes(searchTerm) || 
-                            wo.vehicle?.licensePlate?.toLowerCase().includes(searchTerm) || 
-                            wo.repairType?.toLowerCase().includes(searchTerm);
+                            (wo.vehicle?.model || '').toLowerCase().includes(searchTerm) || 
+                            (wo.vehicle?.licensePlate || '').toLowerCase().includes(searchTerm) || 
+                            (wo.repairType || '').toLowerCase().includes(searchTerm);
                         const matchesPriority = !priorityFilter || wo.priority === priorityFilter;
                         return matchesSearch && matchesPriority;
                     });
@@ -500,16 +525,16 @@
                     const tbody = document.getElementById('historyTableBody');
                     tbody.innerHTML = filteredOrders.map(wo => `
                         <tr>
-                            <td>${wo.orderNumber}</td>
-                            <td>${wo.title}</td>
+                            <td>${wo.orderNumber || 'N/A'}</td>
+                            <td>${wo.title || 'N/A'}</td>
                             <td>${wo.vehicle?.model || 'N/A'}</td>
                             <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
-                            <td>${wo.repairType}</td>
-                            <td>${wo.priority}</td>
+                            <td>${wo.repairType || 'N/A'}</td>
+                            <td>${wo.priority || 'N/A'}</td>
                             <td>${wo.assignedTo?.name || 'Unassigned'}</td>
-                            <td><span class="status-badge ${wo.status.toLowerCase()}">${wo.status}</span></td>
-                            <td>${new Date(wo.scheduling?.startDate).toLocaleString()}</td>
-                            <td>${new Date(wo.scheduling?.dueDate).toLocaleString()}</td>
+                            <td><span class="status-badge ${(wo.status || 'pending').toLowerCase()}">${wo.status || 'PENDING'}</span></td>
+                            <td>${wo.startDate ? new Date(wo.startDate).toLocaleString() : 'N/A'}</td>
+                            <td>${wo.dueDate ? new Date(wo.dueDate).toLocaleString() : 'N/A'}</td>
                             <td>
                                 <button onclick="editWorkOrder('${wo.id}')">Edit</button>
                                 <button onclick="deleteWorkOrder('${wo.id}')">Delete</button>
@@ -517,8 +542,86 @@
                         </tr>
                     `).join('');
                 } catch (error) {
-                    console.error('Error:', error);
+                    console.error('Error fetching work orders:', error);
                     alert('Failed to fetch work orders: ' + error.message);
+                }
+            }
+
+            async function updatePendingOrders() {
+                try {
+                    const token = sessionStorage.getItem('token');
+                    if (!token) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
+
+                    console.log('Fetching pending orders...'); // Debug log
+
+                    const response = await fetch("/api/workorders/pending", {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    console.log('Response status:', response.status); // Debug log
+
+                    // Check content type and handle response
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Expected JSON but got ${contentType || 'unknown'}`);
+                    }
+
+                    const result = await response.json();
+                    console.log('Response data:', result); // Debug log
+
+                    if (!response.ok) {
+                        throw new Error(result.error || result.message || `HTTP error! status: ${response.status}`);
+                    }
+
+                    const pendingOrders = result.data || [];
+
+                    const tbody = document.getElementById('pendingTableBody');
+                    if (!tbody) {
+                        throw new Error('Table body element not found');
+                    }
+
+                    if (pendingOrders.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">No pending work orders found</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = pendingOrders.map(wo => `
+                        <tr>
+                            <td>${wo.orderNumber || 'N/A'}</td>
+                            <td>${wo.title || 'N/A'}</td>
+                            <td>${wo.vehicle?.model || 'N/A'}</td>
+                            <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
+                            <td>${wo.repairType || 'N/A'}</td>
+                            <td>${wo.priority || 'N/A'}</td>
+                            <td>${wo.assignedTo?.name || 'Unassigned'}</td>
+                            <td><span class="status-badge status-pending">PENDING</span></td>
+                            <td>${wo.dueDate ? new Date(wo.dueDate).toLocaleString() : 'N/A'}</td>
+                            <td>
+                                <button onclick="editWorkOrder('${wo.id}')">Edit</button>
+                                <button onclick="completeWorkOrder('${wo.id}')">Complete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+
+                    // Update count in button
+                    const viewPendingBtn = document.getElementById('viewPendingBtn');
+                    if (viewPendingBtn) {
+                        viewPendingBtn.textContent = `View Pending Orders (${pendingOrders.length})`;
+                    }
+
+                } catch (error) {
+                    console.error('Error fetching pending orders:', error);
+                    const tbody = document.getElementById('pendingTableBody');
+                    if (tbody) {
+                        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: red;">
+                            Error: ${error.message}</td></tr>`;
+                    }
                 }
             }
 
@@ -526,10 +629,11 @@
             window.deleteWorkOrder = async function(id) {
                 if (confirm('Are you sure you want to delete this work order?')) {
                     try {
-                        const response = await fetch(`${API_URL}/${id}`, {
+                        const response = await fetch(`/api/workorders/${id}`, {  // Changed from /api/work-order/${id}
                             method: 'DELETE',
                             headers: {
-                                'Authorization': `${localStorage.getItem('token')}`
+                                'Authorization': `Bearer ${sessionStorage.getItem('token')}`,  // Changed from localStorage
+                                'Accept': 'application/json'
                             }
                         });
                         if (!response.ok) throw new Error('Failed to delete work order');
@@ -544,9 +648,10 @@
             // Add edit function
             window.editWorkOrder = async function(id) {
                 try {
-                    const response = await fetch(`${API_URL}/${id}`, {
+                    const response = await fetch(`/api/workorders/${id}`, {  // Changed from /api/work-order/${id}
                         headers: {
-                            'Authorization': `${localStorage.getItem('token')}`
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`,  // Changed from localStorage
+                            'Accept': 'application/json'
                         }
                     });
                     if (!response.ok) throw new Error('Failed to fetch work order');
@@ -617,7 +722,7 @@
                         };
 
                         try {
-                            const response = await fetch(`/api/work-order/update/${id}`, {
+                            const response = await fetch(`/api/workorders/update/${id}`, {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -654,88 +759,163 @@
                 if (!orderNo) return;
                 
                 try {
-                    const response = await fetch(`/api/work-order/by-number/${orderNo}`);
-                    if (response.ok) {
-                        const workOrder = await response.json();
-                        if (workOrder) {
-                            populateForm(workOrder);
+                    const token = sessionStorage.getItem('token');
+                    const response = await fetch(`/api/workorders/by-number/${orderNo}`, {  // Changed from /api/work-order/by-number/${orderNo}
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'  // Request JSON specifically
                         }
+                    });
+
+                    // First check if response is ok
+                    if (!response.ok) {
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && contentType.includes('application/json')) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.message || 'Failed to fetch work order');
+                        }
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
+
+                    // Then check content type
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Expected JSON but got ${contentType || 'unknown content type'}`);
+                    }
+
+                    // Parse JSON safely
+                    const workOrder = await response.json().catch(err => {
+                        console.error('JSON parse error:', err);
+                        throw new Error('Invalid JSON response from server');
+                    });
+
+                    if (!workOrder) {
+                        throw new Error('No work order data received');
+                    }
+
+                    populateForm(workOrder);
+
                 } catch (error) {
                     console.error('Error fetching work order:', error);
+                    alert('Failed to fetch work order details: ' + error.message);
                 }
             }
 
             function populateForm(workOrder) {
-                document.getElementById('title').value = workOrder.title;
-                document.getElementById('description').value = workOrder.description;
-                document.getElementById('department').value = workOrder.department;
-                document.getElementById('carModel').value = workOrder.vehicle.model;
-                document.getElementById('licensePlate').value = workOrder.vehicle.licensePlate;
-                document.getElementById('repairType').value = workOrder.maintenanceDetails.type;
-                document.getElementById('priority').value = workOrder.maintenanceDetails.priority;
-                document.getElementById('assignedTo').value = workOrder.assignedTo;
-                document.getElementById('startDate').value = workOrder.scheduling.startDate;
-                document.getElementById('dueDate').value = workOrder.scheduling.dueDate;
+                try {
+                    // Safe property access with optional chaining and defaults
+                    document.getElementById('title').value = workOrder?.title || '';
+                    document.getElementById('description').value = workOrder?.description || '';
+                    document.getElementById('department').value = workOrder?.department || '';
+                    document.getElementById('carModel').value = workOrder?.vehicle?.model || '';
+                    document.getElementById('licensePlate').value = workOrder?.vehicle?.licensePlate || '';
+                    document.getElementById('repairType').value = workOrder?.maintenanceDetails?.type || '';
+                    document.getElementById('priority').value = workOrder?.maintenanceDetails?.priority || 'MEDIUM';
+                    document.getElementById('assignedTo').value = workOrder?.assignedTo || '';
+                    document.getElementById('startDate').value = workOrder?.scheduling?.startDate || '';
+                    document.getElementById('dueDate').value = workOrder?.scheduling?.dueDate || '';
 
-                // Update checkboxes
-                workOrder.maintenanceDetails.requiredParts.forEach(part => {
-                    document.querySelector(`input[value="${part}"]`).checked = true;
-                });
-                
-                workOrder.maintenanceDetails.safetyTools.forEach(tool => {
-                    document.querySelector(`input[value="${tool}"]`).checked = true;
-                });
+                    // Clear existing checkboxes
+                    document.querySelectorAll('#partsRequired input[type="checkbox"], #safetyTools input[type="checkbox"]')
+                        .forEach(cb => cb.checked = false);
 
-                // Update tasks
-                if (workOrder.tasks && workOrder.tasks.length > 0) {
-                    document.getElementById('taskList').innerHTML = '';
-                    workOrder.tasks.forEach(task => {
-                        const taskItem = document.createElement('div');
-                        taskItem.className = 'task-item';
-                        taskItem.innerHTML = `
-                            <input type="text" placeholder="Enter task" class="task-input" value="${task.title}">
-                            <button type="button" class="remove-task">-</button>
+                    // Safely update checkboxes if data exists
+                    if (workOrder?.maintenanceDetails?.requiredParts) {
+                        workOrder.maintenanceDetails.requiredParts.forEach(part => {
+                            const checkbox = document.querySelector(`input[value="${part}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+
+                    if (workOrder?.maintenanceDetails?.safetyTools) {
+                        workOrder.maintenanceDetails.safetyTools.forEach(tool => {
+                            const checkbox = document.querySelector(`input[value="${tool}"]`);
+                            if (checkbox) checkbox.checked = true;
+                        });
+                    }
+
+                    // Safely update tasks if they exist
+                    const taskList = document.getElementById('taskList');
+                    taskList.innerHTML = '';
+                    
+                    if (workOrder?.tasks && Array.isArray(workOrder.tasks)) {
+                        workOrder.tasks.forEach(task => {
+                            const taskItem = document.createElement('div');
+                            taskItem.className = 'task-item';
+                            taskItem.innerHTML = `
+                                <input type="text" placeholder="Enter task" class="task-input" value="${task.title || ''}">
+                                <button type="button" class="remove-task">-</button>
+                            `;
+                            taskList.appendChild(taskItem);
+                        });
+                    } else {
+                        // Add one empty task item if no tasks exist
+                        taskList.innerHTML = `
+                            <div class="task-item">
+                                <input type="text" placeholder="Enter task" class="task-input">
+                                <button type="button" class="add-task">+</button>
+                            </div>
                         `;
-                        document.getElementById('taskList').appendChild(taskItem);
-                    });
+                    }
+                } catch (error) {
+                    console.error('Error populating form:', error);
+                    alert('Error populating form with work order data');
                 }
             }
 
             // Add this new function to fetch technicians
             async function loadTechnicians() {
                 try {
-                    // Get selected department
                     const department = document.getElementById('department').value;
                     
-                    const response = await fetch(`/api/technicians?department=${department}`, {
+                    const response = await fetch(`/api/technicians`, {
                         headers: {
-                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                            'Accept': 'application/json'  // Add explicit Accept header
                         }
                     });
                     
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch technicians');
+                    // Check content type first
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        throw new Error(`Expected JSON response but got ${contentType || 'unknown'} - Please check API endpoint`);
                     }
 
-                    const technicians = await response.json();
-                    const technicianSelect = document.getElementById('assignedTo');
+                    // Parse response
+                    const data = await response.json().catch(err => {
+                        console.error('JSON parse error:', err);
+                        throw new Error('Invalid JSON response from server');
+                    });
+
+                    // Validate response format
+                    if (!response.ok) {
+                        throw new Error(data.message || data.error || 'Server error');
+                    }
+
+                    // Ensure data is an array
+                    const technicians = Array.isArray(data) ? data : [];
                     
-                    // Clear and reset select
+                    const technicianSelect = document.getElementById('assignedTo');
                     technicianSelect.innerHTML = '<option value="">Select Technician</option>';
                     
-                    // Only add technicians if department is selected
-                    if (department) {
+                    if (department && technicians.length > 0) {
                         technicians.forEach(tech => {
-                            const option = document.createElement('option');
-                            option.value = tech.id;
-                            option.textContent = `${tech.name} - ${tech.department}`;
-                            technicianSelect.appendChild(option);
+                            if (tech && tech.id && tech.name) {  // Validate tech object
+                                const option = document.createElement('option');
+                                option.value = tech.id;
+                                option.textContent = `${tech.name} ${tech.department ? `- ${tech.department}` : ''}`;
+                                technicianSelect.appendChild(option);
+                            }
                         });
                     }
                 } catch (error) {
                     console.error('Error loading technicians:', error);
-                    alert('Failed to load technicians');
+                    // More descriptive error message
+                    alert(`Failed to load technicians: ${error.message}`);
+                    
+                    // Reset select in case of error
+                    const technicianSelect = document.getElementById('assignedTo');
+                    technicianSelect.innerHTML = '<option value="">Select Technician</option>';
                 }
             }
 
@@ -767,7 +947,7 @@
                         assignedToId: formData.get('assignedTo')
                     };
 
-                    const response = await fetch('/api/work-orders/create', {
+                    const response = await fetch('/api/workorders/create', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -794,6 +974,209 @@
 
             // Initialize
             updateWorkOrderHistory();
+
+            async function updatePendingOrders() {
+                try {
+                    const token = sessionStorage.getItem('token');
+                    if (!token) {
+                        window.location.href = '/login.html';
+                        return;
+                    }
+
+                    const response = await fetch("/api/workorders/pending", {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) throw new Error('Failed to fetch pending orders');
+                    const workOrders = await response.json();
+
+                    const tbody = document.getElementById('pendingTableBody');
+                    tbody.innerHTML = workOrders.map(wo => `
+                        <tr>
+                            <td>${wo.orderNumber}</td>
+                            <td>${wo.title}</td>
+                            <td>${wo.vehicle?.model || 'N/A'}</td>
+                            <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
+                            <td>${wo.repairType || 'N/A'}</td>
+                            <td>${wo.priority}</td>
+                            <td>${wo.assignedTo?.name || 'Unassigned'}</td>
+                            <td><span class="status-badge ${wo.status.toLowerCase()}">${wo.status}</span></td>
+                            <td>${new Date(wo.dueDate).toLocaleString()}</td>
+                            <td>
+                                <button onclick="editWorkOrder('${wo.id}')">Edit</button>
+                                <button onclick="completeWorkOrder('${wo.id}')">Complete</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to fetch pending orders');
+                }
+            }
+
+            // Add function to mark work order as complete
+            window.completeWorkOrder = async function(id) {
+                if (confirm('Are you sure you want to mark this work order as complete?')) {
+                    try {
+                        const response = await fetch(`/api/workorders/${id}/complete`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                                'Accept': 'application/json'
+                            }
+                        });
+                        
+                        if (!response.ok) throw new Error('Failed to complete work order');
+                        
+                        await Promise.all([
+                            updatePendingOrders(),
+                            updateWorkOrderHistory()
+                        ]);
+                        
+                        alert('Work order marked as complete!');
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Failed to complete work order');
+                    }
+                }
+            };
+
+            // Initialize both tables
+            updatePendingOrders();
+            updateWorkOrderHistory();
+        });
+
+        // Add fetchWorkOrderDetails function to global scope
+        window.fetchWorkOrderDetails = async function(orderNo) {
+            if (!orderNo) return;
+            
+            try {
+                const token = sessionStorage.getItem('token');
+                const response = await fetch(`/api/workorders/by-number/${orderNo}`, {  // Changed from /api/work-order/by-number/${orderNo}
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.status === 404) {
+                    // Order doesn't exist - allow creating new
+                    return; 
+                }
+
+                if (!response.ok) {
+                    throw new Error('Error checking work order');
+                }
+
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server returned non-JSON response');
+                }
+
+                const workOrder = await response.json();
+                if (workOrder) {
+                    populateForm(workOrder);
+                    // Disable order number field since it exists
+                    document.getElementById('woNumber').readOnly = true;
+                }
+            } catch (error) {
+                console.error('Error fetching work order:', error);
+                // Only show error if it's not a 404
+                if (error.message !== 'Error checking work order') {
+                    alert('Error checking work order status');
+                }
+            }
+        }
+
+        // Add this helper to check if order number can be created
+        async function canCreateWorkOrder(orderNo) {
+            if (!orderNo) return false;
+            
+            try {
+                const token = sessionStorage.getItem('token');
+                const response = await fetch(`/api/workorders/by-number/${orderNo}`, {  // Changed from /api/work-order/by-number/${orderNo}
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.status === 404) {
+                    // Order number is available
+                    return true;
+                }
+
+                if (response.ok && data.exists) {
+                    // Order exists
+                    return false;
+                }
+
+                // Handle other responses
+                throw new Error(data.error || 'Failed to verify work order number');
+            } catch (error) {
+                console.error('Error checking work order:', error);
+                throw error;
+            }
+        }
+
+        // Update form submission handler
+        workorderForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const orderNo = document.getElementById('woNumber').value;
+                
+                // Verify order number availability
+                const canCreate = await canCreateWorkOrder(orderNo);
+                if (!canCreate) {
+                    alert('Work order number already exists');
+                    return;
+                }
+
+                const formData = new FormData(this);
+                const workOrderData = {
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    department: formData.get('department'),
+                    orderNumber: formData.get('woNumber'),
+                    priority: formData.get('priority')?.toUpperCase() || 'HIGH',
+                    vehicle: {
+                        model: formData.get('carModel'),
+                        licensePlate: formData.get('licensePlate')
+                    },
+                    startDate: formData.get('startDate'),
+                    dueDate: formData.get('dueDate'),
+                    assignedToId: formData.get('assignedTo')
+                };
+
+                const response = await fetch('/api/workorders/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(workOrderData)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Failed to create work order');
+                }
+
+                alert('Work order created successfully!');
+                this.reset();
+                await updateWorkOrderHistory();
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message || 'Failed to create work order');
+            }
         });
     </script>
 </body>

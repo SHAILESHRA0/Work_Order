@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/client" // Changed from node_modules location
+  output   = "./generated/client"
 }
 
 datasource db {
@@ -57,44 +57,71 @@ model User {
   lastLogin  DateTime?
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
+  sessions   Session[] // Add this line to handle sessions
 
   // Relations
-  createdOrders    WorkOrder[] @relation("CreatedBy")
-  assignedOrders   WorkOrder[] @relation("AssignedTo")
-  supervisedOrders WorkOrder[] @relation("SupervisedBy")
+  createdOrders    WorkOrder[] @relation("CreatedByRelation")
+  assignedOrders   WorkOrder[] @relation("AssignedToRelation")
+  supervisedOrders WorkOrder[] @relation("SupervisedByRelation")
+  assignedTasks    Task[]      @relation("TaskAssignee")
+  comments         Comment[]   @relation("CommentAuthor")
+  history          History[]   @relation("HistoryAuthor")
+
+  @@index([role, isActive, department])
+  @@map("users")
+}
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("sessions")
 }
 
 model WorkOrder {
-  id          String          @id @default(auto()) @map("_id") @db.ObjectId
-  orderNumber String          @unique
-  title       String
-  description String
-  priority    Priority        @default(MEDIUM)
-  status      WorkOrderStatus @default(PENDING)
-  department  String
-  location    String?
-  equipment   String?
-  vehicle     Vehicle?        @relation(fields: [vehicleId], references: [id])
-  vehicleId   String?         @db.ObjectId
+  id             String          @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber    String          @unique
+  title          String
+  description    String
+  department     Department
+  priority       Priority        @default(MEDIUM)
+  status         WorkOrderStatus @default(PENDING)
+  startDate      DateTime
+  dueDate        DateTime
+  completedDate  DateTime?
+  equipment      String?
+  version        Int             @default(1)
+  estimatedHours Float?
+  actualHours    Float?
 
-  startDate     DateTime?
-  dueDate       DateTime?
-  completedDate DateTime?
-
+  // Assignment fields  
   createdById  String  @db.ObjectId
   assignedToId String? @db.ObjectId
   supervisorId String? @db.ObjectId
 
-  createdBy    User  @relation("CreatedBy", fields: [createdById], references: [id])
-  assignedTo   User? @relation("AssignedTo", fields: [assignedToId], references: [id])
-  supervisedBy User? @relation("SupervisedBy", fields: [supervisorId], references: [id])
+  // Relations
+  createdBy    User  @relation("CreatedByRelation", fields: [createdById], references: [id])
+  assignedTo   User? @relation("AssignedToRelation", fields: [assignedToId], references: [id])
+  supervisedBy User? @relation("SupervisedByRelation", fields: [supervisorId], references: [id])
 
-  tasks       Task[]
-  comments    Comment[]
-  attachments Attachment[]
+  vehicle   Vehicle? @relation(fields: [vehicleId], references: [id])
+  vehicleId String?  @db.ObjectId
+
+  tasks              Task[]
+  comments           Comment[]
+  attachments        Attachment[]
+  history            History[]
+  maintenanceDetails MaintenanceDetails?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now())
+
+  @@index([status, department, assignedToId])
+  @@map("workorders")
 }
 
 model Vehicle {
@@ -104,26 +131,37 @@ model Vehicle {
   workOrders   WorkOrder[]
   createdAt    DateTime    @default(now())
   updatedAt    DateTime    @updatedAt
+
+  @@map("vehicles")
 }
 
 model Task {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  workOrderId String    @db.ObjectId
-  description String
-  status      String    @default("pending")
-  completedAt DateTime?
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId   String          @db.ObjectId
+  description   String
+  status        WorkOrderStatus @default(PENDING)
+  priority      Priority        @default(MEDIUM)
+  estimatedTime Float?
+  actualTime    Float?
+  completedAt   DateTime?
+  assignedToId  String?         @db.ObjectId
 
-  workOrder WorkOrder @relation(fields: [workOrderId], references: [id])
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  workOrder  WorkOrder @relation(fields: [workOrderId], references: [id])
+  assignedTo User?     @relation("TaskAssignee", fields: [assignedToId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Comment {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  workOrderId String    @db.ObjectId
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId String @db.ObjectId
   content     String
-  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
-  createdAt   DateTime  @default(now())
+  authorId    String @db.ObjectId
+
+  workOrder WorkOrder @relation(fields: [workOrderId], references: [id])
+  author    User      @relation("CommentAuthor", fields: [authorId], references: [id])
+  createdAt DateTime  @default(now())
 }
 
 model Attachment {
@@ -131,6 +169,29 @@ model Attachment {
   workOrderId String    @db.ObjectId
   filename    String
   path        String
+  type        String // e.g., "image", "document", etc.
+  size        Int // in bytes
   workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
   uploadedAt  DateTime  @default(now())
+}
+
+model History {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId String   @db.ObjectId
+  authorId    String   @db.ObjectId
+  action      String // CREATE, UPDATE, etc.
+  changes     Json // JSON object of changes
+  createdAt   DateTime @default(now())
+
+  workOrder WorkOrder @relation(fields: [workOrderId], references: [id])
+  author    User      @relation("HistoryAuthor", fields: [authorId], references: [id])
+}
+
+model MaintenanceDetails {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId   String    @unique @db.ObjectId
+  requiredParts String[]
+  safetyTools   String[]
+  procedures    String[]
+  workOrder     WorkOrder @relation(fields: [workOrderId], references: [id])
 }

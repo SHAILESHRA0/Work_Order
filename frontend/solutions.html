@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solutions - Work Order Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .solution-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .solution-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .case-study {
+            background: #f8f9fa;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 10px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            padding: 1rem;
+            background: #1e3c72;
+            color: white;
+            border-radius: 8px;
+        }
+
+        .features-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features-list li {
+            margin: 1rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            color: #1e3c72;
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="top-bar">
+            <div class="container">
+                <div class="logo-container">
+                    <a href="index.html">
+                        <img src="/assets/logo.jpg" alt="All Solve Logo" class="logo-img">
+                        <span class="company-name">All Solve</span>
+                    </a>
+                </div>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="login.html" class="nav-item">Login</a></li>
+                        <li><a href="dashboard.html" class="nav-item">Dashboard</a></li>
+                        <li><a href="solutions.html" class="nav-item active">Solutions</a></li>
+                        <li><a href="support.html" class="nav-item">Support</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <h2>Advanced Workorder Management Solutions</h2>
+            <p>Streamline your operations with our cutting-edge solutions</p>
+        </section>
+
+        <div class="stats-container">
+            <div class="stat-item">
+                <h3>99.9%</h3>
+                <p>Uptime</p>
+            </div>
+            <div class="stat-item">
+                <h3>5000+</h3>
+                <p>Users</p>
+            </div>
+            <div class="stat-item">
+                <h3>50+</h3>
+                <p>Integrations</p>
+            </div>
+            <div class="stat-item">
+                <h3>24/7</h3>
+                <p>Support</p>
+            </div>
+        </div>
+
+        <div class="solutions-grid">
+            <div class="solution-card">
+                <h3>Enterprise Solutions</h3>
+                <ul class="features-list">
+                    <li>Advanced Workflow Automation</li>
+                    <li>Custom Integration Options</li>
+                    <li>Real-time Analytics</li>
+                    <li>Multi-location Support</li>
+                </ul>
+            </div>
+            <div class="solution-card">
+                <h3>Small Business Package</h3>
+                <ul class="features-list">
+                    <li>Easy-to-use Interface</li>
+                    <li>Essential Features</li>
+                    <li>Cost-effective</li>
+                    <li>Quick Setup</li>
+                </ul>
+            </div>
+            <div class="solution-card">
+                <h3>Industry Specific</h3>
+                <ul class="features-list">
+                    <li>Customized Workflows</li>
+                    <li>Compliance Tools</li>
+                    <li>Industry Best Practices</li>
+                    <li>Specialized Reports</li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="case-study">
+            <h3>Success Story</h3>
+            <h4>Global Manufacturing Corp</h4>
+            <p>Achieved 45% reduction in workflow processing time and 60% improvement in resource allocation.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Workorder Management System | All rights reserved</p>
+        </div>
+    </footer>
+
+    <script>
+        gsap.from('.solution-card', {
+            duration: 0.8,
+            y: 50,
+            opacity: 0,
+            stagger: 0.2,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: '.solutions-grid',
+                start: 'top center'
+            }
+        });
+
+        gsap.from('.stat-item', {
+            duration: 1,
+            scale: 0.5,
+            opacity: 0,
+            stagger: 0.1,
+            ease: 'back.out'
+        });
+    </script>
+</body>
+</html>

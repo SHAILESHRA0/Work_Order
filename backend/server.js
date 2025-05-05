@@ -10,8 +10,11 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { WebSocketServer } from "ws";
 import { connectDB } from './db/db.js';
+import { validateContentType } from './middleware/contentType.js';
+import { errorHandler } from './middleware/errorHandler.js';
 import { authRouter } from './routes/auth.js';
 import { technicianRouter } from './routes/technicians.js';
+import workOrderRoutes from './routes/workOrder.js';
 
 // Initialize ES module __dirname equivalent
 const __filename = fileURLToPath(import.meta.url);
@@ -36,6 +39,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(validateContentType);
 
 // Serve static files from frontend directory
 const frontendPath = path.join(__dirname, '..', 'frontend');
@@ -70,20 +74,19 @@ const auth = async (req, res, next) => {
 import { adminRouter } from './routes/admin.js';
 import { supervisorRouter } from './routes/supervisor.js';
 import { userRouter } from './routes/users.js';
-import { workOrderRouter } from './routes/workOrders.js';
 
 // API routes
 app.get("/api", (req, res) => {
     res.send("🚀 Welcome to the Work Order Management System API!");
 });
 
+// API routes with proper prefixes
 app.use('/api/auth', authRouter);
+app.use('/api/workorders', workOrderRoutes);
+app.use('/api/technician', auth, technicianRouter);
 app.use('/api/supervisor', auth, supervisorRouter);
-app.use('/api/technician', auth, technicianRouter); 
 app.use('/api/admin', auth, adminRouter);
 app.use('/api/users', auth, userRouter);
-app.use('/api/workorders', auth, workOrderRouter);
-app.use('/api', technicianRouter);
 
 // Manager registration
 app.post('/api/managers/register', async (req, res) => {
@@ -173,6 +176,13 @@ function broadcastMessage(message) {
 
 // Enhanced error handling
 app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return res.status(400).json({ error: 'Invalid JSON' });
+    }
+    next();
+});
+
+app.use((err, req, res, next) => {
     console.error('Error:', {
         message: err.message,
         stack: err.stack,
@@ -247,39 +257,11 @@ process.on("SIGINT", async () => {
 const startServer = async () => {
   try {
     // Connect to database first
-    const isConnected = await connectDB();
-    if (!isConnected) {
-      throw new Error('Failed to connect to database');
-    }
+    await connectDB();
 
-    // Start server on first available port
-    const ports = [PORT, ...process.env.ALTERNATE_PORTS.split(',').map(Number)];
-    
-    for (const port of ports) {
-      try {
-        await new Promise((resolve, reject) => {
-          server.listen(port, HOST, () => {
-            console.log(`🚀 Server running at http://localhost:${port}/`);
-            resolve();
-          }).on('error', (err) => {
-            if (err.code === 'EADDRINUSE') {
-              console.log(`Port ${port} is busy, trying next port...`);
-              reject(err);
-            } else {
-              console.error('Server error:', err);
-              reject(err);
-            }
-          });
-        });
-        break; // If successful, exit the loop
-      } catch (err) {
-        if (port === ports[ports.length - 1]) {
-          throw new Error('All ports are in use');
-        }
-        // Continue to next port if current is in use
-        continue;
-      }
-    }
+    server.listen(PORT, HOST, () => {
+      console.log(`🚀 Server running at http://localhost:${PORT}/`);
+    });
   } catch (error) {
     console.error('Failed to start server:', error);
     process.exit(1);
@@ -290,4 +272,17 @@ startServer();
 
 // Export for potential import in other files
 export { app, prisma, server };
+
+// Error handling middleware - must be last
+app.use(errorHandler);
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
 

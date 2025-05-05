@@ -123,23 +123,33 @@ exports.Prisma.UserScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.WorkOrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
   title: 'title',
   description: 'description',
+  department: 'department',
   priority: 'priority',
   status: 'status',
-  department: 'department',
-  location: 'location',
-  equipment: 'equipment',
-  vehicleId: 'vehicleId',
   startDate: 'startDate',
   dueDate: 'dueDate',
   completedDate: 'completedDate',
+  equipment: 'equipment',
+  version: 'version',
+  estimatedHours: 'estimatedHours',
+  actualHours: 'actualHours',
   createdById: 'createdById',
   assignedToId: 'assignedToId',
   supervisorId: 'supervisorId',
+  vehicleId: 'vehicleId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -157,7 +167,11 @@ exports.Prisma.TaskScalarFieldEnum = {
   workOrderId: 'workOrderId',
   description: 'description',
   status: 'status',
+  priority: 'priority',
+  estimatedTime: 'estimatedTime',
+  actualTime: 'actualTime',
   completedAt: 'completedAt',
+  assignedToId: 'assignedToId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -166,6 +180,7 @@ exports.Prisma.CommentScalarFieldEnum = {
   id: 'id',
   workOrderId: 'workOrderId',
   content: 'content',
+  authorId: 'authorId',
   createdAt: 'createdAt'
 };
 
@@ -174,7 +189,26 @@ exports.Prisma.AttachmentScalarFieldEnum = {
   workOrderId: 'workOrderId',
   filename: 'filename',
   path: 'path',
+  type: 'type',
+  size: 'size',
   uploadedAt: 'uploadedAt'
+};
+
+exports.Prisma.HistoryScalarFieldEnum = {
+  id: 'id',
+  workOrderId: 'workOrderId',
+  authorId: 'authorId',
+  action: 'action',
+  changes: 'changes',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.MaintenanceDetailsScalarFieldEnum = {
+  id: 'id',
+  workOrderId: 'workOrderId',
+  requiredParts: 'requiredParts',
+  safetyTools: 'safetyTools',
+  procedures: 'procedures'
 };
 
 exports.Prisma.SortOrder = {
@@ -225,11 +259,14 @@ exports.WorkOrderStatus = exports.$Enums.WorkOrderStatus = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Session: 'Session',
   WorkOrder: 'WorkOrder',
   Vehicle: 'Vehicle',
   Task: 'Task',
   Comment: 'Comment',
-  Attachment: 'Attachment'
+  Attachment: 'Attachment',
+  History: 'History',
+  MaintenanceDetails: 'MaintenanceDetails'
 };
 
 /**
