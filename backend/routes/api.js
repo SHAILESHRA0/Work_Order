@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const roleCheck = require('../middleware/roleCheck');
+const workOrderValidationMiddleware = require('../middleware/workOrderValidationMiddleware');
 
 // Import controllers
 const { workOrderController } = require('../controllers/workOrderController');
@@ -11,7 +12,17 @@ const { managerController } = require('../controllers/managerController');
 const { hodController } = require('../controllers/hodController');
 
 // Work Order routes
-router.post('/work-orders', auth, workOrderController.create);
+router.post('/work-orders', auth, workOrderValidationMiddleware, async (req, res) => {
+    try {
+        const result = await workOrderController.create(req, res);
+        return result;
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            error: error.message || 'Failed to create work order'
+        });
+    }
+});
 router.get('/work-orders', auth, workOrderController.getAll);
 router.get('/work-orders/:id', auth, workOrderController.getById);
 router.put('/work-orders/:id', auth, workOrderController.update);

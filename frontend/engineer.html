@@ -182,13 +182,13 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="title">Title:
-                            <input type="text" id="title" required>
+                            <input type="text" id="title" name="title" required>
                         </label>
                         <label for="description">Description:
-                            <textarea id="description" rows="3"></textarea>
+                            <textarea id="description" name="description" rows="3"></textarea>
                         </label>
                         <label for="department">Department:
-                            <select id="department" required name="department">
+                            <select id="department" name="department" required>
                                 <option value="">Select Department</option>
                                 <option value="ELECTRICAL">Electrical</option>
                                 <option value="MECHANICAL">Mechanical</option>
@@ -200,18 +200,18 @@
                             </select>
                         </label>
                         <label for="carModel">Car Model:
-                            <input type="text" id="carModel" required>
+                            <input type="text" id="carModel" name="carModel" required>
                         </label>
                         <label for="licensePlate">License Plate:
-                            <input type="text" id="licensePlate" required>
+                            <input type="text" id="licensePlate" name="licensePlate" required>
                         </label>
                         <label for="woNumber">Order Number:
-                            <input type="text" id="woNumber" required onblur="fetchWorkOrderDetails(this.value)">
+                            <input type="text" id="woNumber" name="woNumber" required onblur="fetchWorkOrderDetails(this.value)">
                         </label>
                     </div>
                     <div class="form-group">
                         <label for="repairType">Repair Type:
-                            <select id="repairType" required>
+                            <select id="repairType" name="repairType" required>
                                 <option value="">Select Type</option>
                                 <option value="engine">Engine</option>
                                 <option value="transmission">Transmission</option>
@@ -221,14 +221,14 @@
                             </select>
                         </label>
                         <label for="priority">Priority:
-                            <select id="priority" required>
+                            <select id="priority" name="priority" required>
                                 <option value="HIGH">High</option>
                                 <option value="MEDIUM" selected>Medium</option>
                                 <option value="LOW">Low</option>
                             </select>
                         </label>
                         <label for="assignedTo">Assign To:
-                            <select id="assignedTo" required>
+                            <select id="assignedTo" name="assignedTo" required>
                                 <option value="">Select Technician</option>
                                 <!-- Technicians will be populated dynamically -->
                             </select>
@@ -273,8 +273,8 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Start Date: <input type="datetime-local" id="startDate" required></label>
-                        <label>Due Date: <input type="datetime-local" id="dueDate" required></label>
+                        <label>Start Date: <input type="datetime-local" id="startDate" name="startDate" required></label>
+                        <label>Due Date: <input type="datetime-local" id="dueDate" name="dueDate" required></label>
                     </div>
                 </div>
                 <div class="form-actions">
@@ -394,70 +394,79 @@
                         return;
                     }
 
-                    const formData = {
-                        title: document.getElementById('title').value,
-                        description: document.getElementById('description').value,
-                        department: document.getElementById('department').value,
-                        orderNumber: document.getElementById('woNumber').value,
-                        priority: document.getElementById('priority').value,
-                        startDate: document.getElementById('startDate').value,
-                        dueDate: document.getElementById('dueDate').value,
-                        assignedToId: document.getElementById('assignedTo').value || null,
+                    const formData = new FormData(this);
+                    const formDataObject = {};
+                    formData.forEach((value, key) => {
+                        formDataObject[key] = value;
+                    });
+
+                    // Validate title explicitly
+                    if (!formDataObject.title || !formDataObject.title.trim()) {
+                        throw new Error('Title is required');
+                    }
+
+                    const workOrderData = {
+                        title: formDataObject.title.trim(),
+                        description: formDataObject.description,
+                        department: formDataObject.department,
+                        orderNumber: formDataObject.woNumber,
+                        priority: formDataObject.priority?.toUpperCase() || 'MEDIUM',
+                        status: 'PENDING',
                         vehicle: {
-                            model: document.getElementById('carModel').value,
-                            licensePlate: document.getElementById('licensePlate').value,
-                            repairType: document.getElementById('repairType').value
+                            model: formDataObject.carModel,
+                            licensePlate: formDataObject.licensePlate,
+                            repairType: formDataObject.repairType
                         },
+                        startDate: formDataObject.startDate,
+                        dueDate: formDataObject.dueDate,
                         tasks: Array.from(document.querySelectorAll('.task-input'))
                             .map(input => ({
-                                title: input.value,
+                                title: input.value.trim(),
                                 status: 'PENDING'
                             }))
                             .filter(task => task.title),
-                        status: 'PENDING', // Explicitly set initial status
+                        parts: Array.from(document.querySelectorAll('#partsRequired input:checked'))
+                            .map(cb => cb.value),
+                        tools: Array.from(document.querySelectorAll('#safetyTools input:checked'))
+                            .map(cb => cb.value),
+                        assignedToId: formDataObject.assignedTo || null
                     };
 
-                    const response = await fetch('/api/workorders/create', {  // Changed from /api/work-order/create
+                    // First verify order number is available
+                    const canCreate = await canCreateWorkOrder(workOrderData.orderNumber);
+                    if (!canCreate) {
+                        throw new Error('Work order number already exists');
+                    }
+
+                    const response = await fetch('/api/workorders/create', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify(formData)
+                        body: JSON.stringify(workOrderData)
                     });
 
-                    let result;
-                    const contentType = response.headers.get('content-type');
-                    
-                    if (contentType && contentType.includes('application/json')) {
-                        result = await response.json().catch(e => {
-                            console.error('JSON parse error:', e);
-                            throw new Error('Invalid JSON response from server');
-                        });
-                    } else {
-                        throw new Error('Expected JSON response but got ' + contentType);
-                    }
-
                     if (!response.ok) {
-                        throw new Error(result.error || result.message || 'Failed to create work order');
+                        const errorData = await response.json();
+                        throw new Error(errorData.message || errorData.error || 'Failed to create work order');
                     }
 
+                    const result = await response.json();
                     alert('Work order created successfully!');
                     this.reset();
-
-                    // Refresh both pending and history views
+                    
+                    // Update views and switch to pending orders
                     await Promise.all([
                         updatePendingOrders(),
                         updateWorkOrderHistory()
                     ]);
-
-                    // Switch to pending orders view after creation
                     showSection('pending');
 
                 } catch (error) {
                     console.error('Error creating work order:', error);
-                    alert(error.message || 'Failed to create work order. Please try again.');
+                    alert(error.message || 'Failed to create work order. Please check all required fields.');
                 }
             });
 
@@ -788,7 +797,9 @@
                     document.getElementById('department').value = workOrder?.department || '';
                     document.getElementById('carModel').value = workOrder?.vehicle?.model || '';
                     document.getElementById('licensePlate').value = workOrder?.vehicle?.licensePlate || '';
-                    document.getElementById('repairType').value = workOrder?.maintenanceDetails?.type || '';
+                    document.getElementById('repairType').value = workOrder.repairType || 
+                        workOrder.vehicle?.repairType || 
+                        workOrder?.maintenanceDetails?.type || '';
                     document.getElementById('priority').value = workOrder?.maintenanceDetails?.priority || 'MEDIUM';
                     document.getElementById('assignedTo').value = workOrder?.assignedTo || '';
                     document.getElementById('startDate').value = workOrder?.scheduling?.startDate || '';
@@ -919,8 +930,10 @@
                         priority: formData.get('priority')?.toUpperCase() || 'HIGH',
                         vehicle: {
                             model: formData.get('carModel'),
-                            licensePlate: formData.get('licensePlate')
+                            licensePlate: formData.get('licensePlate'),
+                            repairType: formData.get('repairType')  // Add repair type to vehicle object
                         },
+                        repairType: formData.get('repairType'),     // Also include at root level for consistency
                         startDate: formData.get('startDate'),
                         dueDate: formData.get('dueDate'),
                         assignedToId: formData.get('assignedTo')
@@ -984,6 +997,24 @@
             // Initialize both tables
             updatePendingOrders();
             updateWorkOrderHistory();
+
+            // Add logout button functionality
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                // Clear session storage
+                sessionStorage.clear();
+                localStorage.clear();
+                
+                // Clear any cached data
+                window.location.replace('../index.html');
+                
+                // Prevent going back
+                window.history.forward();
+            });
+            
+            // Check authentication on page load
+            if (!sessionStorage.getItem('token')) {
+                window.location.replace('../index.html');
+            }
         });
 
         // Add fetchWorkOrderDetails function to global scope
@@ -1084,8 +1115,10 @@
                     priority: formData.get('priority')?.toUpperCase() || 'HIGH',
                     vehicle: {
                         model: formData.get('carModel'),
-                        licensePlate: formData.get('licensePlate')
+                        licensePlate: formData.get('licensePlate'),
+                        repairType: formData.get('repairType')  // Add repair type to vehicle object
                     },
+                    repairType: formData.get('repairType'),     // Also include at root level for consistency
                     startDate: formData.get('startDate'),
                     dueDate: formData.get('dueDate'),
                     assignedToId: formData.get('assignedTo')
@@ -1181,7 +1214,7 @@
                         <td>${wo.title || 'N/A'}</td>
                         <td>${wo.vehicle?.model || 'N/A'}</td>
                         <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
-                        <td>${wo.repairType || 'N/A'}</td>
+                        <td>${wo.repairType || wo.vehicle?.repairType || 'N/A'}</td>
                         <td>${wo.priority || 'N/A'}</td>
                         <td>${wo.assignedTo?.name || 'Unassigned'}</td>
                         <td><span class="status-badge status-pending">PENDING</span></td>
@@ -1244,7 +1277,7 @@
                     <td>${wo.title || 'N/A'}</td>
                     <td>${wo.vehicle?.model || 'N/A'}</td>
                     <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
-                    <td>${wo.repairType || 'N/A'}</td>
+                    <td>${wo.repairType || wo.vehicle?.repairType || 'N/A'}</td>
                     <td>${wo.priority || 'N/A'}</td>
                     <td>${wo.assignedTo?.name || 'Unassigned'}</td>
                     <td><span class="status-badge status-${(wo.status || 'pending').toLowerCase()}">${wo.status}</span></td>

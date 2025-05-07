@@ -27,7 +27,8 @@ const WORK_ORDER_STATUS = {
     ISSUE_REPORTED: 'ISSUE_REPORTED',
     COMPLETED: 'COMPLETED',
     REJECTED: 'REJECTED',
-    CANCELLED: 'CANCELLED'
+    CANCELLED: 'CANCELLED',
+    TECHNICIAN_ASSIGNED: 'TECHNICIAN_ASSIGNED'
 };
 
 const WORKFLOW_STEPS = {
@@ -162,6 +163,20 @@ const workOrderSchema = new mongoose.Schema({
             totalProcessingTime: Number,
             handoffs: Number
         }
+    },
+    assignedTechnician: {
+        technicianId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Technician'
+        },
+        assignedAt: Date,
+        assignedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User'
+        },
+        startedAt: Date,
+        completedAt: Date,
+        notes: String
     }
 });
 
@@ -225,7 +240,8 @@ workOrderSchema.methods.validateWorkflowStatus = function(status) {
         [WORK_ORDER_STATUS.SUBMITTED]: [WORK_ORDER_STATUS.IN_REVIEW, WORK_ORDER_STATUS.NEEDS_INFO, WORK_ORDER_STATUS.REJECTED],
         [WORK_ORDER_STATUS.IN_REVIEW]: [WORK_ORDER_STATUS.PENDING_APPROVAL, WORK_ORDER_STATUS.NEEDS_INFO, WORK_ORDER_STATUS.REJECTED],
         [WORK_ORDER_STATUS.PENDING_APPROVAL]: [WORK_ORDER_STATUS.APPROVED, WORK_ORDER_STATUS.REJECTED],
-        [WORK_ORDER_STATUS.APPROVED]: [WORK_ORDER_STATUS.ASSIGNED, WORK_ORDER_STATUS.CANCELLED],
+        [WORK_ORDER_STATUS.APPROVED]: [WORK_ORDER_STATUS.TECHNICIAN_ASSIGNED, WORK_ORDER_STATUS.CANCELLED],
+        [WORK_ORDER_STATUS.TECHNICIAN_ASSIGNED]: [WORK_ORDER_STATUS.IN_PROGRESS, WORK_ORDER_STATUS.ON_HOLD],
         [WORK_ORDER_STATUS.ASSIGNED]: [WORK_ORDER_STATUS.IN_PROGRESS, WORK_ORDER_STATUS.ON_HOLD],
         [WORK_ORDER_STATUS.IN_PROGRESS]: [WORK_ORDER_STATUS.COMPLETED, WORK_ORDER_STATUS.BLOCKED, WORK_ORDER_STATUS.ISSUE_REPORTED],
         [WORK_ORDER_STATUS.BLOCKED]: [WORK_ORDER_STATUS.IN_PROGRESS, WORK_ORDER_STATUS.CANCELLED],
@@ -260,6 +276,25 @@ workOrderSchema.methods.updateWorkflowStatus = async function(newStatus, userId,
         this.completedAt = new Date();
     }
 
+    return this.save();
+};
+
+// Add technician assignment method
+workOrderSchema.methods.assignTechnician = async function(technicianId, assignedBy, notes = '') {
+    if (this.status !== WORK_ORDER_STATUS.APPROVED) {
+        throw new Error('Work order must be approved before assigning technician');
+    }
+
+    this.assignedTechnician = {
+        technicianId,
+        assignedAt: new Date(),
+        assignedBy,
+        notes
+    };
+
+    await this.updateWorkflowStatus(WORK_ORDER_STATUS.TECHNICIAN_ASSIGNED, assignedBy, 
+        `Technician ${technicianId} assigned to work order`);
+    
     return this.save();
 };
 

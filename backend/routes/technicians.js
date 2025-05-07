@@ -29,7 +29,7 @@ router.get('/api/technicians', auth, async (req, res) => {
         }
 
         const where = {
-            role: 'technician',
+            role: 'TECHNICIAN',
             isActive: true
         };
 
@@ -43,7 +43,8 @@ router.get('/api/technicians', auth, async (req, res) => {
                 id: true,
                 name: true,
                 department: true,
-                isActive: true
+                skills: true,
+                availability: true
             },
             orderBy: {
                 name: 'asc'
@@ -60,4 +61,15 @@ router.get('/api/technicians', auth, async (req, res) => {
     }
 });
 
-export { router as technicianRouter };
+// Add new technician (manager only)
+router.post('/api/technicians', auth, async (req, res) => {
+    try {
+        const technician = new db.user(req.body);
+        await technician.save();
+        res.status(201).json(technician);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+export default router;

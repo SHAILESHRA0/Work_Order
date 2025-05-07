@@ -378,5 +378,141 @@ export const workOrderController = {
                 details: error.message
             });
         }
+    },
+
+    async getPendingApproval(req, res) {
+        try {
+            const pendingOrders = await prisma.workOrder.findMany({
+                where: {
+                    status: 'PENDING'
+                },
+                include: {
+                    vehicle: true,
+                    engineer: {
+                        select: {
+                            id: true,
+                            name: true,
+                            department: true
+                        }
+                    },
+                    tasks: {
+                        select: {
+                            title: true,
+                            priority: true,
+                            status: true
+                        }
+                    }
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            });
+
+            return res.status(200).json({
+                success: true,
+                data: pendingOrders
+            });
+        } catch (error) {
+            console.error('Error fetching pending approval orders:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to fetch pending approval orders',
+                details: error.message
+            });
+        }
+    },
+
+    async approveWorkOrder(req, res) {
+        try {
+            const { id } = req.params;
+            const { comments, technicianId } = req.body;
+
+            if (!technicianId) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Technician ID is required for approval'
+                });
+            }
+
+            const workOrder = await prisma.workOrder.update({
+                where: { id },
+                data: {
+                    status: 'APPROVED',
+                    assignedToId: technicianId,
+                    approvalDetails: {
+                        approvedById: req.user.id,
+                        approvedAt: new Date(),
+                        comments
+                    },
+                    statusHistory: {
+                        create: {
+                            status: 'APPROVED',
+                            updatedById: req.user.id,
+                            comments: `Approved and assigned to technician ${technicianId}`
+                        }
+                    }
+                },
+                include: {
+                    assignedTo: true,
+                    vehicle: true,
+                    tasks: true
+                }
+            });
+
+            return res.status(200).json({
+                success: true,
+                message: 'Work order approved and assigned successfully',
+                data: workOrder
+            });
+
+        } catch (error) {
+            console.error('Error approving work order:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to approve work order',
+                details: error.message
+            });
+        }
+    },
+
+    async rejectWorkOrder(req, res) {
+        try {
+            const { id } = req.params;
+            const { comments } = req.body;
+
+            if (!comments?.trim()) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Comments are required when rejecting a work order'
+                });
+            }
+
+            const workOrder = await prisma.workOrder.update({
+                where: { id },
+                data: {
+                    status: 'REJECTED',
+                    approvalDetails: {
+                        rejectedById: req.user.id,
+                        rejectedAt: new Date(),
+                        comments
+                    },
+                    statusHistory: {
+                        create: {
+                            status: 'REJECTED',
+                            updatedById: req.user.id,
+                            details: comments
+                        }
+                    }
+                }
+            });
+
+            return res.json({ success: true, data: workOrder });
+        } catch (error) {
+            return res.status(500).json({ 
+                success: false, 
+                error: 'Failed to reject work order',
+                details: error.message 
+            });
+        }
     }
 };
