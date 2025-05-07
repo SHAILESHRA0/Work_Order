@@ -287,7 +287,7 @@
         <section class="pending-orders" style="display: none;">
             <h2>Pending Work Orders</h2>
             <div class="table-controls">
-                <input type="text" id="pendingSearchInput" placeholder="Search pending orders...">
+                <input type="text" id="pendingSearchInput" placeholder="Search by title...">
                 <select id="pendingPriorityFilter">
                     <option value="">All Priorities</option>
                     <option value="HIGH">High</option>
@@ -564,6 +564,9 @@
                         return;
                     }
 
+                    const searchTerm = document.getElementById('pendingSearchInput').value.toLowerCase();
+                    const priorityFilter = document.getElementById('pendingPriorityFilter').value;
+
                     console.log('Fetching pending orders...');
                     const response = await fetch("/api/workorders/pending", {
                         headers: {
@@ -586,11 +589,14 @@
                         throw new Error('Invalid data format received from server');
                     }
 
-                    // Filter for truly pending orders
-                    const filteredOrders = pendingOrders.filter(wo => 
-                        wo.status === 'PENDING' || wo.status === 'IN_REVIEW' || wo.status === 'ASSIGNED'
-                    );
+                    // Filter orders based on search term and priority
+                    const filteredOrders = pendingOrders.filter(wo => {
+                        const matchesSearch = wo.title?.toLowerCase().includes(searchTerm);
+                        const matchesPriority = !priorityFilter || wo.priority === priorityFilter;
+                        return wo.status === 'PENDING' && matchesSearch && matchesPriority;
+                    });
 
+                    console.log('Filtered pending orders:', filteredOrders.length);
                     renderPendingOrders(filteredOrders);
 
                 } catch (error) {
@@ -1295,6 +1301,87 @@
                 alert(`Error loading pending orders: ${error.message}\nPlease check console for details.`);
             }
         }
+
+        // Add event listeners for search and filter
+        document.addEventListener('DOMContentLoaded', function() {
+            // ...existing DOMContentLoaded code...
+
+            // Add these new event listeners
+            document.getElementById('pendingSearchInput').addEventListener('input', updatePendingOrders);
+            document.getElementById('pendingPriorityFilter').addEventListener('change', updatePendingOrders);
+
+            // ...rest of existing code...
+        });
+
+        // Refactored updatePendingOrders function
+        async function updatePendingOrders() {
+            try {
+                const token = sessionStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                // Get search and filter values
+                const searchTerm = document.getElementById('pendingSearchInput')?.value?.toLowerCase().trim() || '';
+                const priorityFilter = document.getElementById('pendingPriorityFilter')?.value || '';
+
+                console.log('Search term:', searchTerm);
+                console.log('Priority filter:', priorityFilter);
+
+                const response = await fetch("/api/workorders/pending", {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                const pendingOrders = Array.isArray(result) ? result : (result.data || []);
+
+                // Apply filters
+                const filteredOrders = pendingOrders.filter(wo => {
+                    const titleMatch = wo.title?.toLowerCase().includes(searchTerm);
+                    const priorityMatch = !priorityFilter || wo.priority === priorityFilter;
+                    const statusMatch = wo.status === 'PENDING';
+
+                    console.log(`Order ${wo.orderNumber}: Title Match: ${titleMatch}, Priority Match: ${priorityMatch}, Status Match: ${statusMatch}`);
+                    
+                    return statusMatch && titleMatch && priorityMatch;
+                });
+
+                console.log('Filtered orders:', filteredOrders);
+
+                // Render the filtered orders
+                renderPendingOrders(filteredOrders);
+
+            } catch (error) {
+                handlePendingOrdersError(error);
+            }
+        }
+
+        // Add debounce function to prevent too many API calls
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Add event listeners with debounce
+        const debouncedUpdate = debounce(updatePendingOrders, 300);
+        
+        document.getElementById('pendingSearchInput')?.addEventListener('input', debouncedUpdate);
+        document.getElementById('pendingPriorityFilter')?.addEventListener('change', updatePendingOrders);
     </script>
 </body>
 </html>
