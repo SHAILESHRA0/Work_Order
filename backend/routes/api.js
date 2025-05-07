@@ -27,6 +27,8 @@ router.get('/work-orders', auth, workOrderController.getAll);
 router.get('/work-orders/:id', auth, workOrderController.getById);
 router.put('/work-orders/:id', auth, workOrderController.update);
 router.delete('/work-orders/:id', auth, workOrderController.delete);
+router.put('/work-orders/:id/approve', auth, roleCheck(['MANAGER']), workOrderController.approveWorkOrder);
+router.put('/work-orders/:id/reject', auth, roleCheck(['MANAGER']), workOrderController.rejectWorkOrder);
 
 // Technician routes
 router.get('/technician/work-orders', auth, roleCheck(['TECHNICIAN']), technicianController.getAssignedWorkOrders);
@@ -40,7 +42,7 @@ router.get('/supervisor/technicians', auth, roleCheck(['SUPERVISOR']), superviso
 // Manager routes
 router.get('/manager/work-orders', auth, roleCheck(['MANAGER']), managerController.getWorkOrders);
 router.put('/manager/work-orders/:id/approve', auth, roleCheck(['MANAGER']), managerController.approveWorkOrder);
-router.put('/manager/work-orders/:id/clear', auth, roleCheck(['MANAGER']), managerController.clearWorkOrder);
+router.put('/manager/work-orders/:id/reject', auth, roleCheck(['MANAGER']), managerController.rejectWorkOrder);
 
 // HOD routes
 router.get('/hod/work-orders', auth, roleCheck(['HOD']), hodController.getWorkOrders);

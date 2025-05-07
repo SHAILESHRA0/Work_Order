@@ -331,22 +331,31 @@
             <h2>Work Order Details</h2>
             <div id="workOrderDetails"></div>
             <div class="approval-section">
-                <div class="technician-assignment" id="technicianAssignment">
-                    <h3>Technician Assignment</h3>
-                    <div class="form-group">
-                        <label for="assignedTechnician">Select Technician:</label>
-                        <select id="assignedTechnician" class="form-control" required>
-                            <option value="">Choose a technician</option>
-                        </select>
-                    </div>
-                    <div class="technician-info" id="technicianInfo"></div>
+                <div class="technician-assignment" id="technicianAssignment" style="display: none;">
+                    <!-- Remove technician selection UI since it's pre-assigned -->
                 </div>
-                <textarea id="approvalComments" placeholder="Add comments (required for rejection)"></textarea>
+                <textarea id="approvalComments" placeholder="Add comments (optional for approval, required for rejection)"></textarea>
                 <div class="modal-actions">
-                    <button id="approveBtn" class="approve-btn">Approve & Assign</button>
+                    <button id="approveBtn" class="approve-btn">Approve Work Order</button>
                     <button id="rejectBtn" class="reject-btn">Reject</button>
                     <button class="close-btn">Close</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Rejection Modal -->
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Reject Work Order</h2>
+            <div class="form-group">
+                <label for="rejectReason">Rejection Reason:</label>
+                <textarea id="rejectReason" required placeholder="Please provide a reason for rejection..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button id="confirmReject" class="reject-btn">Confirm Rejection</button>
+                <button class="close-btn">Cancel</button>
             </div>
         </div>
     </div>
@@ -361,6 +370,8 @@
             const modal = document.getElementById('workOrderModal');
             const logoutBtn = document.getElementById('logoutBtn');
             let selectedWorkOrder = null;
+            let workOrderToReject = null;
+            let workOrders = []; // Add this line to store work orders
 
             // Logout functionality
             logoutBtn.addEventListener('click', () => {
@@ -403,7 +414,7 @@
                     }
 
                     const result = await response.json();
-                    const workOrders = result.data || result;
+                    workOrders = result.data || result; // Store work orders globally
                     const filteredOrders = filterWorkOrders(workOrders);
                     renderWorkOrders(filteredOrders);
                 } catch (error) {
@@ -462,76 +473,155 @@
                         <td>${new Date(wo.createdAt).toLocaleString()}</td>
                         <td><span class="status-badge ${wo.status.toLowerCase()}">${wo.status}</span></td>
                         <td>
-                            <button onclick="viewDetails('${wo.id}')" class="view-btn">View</button>
-                            ${wo.status === 'pending' ? `
-                                <button onclick="approveWorkOrder('${wo.id}')" class="approve-btn">Approve</button>
-                                <button onclick="clearWorkOrder('${wo.id}')" class="clear-btn">Clear</button>
+                            ${wo.status === 'PENDING' ? `
+                                <button onclick="handleApproval('${wo.id}', true)" class="approve-btn">
+                                    Approve${wo.assignedTo ? '' : ' & Assign'}
+                                </button>
+                                <button onclick="handleApproval('${wo.id}', false)" class="reject-btn">Reject</button>
                             ` : ''}
                         </td>
+                        ${wo.assignedTo ? `
+                            <td>
+                                <small>Assigned to: ${wo.assignedTo.name}</small>
+                            </td>
+                        ` : ''}
                     </tr>
                 `).join('');
             }
 
-            async function loadTechnicians() {
-                try {
-                    const response = await fetch('/api/technicians', {
-                        headers: {
-                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-                    if (!response.ok) throw new Error('Failed to load technicians');
-                    const technicians = await response.json();
-                    
-                    const techSelect = document.getElementById('assignedTechnician');
-                    techSelect.innerHTML = '<option value="">Select Technician</option>' +
-                        technicians.map(tech => `
-                            <option value="${tech.id}">${tech.name} - ${tech.department}</option>
-                        `).join('');
-                } catch (error) {
-                    console.error('Error loading technicians:', error);
-                }
+            // Make functions globally available
+            window.showApprovalDialog = showApprovalDialog;
+            window.handleApproval = handleApproval;
+
+            async function showApprovalDialog(workOrderId) {
+                const modal = document.getElementById('workOrderModal');
+                
+                // Clear previous values
+                document.getElementById('approvalComments').value = '';
+                
+                // Show details section
+                document.getElementById('workOrderDetails').style.display = 'block';
+                modal.style.display = 'block';
+                
+                // Update approve button to handle direct approval
+                document.getElementById('approveBtn').onclick = () => {
+                    handleApproval(workOrderId, true);
+                };
             }
 
             async function handleApproval(id, isApproved) {
-                const comments = document.getElementById('approvalComments').value;
-                const technicianId = document.getElementById('assignedTechnician').value;
-                const token = sessionStorage.getItem('token');
-                
+                if (!isApproved) {
+                    workOrderToReject = id;
+                    rejectModal.style.display = 'block';
+                    return;
+                }
+
+                const selectedOrder = workOrders.find(wo => wo.id === id);
+                if (!selectedOrder) {
+                    showNotification('Work order not found', 'error');
+                    return;
+                }
+
+                const technicianId = selectedOrder.assignedToId || selectedOrder.assignedTo?.id;
+                if (!technicianId) {
+                    showNotification('No technician assigned to this work order', 'error');
+                    return;
+                }
+
+                const comments = document.getElementById('approvalComments').value.trim();
+
                 try {
-                    const response = await fetch(`/api/workorders/${id}/${isApproved ? 'approve' : 'reject'}`, {
+                    const response = await fetch(`/api/workorders/${id}/approve`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
                         },
                         body: JSON.stringify({
-                            comments,
-                            technicianId: isApproved ? technicianId : null,
-                            status: isApproved ? 'TECHNICIAN_ASSIGNED' : 'REJECTED'
+                            technicianId,
+                            comments: comments || 'Work order approved'
                         })
                     });
 
-                    if (!response.ok) throw new Error('Failed to process work order');
-                    const result = await response.json();
-
-                    if (isApproved && technicianId) {
-                        try {
-                            await NotificationService.notifyTechnician(technicianId, id, token);
-                            showNotification('Technician notified successfully', 'success');
-                        } catch (notifyError) {
-                            showNotification('Work order approved but technician notification failed', 'warning');
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        if (response.status === 400) {
+                            throw new Error(errorData.error || 'Invalid request. Please check work order details.');
+                        } else if (response.status === 401) {
+                            sessionStorage.clear();
+                            window.location.href = '/login.html';
+                            throw new Error('Session expired. Please login again.');
+                        } else {
+                            throw new Error(errorData.error || 'Failed to approve work order');
                         }
                     }
 
-                    modal.style.display = 'none';
+                    showNotification('Work order approved successfully', 'success');
                     await loadPendingWorkOrders();
-                    showNotification(`Work order ${isApproved ? 'approved' : 'rejected'} successfully`, 'success');
+                    modal.style.display = 'none';
+                } catch (error) {
+                    console.error('Error details:', error);
+                    showNotification(error.message || 'An unexpected error occurred while approving work order', 'error');
+                }
+            }
+
+            async function handleRejection() {
+                const reason = document.getElementById('rejectReason').value.trim();
+                
+                if (!reason) {
+                    showNotification('Please provide a rejection reason', 'warning');
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`/api/workorders/${workOrderToReject}/reject`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({
+                            comments: reason
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || errorData.message || 'Failed to reject work order');
+                    }
+
+                    showNotification('Work order rejected successfully', 'success');
+                    await loadPendingWorkOrders();
+                    rejectModal.style.display = 'none';
+                    document.getElementById('rejectReason').value = '';
+                    workOrderToReject = null;
                 } catch (error) {
                     console.error('Error:', error);
                     showNotification(error.message, 'error');
                 }
             }
+
+            // Add event listeners for rejection modal
+            document.getElementById('confirmReject').addEventListener('click', handleRejection);
+            document.querySelectorAll('#rejectModal .close, #rejectModal .close-btn').forEach(el => {
+                el.addEventListener('click', () => {
+                    rejectModal.style.display = 'none';
+                    workOrderToReject = null;
+                });
+            });
+
+            // Add styles for rejection modal
+            const additionalStyles = `
+                #rejectReason {
+                    width: 100%;
+                    min-height: 100px;
+                    margin: 10px 0;
+                    padding: 8px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                }
+            `;
+            document.querySelector('style').textContent += additionalStyles;
 
             function showNotification(message, type = 'info') {
                 const notification = document.createElement('div');
@@ -566,38 +656,10 @@
             `;
             document.head.appendChild(style);
 
-            // Update technician info when selected
-            document.getElementById('assignedTechnician').addEventListener('change', async (e) => {
-                const technicianId = e.target.value;
-                const infoDiv = document.getElementById('technicianInfo');
-                
-                if (!technicianId) {
-                    infoDiv.innerHTML = '';
-                    return;
-                }
-
-                try {
-                    const response = await fetch(`/api/technicians/${technicianId}`, {
-                        headers: {
-                            'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-                        }
-                    });
-                    const technician = await response.json();
-                    
-                    infoDiv.innerHTML = `
-                        <p><strong>Department:</strong> ${technician.department}</p>
-                        <p><strong>Specializations:</strong> ${technician.specializations.join(', ')}</p>
-                        <p><strong>Current Workload:</strong> ${technician.activeWorkOrders || 0} active work orders</p>
-                    `;
-                } catch (error) {
-                    console.error('Error fetching technician details:', error);
-                    infoDiv.innerHTML = '<p class="text-danger">Error loading technician details</p>';
-                }
-            });
-
             function viewWorkOrderDetails(workOrder) {
                 selectedWorkOrder = workOrder;
                 const detailsDiv = document.getElementById('workOrderDetails');
+
                 detailsDiv.innerHTML = `
                     <div class="details-grid">
                         <p><strong>Order Number:</strong> ${workOrder.orderNumber}</p>
@@ -606,22 +668,13 @@
                         <p><strong>Priority:</strong> ${workOrder.priority}</p>
                         <p><strong>Vehicle:</strong> ${workOrder.vehicle.model} (${workOrder.vehicle.licensePlate})</p>
                         <p><strong>Repair Type:</strong> ${workOrder.repairType}</p>
-                        <p><strong>Engineer:</strong> ${workOrder.engineer}</p>
-                        <p><strong>Assigned Technician:</strong> ${workOrder.assignedTechnician?.name || 'Not Assigned'}</p>
+                        <p><strong>Engineer:</strong> ${workOrder.createdBy?.name || 'N/A'}</p>
+                        <p><strong>Assigned Technician:</strong> ${workOrder.assignedTo?.name || 'Not Assigned'}</p>
                         <p><strong>Created:</strong> ${new Date(workOrder.createdAt).toLocaleString()}</p>
                         <p><strong>Status:</strong> ${workOrder.status}</p>
                     </div>
                 `;
                 modal.style.display = 'block';
-                
-                // Show/hide technician assignment based on status
-                const techAssignment = document.getElementById('technicianAssignment');
-                techAssignment.style.display = workOrder.status === 'PENDING' ? 'block' : 'none';
-                
-                // Load technicians if showing assignment
-                if (workOrder.status === 'PENDING') {
-                    loadTechnicians();
-                }
             }
 
             // Add event listeners for approve/reject buttons

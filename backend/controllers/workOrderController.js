@@ -425,12 +425,12 @@ export const workOrderController = {
     async approveWorkOrder(req, res) {
         try {
             const { id } = req.params;
-            const { comments, technicianId } = req.body;
+            const { technicianId, comments } = req.body;
 
             if (!technicianId) {
                 return res.status(400).json({
                     success: false,
-                    error: 'Technician ID is required for approval'
+                    error: 'Technician ID is required'
                 });
             }
 
@@ -439,29 +439,23 @@ export const workOrderController = {
                 data: {
                     status: 'APPROVED',
                     assignedToId: technicianId,
-                    approvalDetails: {
-                        approvedById: req.user.id,
-                        approvedAt: new Date(),
-                        comments
-                    },
-                    statusHistory: {
+                    updatedAt: new Date(),
+                    comments: {
                         create: {
-                            status: 'APPROVED',
-                            updatedById: req.user.id,
-                            comments: `Approved and assigned to technician ${technicianId}`
+                            text: comments || 'Work order approved',
+                            userId: req.user.id,
+                            type: 'APPROVAL'
                         }
                     }
                 },
                 include: {
                     assignedTo: true,
-                    vehicle: true,
-                    tasks: true
+                    comments: true
                 }
             });
 
-            return res.status(200).json({
+            return res.json({
                 success: true,
-                message: 'Work order approved and assigned successfully',
                 data: workOrder
             });
 
@@ -469,8 +463,7 @@ export const workOrderController = {
             console.error('Error approving work order:', error);
             return res.status(500).json({
                 success: false,
-                error: 'Failed to approve work order',
-                details: error.message
+                error: 'Failed to approve work order'
             });
         }
     },
@@ -483,7 +476,7 @@ export const workOrderController = {
             if (!comments?.trim()) {
                 return res.status(400).json({
                     success: false,
-                    error: 'Comments are required when rejecting a work order'
+                    error: 'Rejection reason is required'
                 });
             }
 
@@ -491,27 +484,30 @@ export const workOrderController = {
                 where: { id },
                 data: {
                     status: 'REJECTED',
-                    approvalDetails: {
-                        rejectedById: req.user.id,
-                        rejectedAt: new Date(),
-                        comments
-                    },
-                    statusHistory: {
+                    updatedAt: new Date(),
+                    comments: {
                         create: {
-                            status: 'REJECTED',
-                            updatedById: req.user.id,
-                            details: comments
+                            text: comments,
+                            userId: req.user.id,
+                            type: 'REJECTION'
                         }
                     }
+                },
+                include: {
+                    comments: true
                 }
             });
 
-            return res.json({ success: true, data: workOrder });
+            return res.json({
+                success: true,
+                data: workOrder
+            });
+
         } catch (error) {
-            return res.status(500).json({ 
-                success: false, 
-                error: 'Failed to reject work order',
-                details: error.message 
+            console.error('Error rejecting work order:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to reject work order'
             });
         }
     }

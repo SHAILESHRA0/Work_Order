@@ -27,11 +27,15 @@ enum Priority {
 
 enum WorkOrderStatus {
   PENDING
+  APPROVED
   ASSIGNED
   IN_PROGRESS
   COMPLETED
   REJECTED
   ON_HOLD
+  CANCELLED
+  ISSUE_REPORTED
+  NEEDS_REVIEW
 }
 
 enum Department {
@@ -60,12 +64,13 @@ model User {
   sessions   Session[] // Add this line to handle sessions
 
   // Relations
-  createdOrders    WorkOrder[] @relation("CreatedByRelation")
-  assignedOrders   WorkOrder[] @relation("AssignedToRelation")
-  supervisedOrders WorkOrder[] @relation("SupervisedByRelation")
-  assignedTasks    Task[]      @relation("TaskAssignee")
-  comments         Comment[]   @relation("CommentAuthor")
-  history          History[]   @relation("HistoryAuthor")
+  createdOrders    WorkOrder[]     @relation("CreatedByRelation")
+  assignedOrders   WorkOrder[]     @relation("AssignedToRelation")
+  supervisedOrders WorkOrder[]     @relation("SupervisedByRelation")
+  assignedTasks    Task[]          @relation("TaskAssignee")
+  comments         Comment[]       @relation("CommentAuthor")
+  history          History[]       @relation("HistoryAuthor")
+  statusUpdates    StatusHistory[] @relation("StatusUpdatedBy") // Add this line
 
   @@index([role, isActive, department])
   @@map("users")
@@ -116,6 +121,7 @@ model WorkOrder {
   attachments        Attachment[]
   history            History[]
   maintenanceDetails MaintenanceDetails?
+  statusHistory      StatusHistory[] // Add this new relation
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -194,4 +200,18 @@ model MaintenanceDetails {
   safetyTools   String[]
   procedures    String[]
   workOrder     WorkOrder @relation(fields: [workOrderId], references: [id])
+}
+
+model StatusHistory {
+  id          String          @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId String          @db.ObjectId
+  status      WorkOrderStatus
+  updatedById String          @db.ObjectId
+  comments    String?
+  updatedAt   DateTime        @default(now())
+
+  workOrder WorkOrder @relation(fields: [workOrderId], references: [id])
+  updatedBy User      @relation("StatusUpdatedBy", fields: [updatedById], references: [id])
+
+  @@map("status_history")
 }

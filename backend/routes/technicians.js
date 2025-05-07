@@ -72,4 +72,4 @@ router.post('/api/technicians', auth, async (req, res) => {
     }
 });
 
-export default router;
+export { router as technicianRouter };

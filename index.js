@@ -10,8 +10,6 @@ import { adminRouter } from "./backend/routes/admin.js";
 import { authRouter } from "./backend/routes/auth.js";
 import { technicianRouter } from './backend/routes/technicians.js';
 import { workOrderRouter } from "./backend/routes/workOrders.js";
-// import { userRouter } from "./routes/users.js";
-// import { taskRouter } from "./routes/tasks.js";
 
 config();
 const __filename = fileURLToPath(import.meta.url);
@@ -31,7 +29,7 @@ app.use(bodyParser.json());
 app.use(authRouter);
 app.use(adminRouter);
 app.use('/api/workorders', workOrderRouter);
-app.use(technicianRouter);
+app.use('/api/technicians', technicianRouter);
 
 app.get("/api", (req, res) => {
   res.send("🚀 Welcome to the Work Order Management System API!");

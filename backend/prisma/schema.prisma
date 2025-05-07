@@ -1,0 +1,39 @@
+enum WorkOrderStatus {
+  DRAFT
+  PENDING
+  IN_REVIEW
+  APPROVED
+  REJECTED
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELLED
+}
+
+model WorkOrder {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String
+  priority      String
+  vehicle       Vehicle        @relation(fields: [vehicleId], references: [id])
+  vehicleId     String         @db.ObjectId
+  repairType    String
+  createdBy     User           @relation(fields: [createdById], references: [id])
+  createdById   String         @db.ObjectId
+  assignedTo    User?          @relation(fields: [assignedToId], references: [id])
+  assignedToId  String?        @db.ObjectId
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  status        WorkOrderStatus @default(PENDING)
+  statusHistory StatusHistory[]
+}
+
+model StatusHistory {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  workOrderId String   @db.ObjectId
+  status      String
+  updatedById String   @db.ObjectId
+  updatedAt   DateTime @default(now())
+  comments    String?
+  workOrder   WorkOrder @relation(fields: [workOrderId], references: [id])
+}

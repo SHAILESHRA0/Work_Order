@@ -26,12 +26,20 @@ const managerController = {
     async approveWorkOrder(req, res) {
         try {
             const { id } = req.params;
-            const { comments } = req.body;
+            const { comments, technicianId } = req.body;
+
+            if (!technicianId) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Technician ID is required for approval'
+                });
+            }
 
             const workOrder = await prisma.workOrder.update({
                 where: { id },
                 data: {
                     status: WORK_ORDER_STATUS.APPROVED,
+                    assignedToId: technicianId,
                     approvalDetails: {
                         approvedById: req.user.id,
                         approvedAt: new Date(),
@@ -46,9 +54,18 @@ const managerController = {
                     }
                 }
             });
-            res.json(workOrder);
+
+            return res.json({
+                success: true,
+                message: 'Work order approved successfully',
+                data: workOrder
+            });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to approve work order',
+                details: error.message
+            });
         }
     },
 
@@ -73,6 +90,13 @@ const managerController = {
             const { id } = req.params;
             const { comments } = req.body;
 
+            if (!comments?.trim()) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Comments are required when rejecting a work order'
+                });
+            }
+
             const workOrder = await prisma.workOrder.update({
                 where: { id },
                 data: {
@@ -91,9 +115,18 @@ const managerController = {
                     }
                 }
             });
-            res.json(workOrder);
+
+            return res.json({
+                success: true,
+                message: 'Work order rejected successfully',
+                data: workOrder
+            });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to reject work order',
+                details: error.message
+            });
         }
     }
 };

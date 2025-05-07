@@ -58,6 +58,11 @@ export type History = $Result.DefaultSelection<Prisma.$HistoryPayload>
  * 
  */
 export type MaintenanceDetails = $Result.DefaultSelection<Prisma.$MaintenanceDetailsPayload>
+/**
+ * Model StatusHistory
+ * 
+ */
+export type StatusHistory = $Result.DefaultSelection<Prisma.$StatusHistoryPayload>
 
 /**
  * Enums
@@ -87,11 +92,15 @@ export type Priority = (typeof Priority)[keyof typeof Priority]
 
 export const WorkOrderStatus: {
   PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
   ASSIGNED: 'ASSIGNED',
   IN_PROGRESS: 'IN_PROGRESS',
   COMPLETED: 'COMPLETED',
   REJECTED: 'REJECTED',
-  ON_HOLD: 'ON_HOLD'
+  ON_HOLD: 'ON_HOLD',
+  CANCELLED: 'CANCELLED',
+  ISSUE_REPORTED: 'ISSUE_REPORTED',
+  NEEDS_REVIEW: 'NEEDS_REVIEW'
 };
 
 export type WorkOrderStatus = (typeof WorkOrderStatus)[keyof typeof WorkOrderStatus]
@@ -310,6 +319,16 @@ export class PrismaClient<
     * ```
     */
   get maintenanceDetails(): Prisma.MaintenanceDetailsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.statusHistory`: Exposes CRUD operations for the **StatusHistory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more StatusHistories
+    * const statusHistories = await prisma.statusHistory.findMany()
+    * ```
+    */
+  get statusHistory(): Prisma.StatusHistoryDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -758,7 +777,8 @@ export namespace Prisma {
     Comment: 'Comment',
     Attachment: 'Attachment',
     History: 'History',
-    MaintenanceDetails: 'MaintenanceDetails'
+    MaintenanceDetails: 'MaintenanceDetails',
+    StatusHistory: 'StatusHistory'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -777,7 +797,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "workOrder" | "vehicle" | "task" | "comment" | "attachment" | "history" | "maintenanceDetails"
+      modelProps: "user" | "session" | "workOrder" | "vehicle" | "task" | "comment" | "attachment" | "history" | "maintenanceDetails" | "statusHistory"
       txIsolationLevel: never
     }
     model: {
@@ -1447,6 +1467,80 @@ export namespace Prisma {
           }
         }
       }
+      StatusHistory: {
+        payload: Prisma.$StatusHistoryPayload<ExtArgs>
+        fields: Prisma.StatusHistoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StatusHistoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusHistoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StatusHistoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusHistoryPayload>
+          }
+          findFirst: {
+            args: Prisma.StatusHistoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusHistoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StatusHistoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusHistoryPayload>
+          }
+          findMany: {
+            args: Prisma.StatusHistoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusHistoryPayload>[]
+          }
+          create: {
+            args: Prisma.StatusHistoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusHistoryPayload>
+          }
+          createMany: {
+            args: Prisma.StatusHistoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          delete: {
+            args: Prisma.StatusHistoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusHistoryPayload>
+          }
+          update: {
+            args: Prisma.StatusHistoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusHistoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.StatusHistoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StatusHistoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.StatusHistoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StatusHistoryPayload>
+          }
+          aggregate: {
+            args: Prisma.StatusHistoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStatusHistory>
+          }
+          groupBy: {
+            args: Prisma.StatusHistoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StatusHistoryGroupByOutputType>[]
+          }
+          findRaw: {
+            args: Prisma.StatusHistoryFindRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          aggregateRaw: {
+            args: Prisma.StatusHistoryAggregateRawArgs<ExtArgs>
+            result: JsonObject
+          }
+          count: {
+            args: Prisma.StatusHistoryCountArgs<ExtArgs>
+            result: $Utils.Optional<StatusHistoryCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1527,6 +1621,7 @@ export namespace Prisma {
     attachment?: AttachmentOmit
     history?: HistoryOmit
     maintenanceDetails?: MaintenanceDetailsOmit
+    statusHistory?: StatusHistoryOmit
   }
 
   /* Types for Logging */
@@ -1628,6 +1723,7 @@ export namespace Prisma {
     assignedTasks: number
     comments: number
     history: number
+    statusUpdates: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1638,6 +1734,7 @@ export namespace Prisma {
     assignedTasks?: boolean | UserCountOutputTypeCountAssignedTasksArgs
     comments?: boolean | UserCountOutputTypeCountCommentsArgs
     history?: boolean | UserCountOutputTypeCountHistoryArgs
+    statusUpdates?: boolean | UserCountOutputTypeCountStatusUpdatesArgs
   }
 
   // Custom InputTypes
@@ -1700,6 +1797,13 @@ export namespace Prisma {
     where?: HistoryWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountStatusUpdatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StatusHistoryWhereInput
+  }
+
 
   /**
    * Count Type WorkOrderCountOutputType
@@ -1710,6 +1814,7 @@ export namespace Prisma {
     comments: number
     attachments: number
     history: number
+    statusHistory: number
   }
 
   export type WorkOrderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1717,6 +1822,7 @@ export namespace Prisma {
     comments?: boolean | WorkOrderCountOutputTypeCountCommentsArgs
     attachments?: boolean | WorkOrderCountOutputTypeCountAttachmentsArgs
     history?: boolean | WorkOrderCountOutputTypeCountHistoryArgs
+    statusHistory?: boolean | WorkOrderCountOutputTypeCountStatusHistoryArgs
   }
 
   // Custom InputTypes
@@ -1756,6 +1862,13 @@ export namespace Prisma {
    */
   export type WorkOrderCountOutputTypeCountHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: HistoryWhereInput
+  }
+
+  /**
+   * WorkOrderCountOutputType without action
+   */
+  export type WorkOrderCountOutputTypeCountStatusHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StatusHistoryWhereInput
   }
 
 
@@ -2005,6 +2118,7 @@ export namespace Prisma {
     assignedTasks?: boolean | User$assignedTasksArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     history?: boolean | User$historyArgs<ExtArgs>
+    statusUpdates?: boolean | User$statusUpdatesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2032,6 +2146,7 @@ export namespace Prisma {
     assignedTasks?: boolean | User$assignedTasksArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     history?: boolean | User$historyArgs<ExtArgs>
+    statusUpdates?: boolean | User$statusUpdatesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -2045,6 +2160,7 @@ export namespace Prisma {
       assignedTasks: Prisma.$TaskPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       history: Prisma.$HistoryPayload<ExtArgs>[]
+      statusUpdates: Prisma.$StatusHistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2427,6 +2543,7 @@ export namespace Prisma {
     assignedTasks<T extends User$assignedTasksArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedTasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     history<T extends User$historyArgs<ExtArgs> = {}>(args?: Subset<T, User$historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    statusUpdates<T extends User$statusUpdatesArgs<ExtArgs> = {}>(args?: Subset<T, User$statusUpdatesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3001,6 +3118,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: HistoryScalarFieldEnum | HistoryScalarFieldEnum[]
+  }
+
+  /**
+   * User.statusUpdates
+   */
+  export type User$statusUpdatesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    where?: StatusHistoryWhereInput
+    orderBy?: StatusHistoryOrderByWithRelationInput | StatusHistoryOrderByWithRelationInput[]
+    cursor?: StatusHistoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StatusHistoryScalarFieldEnum | StatusHistoryScalarFieldEnum[]
   }
 
   /**
@@ -4336,6 +4477,7 @@ export namespace Prisma {
     attachments?: boolean | WorkOrder$attachmentsArgs<ExtArgs>
     history?: boolean | WorkOrder$historyArgs<ExtArgs>
     maintenanceDetails?: boolean | WorkOrder$maintenanceDetailsArgs<ExtArgs>
+    statusHistory?: boolean | WorkOrder$statusHistoryArgs<ExtArgs>
     _count?: boolean | WorkOrderCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["workOrder"]>
 
@@ -4375,6 +4517,7 @@ export namespace Prisma {
     attachments?: boolean | WorkOrder$attachmentsArgs<ExtArgs>
     history?: boolean | WorkOrder$historyArgs<ExtArgs>
     maintenanceDetails?: boolean | WorkOrder$maintenanceDetailsArgs<ExtArgs>
+    statusHistory?: boolean | WorkOrder$statusHistoryArgs<ExtArgs>
     _count?: boolean | WorkOrderCountOutputTypeDefaultArgs<ExtArgs>
   }
 
@@ -4390,6 +4533,7 @@ export namespace Prisma {
       attachments: Prisma.$AttachmentPayload<ExtArgs>[]
       history: Prisma.$HistoryPayload<ExtArgs>[]
       maintenanceDetails: Prisma.$MaintenanceDetailsPayload<ExtArgs> | null
+      statusHistory: Prisma.$StatusHistoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4784,6 +4928,7 @@ export namespace Prisma {
     attachments<T extends WorkOrder$attachmentsArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     history<T extends WorkOrder$historyArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$historyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     maintenanceDetails<T extends WorkOrder$maintenanceDetailsArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$maintenanceDetailsArgs<ExtArgs>>): Prisma__MaintenanceDetailsClient<$Result.GetResult<Prisma.$MaintenanceDetailsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    statusHistory<T extends WorkOrder$statusHistoryArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrder$statusHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5372,6 +5517,30 @@ export namespace Prisma {
      */
     include?: MaintenanceDetailsInclude<ExtArgs> | null
     where?: MaintenanceDetailsWhereInput
+  }
+
+  /**
+   * WorkOrder.statusHistory
+   */
+  export type WorkOrder$statusHistoryArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    where?: StatusHistoryWhereInput
+    orderBy?: StatusHistoryOrderByWithRelationInput | StatusHistoryOrderByWithRelationInput[]
+    cursor?: StatusHistoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StatusHistoryScalarFieldEnum | StatusHistoryScalarFieldEnum[]
   }
 
   /**
@@ -11480,6 +11649,1000 @@ export namespace Prisma {
 
 
   /**
+   * Model StatusHistory
+   */
+
+  export type AggregateStatusHistory = {
+    _count: StatusHistoryCountAggregateOutputType | null
+    _min: StatusHistoryMinAggregateOutputType | null
+    _max: StatusHistoryMaxAggregateOutputType | null
+  }
+
+  export type StatusHistoryMinAggregateOutputType = {
+    id: string | null
+    workOrderId: string | null
+    status: $Enums.WorkOrderStatus | null
+    updatedById: string | null
+    comments: string | null
+    updatedAt: Date | null
+  }
+
+  export type StatusHistoryMaxAggregateOutputType = {
+    id: string | null
+    workOrderId: string | null
+    status: $Enums.WorkOrderStatus | null
+    updatedById: string | null
+    comments: string | null
+    updatedAt: Date | null
+  }
+
+  export type StatusHistoryCountAggregateOutputType = {
+    id: number
+    workOrderId: number
+    status: number
+    updatedById: number
+    comments: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type StatusHistoryMinAggregateInputType = {
+    id?: true
+    workOrderId?: true
+    status?: true
+    updatedById?: true
+    comments?: true
+    updatedAt?: true
+  }
+
+  export type StatusHistoryMaxAggregateInputType = {
+    id?: true
+    workOrderId?: true
+    status?: true
+    updatedById?: true
+    comments?: true
+    updatedAt?: true
+  }
+
+  export type StatusHistoryCountAggregateInputType = {
+    id?: true
+    workOrderId?: true
+    status?: true
+    updatedById?: true
+    comments?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type StatusHistoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StatusHistory to aggregate.
+     */
+    where?: StatusHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StatusHistories to fetch.
+     */
+    orderBy?: StatusHistoryOrderByWithRelationInput | StatusHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: StatusHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StatusHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StatusHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned StatusHistories
+    **/
+    _count?: true | StatusHistoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: StatusHistoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: StatusHistoryMaxAggregateInputType
+  }
+
+  export type GetStatusHistoryAggregateType<T extends StatusHistoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateStatusHistory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStatusHistory[P]>
+      : GetScalarType<T[P], AggregateStatusHistory[P]>
+  }
+
+
+
+
+  export type StatusHistoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StatusHistoryWhereInput
+    orderBy?: StatusHistoryOrderByWithAggregationInput | StatusHistoryOrderByWithAggregationInput[]
+    by: StatusHistoryScalarFieldEnum[] | StatusHistoryScalarFieldEnum
+    having?: StatusHistoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StatusHistoryCountAggregateInputType | true
+    _min?: StatusHistoryMinAggregateInputType
+    _max?: StatusHistoryMaxAggregateInputType
+  }
+
+  export type StatusHistoryGroupByOutputType = {
+    id: string
+    workOrderId: string
+    status: $Enums.WorkOrderStatus
+    updatedById: string
+    comments: string | null
+    updatedAt: Date
+    _count: StatusHistoryCountAggregateOutputType | null
+    _min: StatusHistoryMinAggregateOutputType | null
+    _max: StatusHistoryMaxAggregateOutputType | null
+  }
+
+  type GetStatusHistoryGroupByPayload<T extends StatusHistoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StatusHistoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StatusHistoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StatusHistoryGroupByOutputType[P]>
+            : GetScalarType<T[P], StatusHistoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StatusHistorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    workOrderId?: boolean
+    status?: boolean
+    updatedById?: boolean
+    comments?: boolean
+    updatedAt?: boolean
+    workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+    updatedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["statusHistory"]>
+
+
+
+  export type StatusHistorySelectScalar = {
+    id?: boolean
+    workOrderId?: boolean
+    status?: boolean
+    updatedById?: boolean
+    comments?: boolean
+    updatedAt?: boolean
+  }
+
+  export type StatusHistoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "workOrderId" | "status" | "updatedById" | "comments" | "updatedAt", ExtArgs["result"]["statusHistory"]>
+  export type StatusHistoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    workOrder?: boolean | WorkOrderDefaultArgs<ExtArgs>
+    updatedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $StatusHistoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StatusHistory"
+    objects: {
+      workOrder: Prisma.$WorkOrderPayload<ExtArgs>
+      updatedBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      workOrderId: string
+      status: $Enums.WorkOrderStatus
+      updatedById: string
+      comments: string | null
+      updatedAt: Date
+    }, ExtArgs["result"]["statusHistory"]>
+    composites: {}
+  }
+
+  type StatusHistoryGetPayload<S extends boolean | null | undefined | StatusHistoryDefaultArgs> = $Result.GetResult<Prisma.$StatusHistoryPayload, S>
+
+  type StatusHistoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<StatusHistoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: StatusHistoryCountAggregateInputType | true
+    }
+
+  export interface StatusHistoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StatusHistory'], meta: { name: 'StatusHistory' } }
+    /**
+     * Find zero or one StatusHistory that matches the filter.
+     * @param {StatusHistoryFindUniqueArgs} args - Arguments to find a StatusHistory
+     * @example
+     * // Get one StatusHistory
+     * const statusHistory = await prisma.statusHistory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StatusHistoryFindUniqueArgs>(args: SelectSubset<T, StatusHistoryFindUniqueArgs<ExtArgs>>): Prisma__StatusHistoryClient<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one StatusHistory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {StatusHistoryFindUniqueOrThrowArgs} args - Arguments to find a StatusHistory
+     * @example
+     * // Get one StatusHistory
+     * const statusHistory = await prisma.statusHistory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StatusHistoryFindUniqueOrThrowArgs>(args: SelectSubset<T, StatusHistoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StatusHistoryClient<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StatusHistory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusHistoryFindFirstArgs} args - Arguments to find a StatusHistory
+     * @example
+     * // Get one StatusHistory
+     * const statusHistory = await prisma.statusHistory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StatusHistoryFindFirstArgs>(args?: SelectSubset<T, StatusHistoryFindFirstArgs<ExtArgs>>): Prisma__StatusHistoryClient<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StatusHistory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusHistoryFindFirstOrThrowArgs} args - Arguments to find a StatusHistory
+     * @example
+     * // Get one StatusHistory
+     * const statusHistory = await prisma.statusHistory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StatusHistoryFindFirstOrThrowArgs>(args?: SelectSubset<T, StatusHistoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__StatusHistoryClient<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more StatusHistories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusHistoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all StatusHistories
+     * const statusHistories = await prisma.statusHistory.findMany()
+     * 
+     * // Get first 10 StatusHistories
+     * const statusHistories = await prisma.statusHistory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const statusHistoryWithIdOnly = await prisma.statusHistory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends StatusHistoryFindManyArgs>(args?: SelectSubset<T, StatusHistoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a StatusHistory.
+     * @param {StatusHistoryCreateArgs} args - Arguments to create a StatusHistory.
+     * @example
+     * // Create one StatusHistory
+     * const StatusHistory = await prisma.statusHistory.create({
+     *   data: {
+     *     // ... data to create a StatusHistory
+     *   }
+     * })
+     * 
+     */
+    create<T extends StatusHistoryCreateArgs>(args: SelectSubset<T, StatusHistoryCreateArgs<ExtArgs>>): Prisma__StatusHistoryClient<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many StatusHistories.
+     * @param {StatusHistoryCreateManyArgs} args - Arguments to create many StatusHistories.
+     * @example
+     * // Create many StatusHistories
+     * const statusHistory = await prisma.statusHistory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends StatusHistoryCreateManyArgs>(args?: SelectSubset<T, StatusHistoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Delete a StatusHistory.
+     * @param {StatusHistoryDeleteArgs} args - Arguments to delete one StatusHistory.
+     * @example
+     * // Delete one StatusHistory
+     * const StatusHistory = await prisma.statusHistory.delete({
+     *   where: {
+     *     // ... filter to delete one StatusHistory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends StatusHistoryDeleteArgs>(args: SelectSubset<T, StatusHistoryDeleteArgs<ExtArgs>>): Prisma__StatusHistoryClient<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one StatusHistory.
+     * @param {StatusHistoryUpdateArgs} args - Arguments to update one StatusHistory.
+     * @example
+     * // Update one StatusHistory
+     * const statusHistory = await prisma.statusHistory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends StatusHistoryUpdateArgs>(args: SelectSubset<T, StatusHistoryUpdateArgs<ExtArgs>>): Prisma__StatusHistoryClient<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more StatusHistories.
+     * @param {StatusHistoryDeleteManyArgs} args - Arguments to filter StatusHistories to delete.
+     * @example
+     * // Delete a few StatusHistories
+     * const { count } = await prisma.statusHistory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends StatusHistoryDeleteManyArgs>(args?: SelectSubset<T, StatusHistoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StatusHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusHistoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many StatusHistories
+     * const statusHistory = await prisma.statusHistory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends StatusHistoryUpdateManyArgs>(args: SelectSubset<T, StatusHistoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one StatusHistory.
+     * @param {StatusHistoryUpsertArgs} args - Arguments to update or create a StatusHistory.
+     * @example
+     * // Update or create a StatusHistory
+     * const statusHistory = await prisma.statusHistory.upsert({
+     *   create: {
+     *     // ... data to create a StatusHistory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the StatusHistory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StatusHistoryUpsertArgs>(args: SelectSubset<T, StatusHistoryUpsertArgs<ExtArgs>>): Prisma__StatusHistoryClient<$Result.GetResult<Prisma.$StatusHistoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more StatusHistories that matches the filter.
+     * @param {StatusHistoryFindRawArgs} args - Select which filters you would like to apply.
+     * @example
+     * const statusHistory = await prisma.statusHistory.findRaw({
+     *   filter: { age: { $gt: 25 } }
+     * })
+     */
+    findRaw(args?: StatusHistoryFindRawArgs): Prisma.PrismaPromise<JsonObject>
+
+    /**
+     * Perform aggregation operations on a StatusHistory.
+     * @param {StatusHistoryAggregateRawArgs} args - Select which aggregations you would like to apply.
+     * @example
+     * const statusHistory = await prisma.statusHistory.aggregateRaw({
+     *   pipeline: [
+     *     { $match: { status: "registered" } },
+     *     { $group: { _id: "$country", total: { $sum: 1 } } }
+     *   ]
+     * })
+     */
+    aggregateRaw(args?: StatusHistoryAggregateRawArgs): Prisma.PrismaPromise<JsonObject>
+
+
+    /**
+     * Count the number of StatusHistories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusHistoryCountArgs} args - Arguments to filter StatusHistories to count.
+     * @example
+     * // Count the number of StatusHistories
+     * const count = await prisma.statusHistory.count({
+     *   where: {
+     *     // ... the filter for the StatusHistories we want to count
+     *   }
+     * })
+    **/
+    count<T extends StatusHistoryCountArgs>(
+      args?: Subset<T, StatusHistoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StatusHistoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a StatusHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusHistoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StatusHistoryAggregateArgs>(args: Subset<T, StatusHistoryAggregateArgs>): Prisma.PrismaPromise<GetStatusHistoryAggregateType<T>>
+
+    /**
+     * Group by StatusHistory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StatusHistoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends StatusHistoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StatusHistoryGroupByArgs['orderBy'] }
+        : { orderBy?: StatusHistoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StatusHistoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStatusHistoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the StatusHistory model
+   */
+  readonly fields: StatusHistoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for StatusHistory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StatusHistoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    workOrder<T extends WorkOrderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, WorkOrderDefaultArgs<ExtArgs>>): Prisma__WorkOrderClient<$Result.GetResult<Prisma.$WorkOrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    updatedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the StatusHistory model
+   */
+  interface StatusHistoryFieldRefs {
+    readonly id: FieldRef<"StatusHistory", 'String'>
+    readonly workOrderId: FieldRef<"StatusHistory", 'String'>
+    readonly status: FieldRef<"StatusHistory", 'WorkOrderStatus'>
+    readonly updatedById: FieldRef<"StatusHistory", 'String'>
+    readonly comments: FieldRef<"StatusHistory", 'String'>
+    readonly updatedAt: FieldRef<"StatusHistory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * StatusHistory findUnique
+   */
+  export type StatusHistoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which StatusHistory to fetch.
+     */
+    where: StatusHistoryWhereUniqueInput
+  }
+
+  /**
+   * StatusHistory findUniqueOrThrow
+   */
+  export type StatusHistoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which StatusHistory to fetch.
+     */
+    where: StatusHistoryWhereUniqueInput
+  }
+
+  /**
+   * StatusHistory findFirst
+   */
+  export type StatusHistoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which StatusHistory to fetch.
+     */
+    where?: StatusHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StatusHistories to fetch.
+     */
+    orderBy?: StatusHistoryOrderByWithRelationInput | StatusHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StatusHistories.
+     */
+    cursor?: StatusHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StatusHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StatusHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StatusHistories.
+     */
+    distinct?: StatusHistoryScalarFieldEnum | StatusHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * StatusHistory findFirstOrThrow
+   */
+  export type StatusHistoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which StatusHistory to fetch.
+     */
+    where?: StatusHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StatusHistories to fetch.
+     */
+    orderBy?: StatusHistoryOrderByWithRelationInput | StatusHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StatusHistories.
+     */
+    cursor?: StatusHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StatusHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StatusHistories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StatusHistories.
+     */
+    distinct?: StatusHistoryScalarFieldEnum | StatusHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * StatusHistory findMany
+   */
+  export type StatusHistoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter, which StatusHistories to fetch.
+     */
+    where?: StatusHistoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StatusHistories to fetch.
+     */
+    orderBy?: StatusHistoryOrderByWithRelationInput | StatusHistoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing StatusHistories.
+     */
+    cursor?: StatusHistoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StatusHistories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StatusHistories.
+     */
+    skip?: number
+    distinct?: StatusHistoryScalarFieldEnum | StatusHistoryScalarFieldEnum[]
+  }
+
+  /**
+   * StatusHistory create
+   */
+  export type StatusHistoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a StatusHistory.
+     */
+    data: XOR<StatusHistoryCreateInput, StatusHistoryUncheckedCreateInput>
+  }
+
+  /**
+   * StatusHistory createMany
+   */
+  export type StatusHistoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many StatusHistories.
+     */
+    data: StatusHistoryCreateManyInput | StatusHistoryCreateManyInput[]
+  }
+
+  /**
+   * StatusHistory update
+   */
+  export type StatusHistoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a StatusHistory.
+     */
+    data: XOR<StatusHistoryUpdateInput, StatusHistoryUncheckedUpdateInput>
+    /**
+     * Choose, which StatusHistory to update.
+     */
+    where: StatusHistoryWhereUniqueInput
+  }
+
+  /**
+   * StatusHistory updateMany
+   */
+  export type StatusHistoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update StatusHistories.
+     */
+    data: XOR<StatusHistoryUpdateManyMutationInput, StatusHistoryUncheckedUpdateManyInput>
+    /**
+     * Filter which StatusHistories to update
+     */
+    where?: StatusHistoryWhereInput
+    /**
+     * Limit how many StatusHistories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StatusHistory upsert
+   */
+  export type StatusHistoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the StatusHistory to update in case it exists.
+     */
+    where: StatusHistoryWhereUniqueInput
+    /**
+     * In case the StatusHistory found by the `where` argument doesn't exist, create a new StatusHistory with this data.
+     */
+    create: XOR<StatusHistoryCreateInput, StatusHistoryUncheckedCreateInput>
+    /**
+     * In case the StatusHistory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StatusHistoryUpdateInput, StatusHistoryUncheckedUpdateInput>
+  }
+
+  /**
+   * StatusHistory delete
+   */
+  export type StatusHistoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+    /**
+     * Filter which StatusHistory to delete.
+     */
+    where: StatusHistoryWhereUniqueInput
+  }
+
+  /**
+   * StatusHistory deleteMany
+   */
+  export type StatusHistoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StatusHistories to delete
+     */
+    where?: StatusHistoryWhereInput
+    /**
+     * Limit how many StatusHistories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * StatusHistory findRaw
+   */
+  export type StatusHistoryFindRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The query predicate filter. If unspecified, then all documents in the collection will match the predicate. ${@link https://docs.mongodb.com/manual/reference/operator/query MongoDB Docs}.
+     */
+    filter?: InputJsonValue
+    /**
+     * Additional options to pass to the `find` command ${@link https://docs.mongodb.com/manual/reference/command/find/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * StatusHistory aggregateRaw
+   */
+  export type StatusHistoryAggregateRawArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * An array of aggregation stages to process and transform the document stream via the aggregation pipeline. ${@link https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline MongoDB Docs}.
+     */
+    pipeline?: InputJsonValue[]
+    /**
+     * Additional options to pass to the `aggregate` command ${@link https://docs.mongodb.com/manual/reference/command/aggregate/#command-fields MongoDB Docs}.
+     */
+    options?: InputJsonValue
+  }
+
+  /**
+   * StatusHistory without action
+   */
+  export type StatusHistoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StatusHistory
+     */
+    select?: StatusHistorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StatusHistory
+     */
+    omit?: StatusHistoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StatusHistoryInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -11609,6 +12772,18 @@ export namespace Prisma {
   };
 
   export type MaintenanceDetailsScalarFieldEnum = (typeof MaintenanceDetailsScalarFieldEnum)[keyof typeof MaintenanceDetailsScalarFieldEnum]
+
+
+  export const StatusHistoryScalarFieldEnum: {
+    id: 'id',
+    workOrderId: 'workOrderId',
+    status: 'status',
+    updatedById: 'updatedById',
+    comments: 'comments',
+    updatedAt: 'updatedAt'
+  };
+
+  export type StatusHistoryScalarFieldEnum = (typeof StatusHistoryScalarFieldEnum)[keyof typeof StatusHistoryScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -11782,6 +12957,7 @@ export namespace Prisma {
     assignedTasks?: TaskListRelationFilter
     comments?: CommentListRelationFilter
     history?: HistoryListRelationFilter
+    statusUpdates?: StatusHistoryListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -11802,6 +12978,7 @@ export namespace Prisma {
     assignedTasks?: TaskOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     history?: HistoryOrderByRelationAggregateInput
+    statusUpdates?: StatusHistoryOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -11825,6 +13002,7 @@ export namespace Prisma {
     assignedTasks?: TaskListRelationFilter
     comments?: CommentListRelationFilter
     history?: HistoryListRelationFilter
+    statusUpdates?: StatusHistoryListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -11947,6 +13125,7 @@ export namespace Prisma {
     attachments?: AttachmentListRelationFilter
     history?: HistoryListRelationFilter
     maintenanceDetails?: XOR<MaintenanceDetailsNullableScalarRelationFilter, MaintenanceDetailsWhereInput> | null
+    statusHistory?: StatusHistoryListRelationFilter
   }
 
   export type WorkOrderOrderByWithRelationInput = {
@@ -11979,6 +13158,7 @@ export namespace Prisma {
     attachments?: AttachmentOrderByRelationAggregateInput
     history?: HistoryOrderByRelationAggregateInput
     maintenanceDetails?: MaintenanceDetailsOrderByWithRelationInput
+    statusHistory?: StatusHistoryOrderByRelationAggregateInput
   }
 
   export type WorkOrderWhereUniqueInput = Prisma.AtLeast<{
@@ -12014,6 +13194,7 @@ export namespace Prisma {
     attachments?: AttachmentListRelationFilter
     history?: HistoryListRelationFilter
     maintenanceDetails?: XOR<MaintenanceDetailsNullableScalarRelationFilter, MaintenanceDetailsWhereInput> | null
+    statusHistory?: StatusHistoryListRelationFilter
   }, "id" | "orderNumber">
 
   export type WorkOrderOrderByWithAggregationInput = {
@@ -12458,6 +13639,69 @@ export namespace Prisma {
     procedures?: StringNullableListFilter<"MaintenanceDetails">
   }
 
+  export type StatusHistoryWhereInput = {
+    AND?: StatusHistoryWhereInput | StatusHistoryWhereInput[]
+    OR?: StatusHistoryWhereInput[]
+    NOT?: StatusHistoryWhereInput | StatusHistoryWhereInput[]
+    id?: StringFilter<"StatusHistory"> | string
+    workOrderId?: StringFilter<"StatusHistory"> | string
+    status?: EnumWorkOrderStatusFilter<"StatusHistory"> | $Enums.WorkOrderStatus
+    updatedById?: StringFilter<"StatusHistory"> | string
+    comments?: StringNullableFilter<"StatusHistory"> | string | null
+    updatedAt?: DateTimeFilter<"StatusHistory"> | Date | string
+    workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+    updatedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type StatusHistoryOrderByWithRelationInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    status?: SortOrder
+    updatedById?: SortOrder
+    comments?: SortOrder
+    updatedAt?: SortOrder
+    workOrder?: WorkOrderOrderByWithRelationInput
+    updatedBy?: UserOrderByWithRelationInput
+  }
+
+  export type StatusHistoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: StatusHistoryWhereInput | StatusHistoryWhereInput[]
+    OR?: StatusHistoryWhereInput[]
+    NOT?: StatusHistoryWhereInput | StatusHistoryWhereInput[]
+    workOrderId?: StringFilter<"StatusHistory"> | string
+    status?: EnumWorkOrderStatusFilter<"StatusHistory"> | $Enums.WorkOrderStatus
+    updatedById?: StringFilter<"StatusHistory"> | string
+    comments?: StringNullableFilter<"StatusHistory"> | string | null
+    updatedAt?: DateTimeFilter<"StatusHistory"> | Date | string
+    workOrder?: XOR<WorkOrderScalarRelationFilter, WorkOrderWhereInput>
+    updatedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type StatusHistoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    status?: SortOrder
+    updatedById?: SortOrder
+    comments?: SortOrder
+    updatedAt?: SortOrder
+    _count?: StatusHistoryCountOrderByAggregateInput
+    _max?: StatusHistoryMaxOrderByAggregateInput
+    _min?: StatusHistoryMinOrderByAggregateInput
+  }
+
+  export type StatusHistoryScalarWhereWithAggregatesInput = {
+    AND?: StatusHistoryScalarWhereWithAggregatesInput | StatusHistoryScalarWhereWithAggregatesInput[]
+    OR?: StatusHistoryScalarWhereWithAggregatesInput[]
+    NOT?: StatusHistoryScalarWhereWithAggregatesInput | StatusHistoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"StatusHistory"> | string
+    workOrderId?: StringWithAggregatesFilter<"StatusHistory"> | string
+    status?: EnumWorkOrderStatusWithAggregatesFilter<"StatusHistory"> | $Enums.WorkOrderStatus
+    updatedById?: StringWithAggregatesFilter<"StatusHistory"> | string
+    comments?: StringNullableWithAggregatesFilter<"StatusHistory"> | string | null
+    updatedAt?: DateTimeWithAggregatesFilter<"StatusHistory"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     email: string
@@ -12476,6 +13720,7 @@ export namespace Prisma {
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     history?: HistoryCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -12496,6 +13741,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUpdateInput = {
@@ -12515,6 +13761,7 @@ export namespace Prisma {
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     history?: HistoryUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -12534,6 +13781,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -12650,6 +13898,7 @@ export namespace Prisma {
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
     history?: HistoryCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateInput = {
@@ -12678,6 +13927,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
     history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUpdateInput = {
@@ -12705,6 +13955,7 @@ export namespace Prisma {
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateInput = {
@@ -12732,6 +13983,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderCreateManyInput = {
@@ -13168,6 +14420,63 @@ export namespace Prisma {
     procedures?: MaintenanceDetailsUpdateproceduresInput | string[]
   }
 
+  export type StatusHistoryCreateInput = {
+    id?: string
+    status: $Enums.WorkOrderStatus
+    comments?: string | null
+    updatedAt?: Date | string
+    workOrder: WorkOrderCreateNestedOneWithoutStatusHistoryInput
+    updatedBy: UserCreateNestedOneWithoutStatusUpdatesInput
+  }
+
+  export type StatusHistoryUncheckedCreateInput = {
+    id?: string
+    workOrderId: string
+    status: $Enums.WorkOrderStatus
+    updatedById: string
+    comments?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type StatusHistoryUpdateInput = {
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workOrder?: WorkOrderUpdateOneRequiredWithoutStatusHistoryNestedInput
+    updatedBy?: UserUpdateOneRequiredWithoutStatusUpdatesNestedInput
+  }
+
+  export type StatusHistoryUncheckedUpdateInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    updatedById?: StringFieldUpdateOperationsInput | string
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusHistoryCreateManyInput = {
+    id?: string
+    workOrderId: string
+    status: $Enums.WorkOrderStatus
+    updatedById: string
+    comments?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type StatusHistoryUpdateManyMutationInput = {
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusHistoryUncheckedUpdateManyInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    updatedById?: StringFieldUpdateOperationsInput | string
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -13256,6 +14565,12 @@ export namespace Prisma {
     none?: HistoryWhereInput
   }
 
+  export type StatusHistoryListRelationFilter = {
+    every?: StatusHistoryWhereInput
+    some?: StatusHistoryWhereInput
+    none?: StatusHistoryWhereInput
+  }
+
   export type SessionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -13273,6 +14588,10 @@ export namespace Prisma {
   }
 
   export type HistoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type StatusHistoryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -13887,6 +15206,33 @@ export namespace Prisma {
     workOrderId?: SortOrder
   }
 
+  export type StatusHistoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    status?: SortOrder
+    updatedById?: SortOrder
+    comments?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StatusHistoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    status?: SortOrder
+    updatedById?: SortOrder
+    comments?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StatusHistoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    workOrderId?: SortOrder
+    status?: SortOrder
+    updatedById?: SortOrder
+    comments?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type SessionCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -13936,6 +15282,13 @@ export namespace Prisma {
     connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
   }
 
+  export type StatusHistoryCreateNestedManyWithoutUpdatedByInput = {
+    create?: XOR<StatusHistoryCreateWithoutUpdatedByInput, StatusHistoryUncheckedCreateWithoutUpdatedByInput> | StatusHistoryCreateWithoutUpdatedByInput[] | StatusHistoryUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: StatusHistoryCreateOrConnectWithoutUpdatedByInput | StatusHistoryCreateOrConnectWithoutUpdatedByInput[]
+    createMany?: StatusHistoryCreateManyUpdatedByInputEnvelope
+    connect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+  }
+
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -13983,6 +15336,13 @@ export namespace Prisma {
     connectOrCreate?: HistoryCreateOrConnectWithoutAuthorInput | HistoryCreateOrConnectWithoutAuthorInput[]
     createMany?: HistoryCreateManyAuthorInputEnvelope
     connect?: HistoryWhereUniqueInput | HistoryWhereUniqueInput[]
+  }
+
+  export type StatusHistoryUncheckedCreateNestedManyWithoutUpdatedByInput = {
+    create?: XOR<StatusHistoryCreateWithoutUpdatedByInput, StatusHistoryUncheckedCreateWithoutUpdatedByInput> | StatusHistoryCreateWithoutUpdatedByInput[] | StatusHistoryUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: StatusHistoryCreateOrConnectWithoutUpdatedByInput | StatusHistoryCreateOrConnectWithoutUpdatedByInput[]
+    createMany?: StatusHistoryCreateManyUpdatedByInputEnvelope
+    connect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -14109,6 +15469,20 @@ export namespace Prisma {
     deleteMany?: HistoryScalarWhereInput | HistoryScalarWhereInput[]
   }
 
+  export type StatusHistoryUpdateManyWithoutUpdatedByNestedInput = {
+    create?: XOR<StatusHistoryCreateWithoutUpdatedByInput, StatusHistoryUncheckedCreateWithoutUpdatedByInput> | StatusHistoryCreateWithoutUpdatedByInput[] | StatusHistoryUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: StatusHistoryCreateOrConnectWithoutUpdatedByInput | StatusHistoryCreateOrConnectWithoutUpdatedByInput[]
+    upsert?: StatusHistoryUpsertWithWhereUniqueWithoutUpdatedByInput | StatusHistoryUpsertWithWhereUniqueWithoutUpdatedByInput[]
+    createMany?: StatusHistoryCreateManyUpdatedByInputEnvelope
+    set?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    disconnect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    delete?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    connect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    update?: StatusHistoryUpdateWithWhereUniqueWithoutUpdatedByInput | StatusHistoryUpdateWithWhereUniqueWithoutUpdatedByInput[]
+    updateMany?: StatusHistoryUpdateManyWithWhereWithoutUpdatedByInput | StatusHistoryUpdateManyWithWhereWithoutUpdatedByInput[]
+    deleteMany?: StatusHistoryScalarWhereInput | StatusHistoryScalarWhereInput[]
+  }
+
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -14207,6 +15581,20 @@ export namespace Prisma {
     deleteMany?: HistoryScalarWhereInput | HistoryScalarWhereInput[]
   }
 
+  export type StatusHistoryUncheckedUpdateManyWithoutUpdatedByNestedInput = {
+    create?: XOR<StatusHistoryCreateWithoutUpdatedByInput, StatusHistoryUncheckedCreateWithoutUpdatedByInput> | StatusHistoryCreateWithoutUpdatedByInput[] | StatusHistoryUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: StatusHistoryCreateOrConnectWithoutUpdatedByInput | StatusHistoryCreateOrConnectWithoutUpdatedByInput[]
+    upsert?: StatusHistoryUpsertWithWhereUniqueWithoutUpdatedByInput | StatusHistoryUpsertWithWhereUniqueWithoutUpdatedByInput[]
+    createMany?: StatusHistoryCreateManyUpdatedByInputEnvelope
+    set?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    disconnect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    delete?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    connect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    update?: StatusHistoryUpdateWithWhereUniqueWithoutUpdatedByInput | StatusHistoryUpdateWithWhereUniqueWithoutUpdatedByInput[]
+    updateMany?: StatusHistoryUpdateManyWithWhereWithoutUpdatedByInput | StatusHistoryUpdateManyWithWhereWithoutUpdatedByInput[]
+    deleteMany?: StatusHistoryScalarWhereInput | StatusHistoryScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutSessionsInput = {
     create?: XOR<UserCreateWithoutSessionsInput, UserUncheckedCreateWithoutSessionsInput>
     connectOrCreate?: UserCreateOrConnectWithoutSessionsInput
@@ -14279,6 +15667,13 @@ export namespace Prisma {
     connect?: MaintenanceDetailsWhereUniqueInput
   }
 
+  export type StatusHistoryCreateNestedManyWithoutWorkOrderInput = {
+    create?: XOR<StatusHistoryCreateWithoutWorkOrderInput, StatusHistoryUncheckedCreateWithoutWorkOrderInput> | StatusHistoryCreateWithoutWorkOrderInput[] | StatusHistoryUncheckedCreateWithoutWorkOrderInput[]
+    connectOrCreate?: StatusHistoryCreateOrConnectWithoutWorkOrderInput | StatusHistoryCreateOrConnectWithoutWorkOrderInput[]
+    createMany?: StatusHistoryCreateManyWorkOrderInputEnvelope
+    connect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+  }
+
   export type TaskUncheckedCreateNestedManyWithoutWorkOrderInput = {
     create?: XOR<TaskCreateWithoutWorkOrderInput, TaskUncheckedCreateWithoutWorkOrderInput> | TaskCreateWithoutWorkOrderInput[] | TaskUncheckedCreateWithoutWorkOrderInput[]
     connectOrCreate?: TaskCreateOrConnectWithoutWorkOrderInput | TaskCreateOrConnectWithoutWorkOrderInput[]
@@ -14311,6 +15706,13 @@ export namespace Prisma {
     create?: XOR<MaintenanceDetailsCreateWithoutWorkOrderInput, MaintenanceDetailsUncheckedCreateWithoutWorkOrderInput>
     connectOrCreate?: MaintenanceDetailsCreateOrConnectWithoutWorkOrderInput
     connect?: MaintenanceDetailsWhereUniqueInput
+  }
+
+  export type StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput = {
+    create?: XOR<StatusHistoryCreateWithoutWorkOrderInput, StatusHistoryUncheckedCreateWithoutWorkOrderInput> | StatusHistoryCreateWithoutWorkOrderInput[] | StatusHistoryUncheckedCreateWithoutWorkOrderInput[]
+    connectOrCreate?: StatusHistoryCreateOrConnectWithoutWorkOrderInput | StatusHistoryCreateOrConnectWithoutWorkOrderInput[]
+    createMany?: StatusHistoryCreateManyWorkOrderInputEnvelope
+    connect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
   }
 
   export type EnumDepartmentFieldUpdateOperationsInput = {
@@ -14451,6 +15853,20 @@ export namespace Prisma {
     update?: XOR<XOR<MaintenanceDetailsUpdateToOneWithWhereWithoutWorkOrderInput, MaintenanceDetailsUpdateWithoutWorkOrderInput>, MaintenanceDetailsUncheckedUpdateWithoutWorkOrderInput>
   }
 
+  export type StatusHistoryUpdateManyWithoutWorkOrderNestedInput = {
+    create?: XOR<StatusHistoryCreateWithoutWorkOrderInput, StatusHistoryUncheckedCreateWithoutWorkOrderInput> | StatusHistoryCreateWithoutWorkOrderInput[] | StatusHistoryUncheckedCreateWithoutWorkOrderInput[]
+    connectOrCreate?: StatusHistoryCreateOrConnectWithoutWorkOrderInput | StatusHistoryCreateOrConnectWithoutWorkOrderInput[]
+    upsert?: StatusHistoryUpsertWithWhereUniqueWithoutWorkOrderInput | StatusHistoryUpsertWithWhereUniqueWithoutWorkOrderInput[]
+    createMany?: StatusHistoryCreateManyWorkOrderInputEnvelope
+    set?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    disconnect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    delete?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    connect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    update?: StatusHistoryUpdateWithWhereUniqueWithoutWorkOrderInput | StatusHistoryUpdateWithWhereUniqueWithoutWorkOrderInput[]
+    updateMany?: StatusHistoryUpdateManyWithWhereWithoutWorkOrderInput | StatusHistoryUpdateManyWithWhereWithoutWorkOrderInput[]
+    deleteMany?: StatusHistoryScalarWhereInput | StatusHistoryScalarWhereInput[]
+  }
+
   export type TaskUncheckedUpdateManyWithoutWorkOrderNestedInput = {
     create?: XOR<TaskCreateWithoutWorkOrderInput, TaskUncheckedCreateWithoutWorkOrderInput> | TaskCreateWithoutWorkOrderInput[] | TaskUncheckedCreateWithoutWorkOrderInput[]
     connectOrCreate?: TaskCreateOrConnectWithoutWorkOrderInput | TaskCreateOrConnectWithoutWorkOrderInput[]
@@ -14515,6 +15931,20 @@ export namespace Prisma {
     delete?: MaintenanceDetailsWhereInput | boolean
     connect?: MaintenanceDetailsWhereUniqueInput
     update?: XOR<XOR<MaintenanceDetailsUpdateToOneWithWhereWithoutWorkOrderInput, MaintenanceDetailsUpdateWithoutWorkOrderInput>, MaintenanceDetailsUncheckedUpdateWithoutWorkOrderInput>
+  }
+
+  export type StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput = {
+    create?: XOR<StatusHistoryCreateWithoutWorkOrderInput, StatusHistoryUncheckedCreateWithoutWorkOrderInput> | StatusHistoryCreateWithoutWorkOrderInput[] | StatusHistoryUncheckedCreateWithoutWorkOrderInput[]
+    connectOrCreate?: StatusHistoryCreateOrConnectWithoutWorkOrderInput | StatusHistoryCreateOrConnectWithoutWorkOrderInput[]
+    upsert?: StatusHistoryUpsertWithWhereUniqueWithoutWorkOrderInput | StatusHistoryUpsertWithWhereUniqueWithoutWorkOrderInput[]
+    createMany?: StatusHistoryCreateManyWorkOrderInputEnvelope
+    set?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    disconnect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    delete?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    connect?: StatusHistoryWhereUniqueInput | StatusHistoryWhereUniqueInput[]
+    update?: StatusHistoryUpdateWithWhereUniqueWithoutWorkOrderInput | StatusHistoryUpdateWithWhereUniqueWithoutWorkOrderInput[]
+    updateMany?: StatusHistoryUpdateManyWithWhereWithoutWorkOrderInput | StatusHistoryUpdateManyWithWhereWithoutWorkOrderInput[]
+    deleteMany?: StatusHistoryScalarWhereInput | StatusHistoryScalarWhereInput[]
   }
 
   export type WorkOrderCreateNestedManyWithoutVehicleInput = {
@@ -14698,6 +16128,34 @@ export namespace Prisma {
     upsert?: WorkOrderUpsertWithoutMaintenanceDetailsInput
     connect?: WorkOrderWhereUniqueInput
     update?: XOR<XOR<WorkOrderUpdateToOneWithWhereWithoutMaintenanceDetailsInput, WorkOrderUpdateWithoutMaintenanceDetailsInput>, WorkOrderUncheckedUpdateWithoutMaintenanceDetailsInput>
+  }
+
+  export type WorkOrderCreateNestedOneWithoutStatusHistoryInput = {
+    create?: XOR<WorkOrderCreateWithoutStatusHistoryInput, WorkOrderUncheckedCreateWithoutStatusHistoryInput>
+    connectOrCreate?: WorkOrderCreateOrConnectWithoutStatusHistoryInput
+    connect?: WorkOrderWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutStatusUpdatesInput = {
+    create?: XOR<UserCreateWithoutStatusUpdatesInput, UserUncheckedCreateWithoutStatusUpdatesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStatusUpdatesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type WorkOrderUpdateOneRequiredWithoutStatusHistoryNestedInput = {
+    create?: XOR<WorkOrderCreateWithoutStatusHistoryInput, WorkOrderUncheckedCreateWithoutStatusHistoryInput>
+    connectOrCreate?: WorkOrderCreateOrConnectWithoutStatusHistoryInput
+    upsert?: WorkOrderUpsertWithoutStatusHistoryInput
+    connect?: WorkOrderWhereUniqueInput
+    update?: XOR<XOR<WorkOrderUpdateToOneWithWhereWithoutStatusHistoryInput, WorkOrderUpdateWithoutStatusHistoryInput>, WorkOrderUncheckedUpdateWithoutStatusHistoryInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutStatusUpdatesNestedInput = {
+    create?: XOR<UserCreateWithoutStatusUpdatesInput, UserUncheckedCreateWithoutStatusUpdatesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutStatusUpdatesInput
+    upsert?: UserUpsertWithoutStatusUpdatesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutStatusUpdatesInput, UserUpdateWithoutStatusUpdatesInput>, UserUncheckedUpdateWithoutStatusUpdatesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -15054,6 +16512,7 @@ export namespace Prisma {
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
     history?: HistoryCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutCreatedByInput = {
@@ -15081,6 +16540,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
     history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutCreatedByInput = {
@@ -15117,6 +16577,7 @@ export namespace Prisma {
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
     history?: HistoryCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutAssignedToInput = {
@@ -15144,6 +16605,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
     history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutAssignedToInput = {
@@ -15180,6 +16642,7 @@ export namespace Prisma {
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
     history?: HistoryCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutSupervisedByInput = {
@@ -15207,6 +16670,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
     history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutSupervisedByInput = {
@@ -15299,6 +16763,31 @@ export namespace Prisma {
 
   export type HistoryCreateManyAuthorInputEnvelope = {
     data: HistoryCreateManyAuthorInput | HistoryCreateManyAuthorInput[]
+  }
+
+  export type StatusHistoryCreateWithoutUpdatedByInput = {
+    id?: string
+    status: $Enums.WorkOrderStatus
+    comments?: string | null
+    updatedAt?: Date | string
+    workOrder: WorkOrderCreateNestedOneWithoutStatusHistoryInput
+  }
+
+  export type StatusHistoryUncheckedCreateWithoutUpdatedByInput = {
+    id?: string
+    workOrderId: string
+    status: $Enums.WorkOrderStatus
+    comments?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type StatusHistoryCreateOrConnectWithoutUpdatedByInput = {
+    where: StatusHistoryWhereUniqueInput
+    create: XOR<StatusHistoryCreateWithoutUpdatedByInput, StatusHistoryUncheckedCreateWithoutUpdatedByInput>
+  }
+
+  export type StatusHistoryCreateManyUpdatedByInputEnvelope = {
+    data: StatusHistoryCreateManyUpdatedByInput | StatusHistoryCreateManyUpdatedByInput[]
   }
 
   export type SessionUpsertWithWhereUniqueWithoutUserInput = {
@@ -15490,6 +16979,34 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"History"> | Date | string
   }
 
+  export type StatusHistoryUpsertWithWhereUniqueWithoutUpdatedByInput = {
+    where: StatusHistoryWhereUniqueInput
+    update: XOR<StatusHistoryUpdateWithoutUpdatedByInput, StatusHistoryUncheckedUpdateWithoutUpdatedByInput>
+    create: XOR<StatusHistoryCreateWithoutUpdatedByInput, StatusHistoryUncheckedCreateWithoutUpdatedByInput>
+  }
+
+  export type StatusHistoryUpdateWithWhereUniqueWithoutUpdatedByInput = {
+    where: StatusHistoryWhereUniqueInput
+    data: XOR<StatusHistoryUpdateWithoutUpdatedByInput, StatusHistoryUncheckedUpdateWithoutUpdatedByInput>
+  }
+
+  export type StatusHistoryUpdateManyWithWhereWithoutUpdatedByInput = {
+    where: StatusHistoryScalarWhereInput
+    data: XOR<StatusHistoryUpdateManyMutationInput, StatusHistoryUncheckedUpdateManyWithoutUpdatedByInput>
+  }
+
+  export type StatusHistoryScalarWhereInput = {
+    AND?: StatusHistoryScalarWhereInput | StatusHistoryScalarWhereInput[]
+    OR?: StatusHistoryScalarWhereInput[]
+    NOT?: StatusHistoryScalarWhereInput | StatusHistoryScalarWhereInput[]
+    id?: StringFilter<"StatusHistory"> | string
+    workOrderId?: StringFilter<"StatusHistory"> | string
+    status?: EnumWorkOrderStatusFilter<"StatusHistory"> | $Enums.WorkOrderStatus
+    updatedById?: StringFilter<"StatusHistory"> | string
+    comments?: StringNullableFilter<"StatusHistory"> | string | null
+    updatedAt?: DateTimeFilter<"StatusHistory"> | Date | string
+  }
+
   export type UserCreateWithoutSessionsInput = {
     id?: string
     email: string
@@ -15507,6 +17024,7 @@ export namespace Prisma {
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     history?: HistoryCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -15526,6 +17044,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -15560,6 +17079,7 @@ export namespace Prisma {
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     history?: HistoryUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -15578,6 +17098,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserCreateWithoutCreatedOrdersInput = {
@@ -15597,6 +17118,7 @@ export namespace Prisma {
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     history?: HistoryCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedOrdersInput = {
@@ -15616,6 +17138,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedOrdersInput = {
@@ -15640,6 +17163,7 @@ export namespace Prisma {
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     history?: HistoryCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedOrdersInput = {
@@ -15659,6 +17183,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedOrdersInput = {
@@ -15683,6 +17208,7 @@ export namespace Prisma {
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     history?: HistoryCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutSupervisedOrdersInput = {
@@ -15702,6 +17228,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutSupervisedOrdersInput = {
@@ -15859,6 +17386,31 @@ export namespace Prisma {
     create: XOR<MaintenanceDetailsCreateWithoutWorkOrderInput, MaintenanceDetailsUncheckedCreateWithoutWorkOrderInput>
   }
 
+  export type StatusHistoryCreateWithoutWorkOrderInput = {
+    id?: string
+    status: $Enums.WorkOrderStatus
+    comments?: string | null
+    updatedAt?: Date | string
+    updatedBy: UserCreateNestedOneWithoutStatusUpdatesInput
+  }
+
+  export type StatusHistoryUncheckedCreateWithoutWorkOrderInput = {
+    id?: string
+    status: $Enums.WorkOrderStatus
+    updatedById: string
+    comments?: string | null
+    updatedAt?: Date | string
+  }
+
+  export type StatusHistoryCreateOrConnectWithoutWorkOrderInput = {
+    where: StatusHistoryWhereUniqueInput
+    create: XOR<StatusHistoryCreateWithoutWorkOrderInput, StatusHistoryUncheckedCreateWithoutWorkOrderInput>
+  }
+
+  export type StatusHistoryCreateManyWorkOrderInputEnvelope = {
+    data: StatusHistoryCreateManyWorkOrderInput | StatusHistoryCreateManyWorkOrderInput[]
+  }
+
   export type UserUpsertWithoutCreatedOrdersInput = {
     update: XOR<UserUpdateWithoutCreatedOrdersInput, UserUncheckedUpdateWithoutCreatedOrdersInput>
     create: XOR<UserCreateWithoutCreatedOrdersInput, UserUncheckedCreateWithoutCreatedOrdersInput>
@@ -15886,6 +17438,7 @@ export namespace Prisma {
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     history?: HistoryUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedOrdersInput = {
@@ -15904,6 +17457,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUpsertWithoutAssignedOrdersInput = {
@@ -15933,6 +17487,7 @@ export namespace Prisma {
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     history?: HistoryUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedOrdersInput = {
@@ -15951,6 +17506,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUpsertWithoutSupervisedOrdersInput = {
@@ -15980,6 +17536,7 @@ export namespace Prisma {
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     history?: HistoryUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSupervisedOrdersInput = {
@@ -15998,6 +17555,7 @@ export namespace Prisma {
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type VehicleUpsertWithoutWorkOrdersInput = {
@@ -16125,6 +17683,22 @@ export namespace Prisma {
     procedures?: MaintenanceDetailsUpdateproceduresInput | string[]
   }
 
+  export type StatusHistoryUpsertWithWhereUniqueWithoutWorkOrderInput = {
+    where: StatusHistoryWhereUniqueInput
+    update: XOR<StatusHistoryUpdateWithoutWorkOrderInput, StatusHistoryUncheckedUpdateWithoutWorkOrderInput>
+    create: XOR<StatusHistoryCreateWithoutWorkOrderInput, StatusHistoryUncheckedCreateWithoutWorkOrderInput>
+  }
+
+  export type StatusHistoryUpdateWithWhereUniqueWithoutWorkOrderInput = {
+    where: StatusHistoryWhereUniqueInput
+    data: XOR<StatusHistoryUpdateWithoutWorkOrderInput, StatusHistoryUncheckedUpdateWithoutWorkOrderInput>
+  }
+
+  export type StatusHistoryUpdateManyWithWhereWithoutWorkOrderInput = {
+    where: StatusHistoryScalarWhereInput
+    data: XOR<StatusHistoryUpdateManyMutationInput, StatusHistoryUncheckedUpdateManyWithoutWorkOrderInput>
+  }
+
   export type WorkOrderCreateWithoutVehicleInput = {
     id?: string
     orderNumber: string
@@ -16150,6 +17724,7 @@ export namespace Prisma {
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
     history?: HistoryCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutVehicleInput = {
@@ -16177,6 +17752,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
     history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutVehicleInput = {
@@ -16229,6 +17805,7 @@ export namespace Prisma {
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
     history?: HistoryCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutTasksInput = {
@@ -16256,6 +17833,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
     history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutTasksInput = {
@@ -16280,6 +17858,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
     history?: HistoryCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedTasksInput = {
@@ -16299,6 +17878,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
     history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedTasksInput = {
@@ -16341,6 +17921,7 @@ export namespace Prisma {
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutTasksInput = {
@@ -16367,6 +17948,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type UserUpsertWithoutAssignedTasksInput = {
@@ -16396,6 +17978,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
     history?: HistoryUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedTasksInput = {
@@ -16414,6 +17997,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
     history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type WorkOrderCreateWithoutCommentsInput = {
@@ -16441,6 +18025,7 @@ export namespace Prisma {
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
     history?: HistoryCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutCommentsInput = {
@@ -16468,6 +18053,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
     history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutCommentsInput = {
@@ -16492,6 +18078,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     history?: HistoryCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -16511,6 +18098,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -16553,6 +18141,7 @@ export namespace Prisma {
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutCommentsInput = {
@@ -16579,6 +18168,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type UserUpsertWithoutCommentsInput = {
@@ -16608,6 +18198,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     history?: HistoryUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -16626,6 +18217,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type WorkOrderCreateWithoutAttachmentsInput = {
@@ -16653,6 +18245,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
     history?: HistoryCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutAttachmentsInput = {
@@ -16680,6 +18273,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
     history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutAttachmentsInput = {
@@ -16722,6 +18316,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutAttachmentsInput = {
@@ -16748,6 +18343,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderCreateWithoutHistoryInput = {
@@ -16775,6 +18371,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutHistoryInput = {
@@ -16802,6 +18399,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
     maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutHistoryInput = {
@@ -16826,6 +18424,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
     assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
     comments?: CommentCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutHistoryInput = {
@@ -16845,6 +18444,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
     assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
     comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    statusUpdates?: StatusHistoryUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutHistoryInput = {
@@ -16887,6 +18487,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutHistoryInput = {
@@ -16913,6 +18514,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type UserUpsertWithoutHistoryInput = {
@@ -16942,6 +18544,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
     assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutHistoryInput = {
@@ -16960,6 +18563,7 @@ export namespace Prisma {
     supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
     assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
     comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    statusUpdates?: StatusHistoryUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type WorkOrderCreateWithoutMaintenanceDetailsInput = {
@@ -16987,6 +18591,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
     history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    statusHistory?: StatusHistoryCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderUncheckedCreateWithoutMaintenanceDetailsInput = {
@@ -17014,6 +18619,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
     attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
     history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    statusHistory?: StatusHistoryUncheckedCreateNestedManyWithoutWorkOrderInput
   }
 
   export type WorkOrderCreateOrConnectWithoutMaintenanceDetailsInput = {
@@ -17056,6 +18662,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutMaintenanceDetailsInput = {
@@ -17082,6 +18689,227 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+  }
+
+  export type WorkOrderCreateWithoutStatusHistoryInput = {
+    id?: string
+    orderNumber: string
+    title: string
+    description: string
+    department: $Enums.Department
+    priority?: $Enums.Priority
+    status?: $Enums.WorkOrderStatus
+    startDate: Date | string
+    dueDate: Date | string
+    completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutCreatedOrdersInput
+    assignedTo?: UserCreateNestedOneWithoutAssignedOrdersInput
+    supervisedBy?: UserCreateNestedOneWithoutSupervisedOrdersInput
+    vehicle?: VehicleCreateNestedOneWithoutWorkOrdersInput
+    tasks?: TaskCreateNestedManyWithoutWorkOrderInput
+    comments?: CommentCreateNestedManyWithoutWorkOrderInput
+    attachments?: AttachmentCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsCreateNestedOneWithoutWorkOrderInput
+  }
+
+  export type WorkOrderUncheckedCreateWithoutStatusHistoryInput = {
+    id?: string
+    orderNumber: string
+    title: string
+    description: string
+    department: $Enums.Department
+    priority?: $Enums.Priority
+    status?: $Enums.WorkOrderStatus
+    startDate: Date | string
+    dueDate: Date | string
+    completedDate?: Date | string | null
+    equipment?: string | null
+    version?: number
+    estimatedHours?: number | null
+    actualHours?: number | null
+    createdById: string
+    assignedToId?: string | null
+    supervisorId?: string | null
+    vehicleId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    tasks?: TaskUncheckedCreateNestedManyWithoutWorkOrderInput
+    comments?: CommentUncheckedCreateNestedManyWithoutWorkOrderInput
+    attachments?: AttachmentUncheckedCreateNestedManyWithoutWorkOrderInput
+    history?: HistoryUncheckedCreateNestedManyWithoutWorkOrderInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedCreateNestedOneWithoutWorkOrderInput
+  }
+
+  export type WorkOrderCreateOrConnectWithoutStatusHistoryInput = {
+    where: WorkOrderWhereUniqueInput
+    create: XOR<WorkOrderCreateWithoutStatusHistoryInput, WorkOrderUncheckedCreateWithoutStatusHistoryInput>
+  }
+
+  export type UserCreateWithoutStatusUpdatesInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssignedToInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    history?: HistoryCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutStatusUpdatesInput = {
+    id?: string
+    email: string
+    name: string
+    password: string
+    role?: $Enums.Role
+    department?: $Enums.Department | null
+    isActive?: boolean
+    lastLogin?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    createdOrders?: WorkOrderUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedOrders?: WorkOrderUncheckedCreateNestedManyWithoutAssignedToInput
+    supervisedOrders?: WorkOrderUncheckedCreateNestedManyWithoutSupervisedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssignedToInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    history?: HistoryUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutStatusUpdatesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutStatusUpdatesInput, UserUncheckedCreateWithoutStatusUpdatesInput>
+  }
+
+  export type WorkOrderUpsertWithoutStatusHistoryInput = {
+    update: XOR<WorkOrderUpdateWithoutStatusHistoryInput, WorkOrderUncheckedUpdateWithoutStatusHistoryInput>
+    create: XOR<WorkOrderCreateWithoutStatusHistoryInput, WorkOrderUncheckedCreateWithoutStatusHistoryInput>
+    where?: WorkOrderWhereInput
+  }
+
+  export type WorkOrderUpdateToOneWithWhereWithoutStatusHistoryInput = {
+    where?: WorkOrderWhereInput
+    data: XOR<WorkOrderUpdateWithoutStatusHistoryInput, WorkOrderUncheckedUpdateWithoutStatusHistoryInput>
+  }
+
+  export type WorkOrderUpdateWithoutStatusHistoryInput = {
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutCreatedOrdersNestedInput
+    assignedTo?: UserUpdateOneWithoutAssignedOrdersNestedInput
+    supervisedBy?: UserUpdateOneWithoutSupervisedOrdersNestedInput
+    vehicle?: VehicleUpdateOneWithoutWorkOrdersNestedInput
+    tasks?: TaskUpdateManyWithoutWorkOrderNestedInput
+    comments?: CommentUpdateManyWithoutWorkOrderNestedInput
+    attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+  }
+
+  export type WorkOrderUncheckedUpdateWithoutStatusHistoryInput = {
+    orderNumber?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    department?: EnumDepartmentFieldUpdateOperationsInput | $Enums.Department
+    priority?: EnumPriorityFieldUpdateOperationsInput | $Enums.Priority
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    equipment?: NullableStringFieldUpdateOperationsInput | string | null
+    version?: IntFieldUpdateOperationsInput | number
+    estimatedHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    actualHours?: NullableFloatFieldUpdateOperationsInput | number | null
+    createdById?: StringFieldUpdateOperationsInput | string
+    assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    supervisorId?: NullableStringFieldUpdateOperationsInput | string | null
+    vehicleId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tasks?: TaskUncheckedUpdateManyWithoutWorkOrderNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
+    maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+  }
+
+  export type UserUpsertWithoutStatusUpdatesInput = {
+    update: XOR<UserUpdateWithoutStatusUpdatesInput, UserUncheckedUpdateWithoutStatusUpdatesInput>
+    create: XOR<UserCreateWithoutStatusUpdatesInput, UserUncheckedCreateWithoutStatusUpdatesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutStatusUpdatesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutStatusUpdatesInput, UserUncheckedUpdateWithoutStatusUpdatesInput>
+  }
+
+  export type UserUpdateWithoutStatusUpdatesInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutStatusUpdatesInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    department?: NullableEnumDepartmentFieldUpdateOperationsInput | $Enums.Department | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastLogin?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    createdOrders?: WorkOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedOrders?: WorkOrderUncheckedUpdateManyWithoutAssignedToNestedInput
+    supervisedOrders?: WorkOrderUncheckedUpdateManyWithoutSupervisedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssignedToNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    history?: HistoryUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type SessionCreateManyUserInput = {
@@ -17185,6 +19013,14 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type StatusHistoryCreateManyUpdatedByInput = {
+    id?: string
+    workOrderId: string
+    status: $Enums.WorkOrderStatus
+    comments?: string | null
+    updatedAt?: Date | string
+  }
+
   export type SessionUpdateWithoutUserInput = {
     token?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -17227,6 +19063,7 @@ export namespace Prisma {
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutCreatedByInput = {
@@ -17253,6 +19090,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateManyWithoutCreatedByInput = {
@@ -17300,6 +19138,7 @@ export namespace Prisma {
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutAssignedToInput = {
@@ -17326,6 +19165,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateManyWithoutAssignedToInput = {
@@ -17373,6 +19213,7 @@ export namespace Prisma {
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutSupervisedByInput = {
@@ -17399,6 +19240,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateManyWithoutSupervisedByInput = {
@@ -17497,6 +19339,27 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type StatusHistoryUpdateWithoutUpdatedByInput = {
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    workOrder?: WorkOrderUpdateOneRequiredWithoutStatusHistoryNestedInput
+  }
+
+  export type StatusHistoryUncheckedUpdateWithoutUpdatedByInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusHistoryUncheckedUpdateManyWithoutUpdatedByInput = {
+    workOrderId?: StringFieldUpdateOperationsInput | string
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TaskCreateManyWorkOrderInput = {
     id?: string
     description: string
@@ -17532,6 +19395,14 @@ export namespace Prisma {
     action: string
     changes: InputJsonValue
     createdAt?: Date | string
+  }
+
+  export type StatusHistoryCreateManyWorkOrderInput = {
+    id?: string
+    status: $Enums.WorkOrderStatus
+    updatedById: string
+    comments?: string | null
+    updatedAt?: Date | string
   }
 
   export type TaskUpdateWithoutWorkOrderInput = {
@@ -17633,6 +19504,27 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type StatusHistoryUpdateWithoutWorkOrderInput = {
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: UserUpdateOneRequiredWithoutStatusUpdatesNestedInput
+  }
+
+  export type StatusHistoryUncheckedUpdateWithoutWorkOrderInput = {
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    updatedById?: StringFieldUpdateOperationsInput | string
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StatusHistoryUncheckedUpdateManyWithoutWorkOrderInput = {
+    status?: EnumWorkOrderStatusFieldUpdateOperationsInput | $Enums.WorkOrderStatus
+    updatedById?: StringFieldUpdateOperationsInput | string
+    comments?: NullableStringFieldUpdateOperationsInput | string | null
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type WorkOrderCreateManyVehicleInput = {
     id?: string
     orderNumber: string
@@ -17679,6 +19571,7 @@ export namespace Prisma {
     attachments?: AttachmentUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateWithoutVehicleInput = {
@@ -17705,6 +19598,7 @@ export namespace Prisma {
     attachments?: AttachmentUncheckedUpdateManyWithoutWorkOrderNestedInput
     history?: HistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
     maintenanceDetails?: MaintenanceDetailsUncheckedUpdateOneWithoutWorkOrderNestedInput
+    statusHistory?: StatusHistoryUncheckedUpdateManyWithoutWorkOrderNestedInput
   }
 
   export type WorkOrderUncheckedUpdateManyWithoutVehicleInput = {

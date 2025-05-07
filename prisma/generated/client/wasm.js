@@ -211,6 +211,15 @@ exports.Prisma.MaintenanceDetailsScalarFieldEnum = {
   procedures: 'procedures'
 };
 
+exports.Prisma.StatusHistoryScalarFieldEnum = {
+  id: 'id',
+  workOrderId: 'workOrderId',
+  status: 'status',
+  updatedById: 'updatedById',
+  comments: 'comments',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -250,11 +259,15 @@ exports.Priority = exports.$Enums.Priority = {
 
 exports.WorkOrderStatus = exports.$Enums.WorkOrderStatus = {
   PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
   ASSIGNED: 'ASSIGNED',
   IN_PROGRESS: 'IN_PROGRESS',
   COMPLETED: 'COMPLETED',
   REJECTED: 'REJECTED',
-  ON_HOLD: 'ON_HOLD'
+  ON_HOLD: 'ON_HOLD',
+  CANCELLED: 'CANCELLED',
+  ISSUE_REPORTED: 'ISSUE_REPORTED',
+  NEEDS_REVIEW: 'NEEDS_REVIEW'
 };
 
 exports.Prisma.ModelName = {
@@ -266,7 +279,8 @@ exports.Prisma.ModelName = {
   Comment: 'Comment',
   Attachment: 'Attachment',
   History: 'History',
-  MaintenanceDetails: 'MaintenanceDetails'
+  MaintenanceDetails: 'MaintenanceDetails',
+  StatusHistory: 'StatusHistory'
 };
 
 /**

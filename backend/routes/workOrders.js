@@ -16,5 +16,5 @@ router.put('/:id/approve', auth, workOrderController.approveWorkOrder);
 router.put('/:id/reject', auth, workOrderController.rejectWorkOrder);
 router.delete('/:id', auth, workOrderController.delete);
 
-export const workOrderRouter = router;
+export { router as workOrderRouter };
 
