@@ -413,7 +413,8 @@
                                 title: input.value,
                                 status: 'PENDING'
                             }))
-                            .filter(task => task.title)
+                            .filter(task => task.title),
+                        status: 'PENDING', // Explicitly set initial status
                     };
 
                     const response = await fetch('/api/workorders/create', {  // Changed from /api/work-order/create
@@ -444,7 +445,15 @@
 
                     alert('Work order created successfully!');
                     this.reset();
-                    await updateWorkOrderHistory();
+
+                    // Refresh both pending and history views
+                    await Promise.all([
+                        updatePendingOrders(),
+                        updateWorkOrderHistory()
+                    ]);
+
+                    // Switch to pending orders view after creation
+                    showSection('pending');
 
                 } catch (error) {
                     console.error('Error creating work order:', error);
@@ -555,73 +564,37 @@
                         return;
                     }
 
-                    console.log('Fetching pending orders...'); // Debug log
-
+                    console.log('Fetching pending orders...');
                     const response = await fetch("/api/workorders/pending", {
                         headers: {
                             'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
                         }
                     });
 
-                    console.log('Response status:', response.status); // Debug log
-
-                    // Check content type and handle response
-                    const contentType = response.headers.get('content-type');
-                    if (!contentType || !contentType.includes('application/json')) {
-                        throw new Error(`Expected JSON but got ${contentType || 'unknown'}`);
-                    }
-
-                    const result = await response.json();
-                    console.log('Response data:', result); // Debug log
-
+                    // Handle response status
                     if (!response.ok) {
-                        throw new Error(result.error || result.message || `HTTP error! status: ${response.status}`);
-                    }
-
-                    const pendingOrders = result.data || [];
-
-                    const tbody = document.getElementById('pendingTableBody');
-                    if (!tbody) {
-                        throw new Error('Table body element not found');
-                    }
-
-                    if (pendingOrders.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">No pending work orders found</td></tr>';
+                        handleErrorResponse(response);
                         return;
                     }
 
-                    tbody.innerHTML = pendingOrders.map(wo => `
-                        <tr>
-                            <td>${wo.orderNumber || 'N/A'}</td>
-                            <td>${wo.title || 'N/A'}</td>
-                            <td>${wo.vehicle?.model || 'N/A'}</td>
-                            <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
-                            <td>${wo.repairType || 'N/A'}</td>
-                            <td>${wo.priority || 'N/A'}</td>
-                            <td>${wo.assignedTo?.name || 'Unassigned'}</td>
-                            <td><span class="status-badge status-pending">PENDING</span></td>
-                            <td>${wo.dueDate ? new Date(wo.dueDate).toLocaleString() : 'N/A'}</td>
-                            <td>
-                                <button onclick="editWorkOrder('${wo.id}')">Edit</button>
-                                <button onclick="completeWorkOrder('${wo.id}')">Complete</button>
-                            </td>
-                        </tr>
-                    `).join('');
-
-                    // Update count in button
-                    const viewPendingBtn = document.getElementById('viewPendingBtn');
-                    if (viewPendingBtn) {
-                        viewPendingBtn.textContent = `View Pending Orders (${pendingOrders.length})`;
+                    const result = await response.json();
+                    const pendingOrders = result.data || result;
+                    
+                    if (!Array.isArray(pendingOrders)) {
+                        throw new Error('Invalid data format received from server');
                     }
+
+                    // Filter for truly pending orders
+                    const filteredOrders = pendingOrders.filter(wo => 
+                        wo.status === 'PENDING' || wo.status === 'IN_REVIEW' || wo.status === 'ASSIGNED'
+                    );
+
+                    renderPendingOrders(filteredOrders);
 
                 } catch (error) {
-                    console.error('Error fetching pending orders:', error);
-                    const tbody = document.getElementById('pendingTableBody');
-                    if (tbody) {
-                        tbody.innerHTML = `<tr><td colspan="10" style="text-align: center; color: red;">
-                            Error: ${error.message}</td></tr>`;
-                    }
+                    handlePendingOrdersError(error);
                 }
             }
 
@@ -975,48 +948,6 @@
             // Initialize
             updateWorkOrderHistory();
 
-            async function updatePendingOrders() {
-                try {
-                    const token = sessionStorage.getItem('token');
-                    if (!token) {
-                        window.location.href = '/login.html';
-                        return;
-                    }
-
-                    const response = await fetch("/api/workorders/pending", {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json'
-                        }
-                    });
-
-                    if (!response.ok) throw new Error('Failed to fetch pending orders');
-                    const workOrders = await response.json();
-
-                    const tbody = document.getElementById('pendingTableBody');
-                    tbody.innerHTML = workOrders.map(wo => `
-                        <tr>
-                            <td>${wo.orderNumber}</td>
-                            <td>${wo.title}</td>
-                            <td>${wo.vehicle?.model || 'N/A'}</td>
-                            <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
-                            <td>${wo.repairType || 'N/A'}</td>
-                            <td>${wo.priority}</td>
-                            <td>${wo.assignedTo?.name || 'Unassigned'}</td>
-                            <td><span class="status-badge ${wo.status.toLowerCase()}">${wo.status}</span></td>
-                            <td>${new Date(wo.dueDate).toLocaleString()}</td>
-                            <td>
-                                <button onclick="editWorkOrder('${wo.id}')">Edit</button>
-                                <button onclick="completeWorkOrder('${wo.id}')">Complete</button>
-                            </td>
-                        </tr>
-                    `).join('');
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Failed to fetch pending orders');
-                }
-            }
-
             // Add function to mark work order as complete
             window.completeWorkOrder = async function(id) {
                 if (confirm('Are you sure you want to mark this work order as complete?')) {
@@ -1178,6 +1109,192 @@
                 alert(error.message || 'Failed to create work order');
             }
         });
+
+        async function updatePendingOrders() {
+            try {
+                const token = sessionStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                console.log('Fetching pending orders...');
+                const response = await fetch("/api/workorders/pending", {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                // Log response status for debugging
+                console.log('Response status:', response.status);
+                
+                // Check for specific HTTP status codes
+                if (response.status === 401) {
+                    throw new Error('Unauthorized - Please log in again');
+                } else if (response.status === 403) {
+                    throw new Error('Forbidden - You do not have permission to access this resource');
+                } else if (response.status === 404) {
+                    throw new Error('API endpoint not found - Please check the URL');
+                } else if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || `Server error: ${response.status}`);
+                }
+
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Invalid response format from server');
+                }
+
+                const result = await response.json();
+                console.log('Received data:', result);
+
+                const pendingOrders = result.data || result;
+                if (!Array.isArray(pendingOrders)) {
+                    throw new Error('Invalid data format received from server');
+                }
+
+                // Filter to only show PENDING status
+                const filteredOrders = pendingOrders.filter(wo => wo.status === 'PENDING');
+                console.log('Filtered pending orders:', filteredOrders.length);
+
+                const tbody = document.getElementById('pendingTableBody');
+                if (!tbody) {
+                    throw new Error('Table body element not found');
+                }
+
+                if (filteredOrders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">No pending work orders found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = filteredOrders.map(wo => `
+                    <tr>
+                        <td>${wo.orderNumber || 'N/A'}</td>
+                        <td>${wo.title || 'N/A'}</td>
+                        <td>${wo.vehicle?.model || 'N/A'}</td>
+                        <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
+                        <td>${wo.repairType || 'N/A'}</td>
+                        <td>${wo.priority || 'N/A'}</td>
+                        <td>${wo.assignedTo?.name || 'Unassigned'}</td>
+                        <td><span class="status-badge status-pending">PENDING</span></td>
+                        <td>${wo.dueDate ? new Date(wo.dueDate).toLocaleString() : 'N/A'}</td>
+                        <td>
+                            <button onclick="editWorkOrder('${wo.id}')" class="btn btn-edit">Edit</button>
+                            ${wo.status === 'PENDING' ? `
+                                <button onclick="completeWorkOrder('${wo.id}')" class="btn btn-complete">Complete</button>
+                            ` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Update the pending count in button
+                const viewPendingBtn = document.getElementById('viewPendingBtn');
+                if (viewPendingBtn) {
+                    viewPendingBtn.textContent = `View Pending Orders (${filteredOrders.length})`;
+                }
+
+            } catch (error) {
+                console.error('Error details:', {
+                    message: error.message,
+                    stack: error.stack
+                });
+
+                const tbody = document.getElementById('pendingTableBody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="10" style="text-align: center; color: red;">
+                                ${error.message === 'Failed to fetch' 
+                                    ? 'Network error - Please check your connection' 
+                                    : `Error: ${error.message}`}
+                            </td>
+                        </tr>`;
+                }
+
+                // Only show alert for critical errors
+                if (!error.message.includes('No pending') && !error.message.includes('not found')) {
+                    alert(`Error loading pending orders: ${error.message}\nPlease check console for details.`);
+                }
+            }
+        }
+
+        // Add helper functions for better organization
+        function renderPendingOrders(orders) {
+            const tbody = document.getElementById('pendingTableBody');
+            if (!tbody) {
+                throw new Error('Table body element not found');
+            }
+
+            if (orders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center">No pending work orders found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = orders.map(wo => `
+                <tr>
+                    <td>${wo.orderNumber || 'N/A'}</td>
+                    <td>${wo.title || 'N/A'}</td>
+                    <td>${wo.vehicle?.model || 'N/A'}</td>
+                    <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
+                    <td>${wo.repairType || 'N/A'}</td>
+                    <td>${wo.priority || 'N/A'}</td>
+                    <td>${wo.assignedTo?.name || 'Unassigned'}</td>
+                    <td><span class="status-badge status-${(wo.status || 'pending').toLowerCase()}">${wo.status}</span></td>
+                    <td>${wo.dueDate ? new Date(wo.dueDate).toLocaleString() : 'N/A'}</td>
+                    <td>
+                        <button onclick="editWorkOrder('${wo.id}')" class="btn btn-edit">Edit</button>
+                        ${wo.status === 'PENDING' ? `
+                            <button onclick="completeWorkOrder('${wo.id}')" class="btn btn-complete">Complete</button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Update count in button
+            const viewPendingBtn = document.getElementById('viewPendingBtn');
+            if (viewPendingBtn) {
+                viewPendingBtn.textContent = `View Pending Orders (${orders.length})`;
+            }
+        }
+
+        function handleErrorResponse(response) {
+            if (response.status === 401) {
+                alert('Unauthorized - Please log in again');
+                window.location.href = '/login.html';
+            } else if (response.status === 403) {
+                alert('Forbidden - You do not have permission to access this resource');
+            } else if (response.status === 404) {
+                alert('API endpoint not found - Please check the URL');
+            } else {
+                alert(`Server error: ${response.status}`);
+            }
+        }
+
+        function handlePendingOrdersError(error) {
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack
+            });
+
+            const tbody = document.getElementById('pendingTableBody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" style="text-align: center; color: red;">
+                            ${error.message === 'Failed to fetch' 
+                                ? 'Network error - Please check your connection' 
+                                : `Error: ${error.message}`}
+                        </td>
+                    </tr>`;
+            }
+
+            // Only show alert for critical errors
+            if (!error.message.includes('No pending') && !error.message.includes('not found')) {
+                alert(`Error loading pending orders: ${error.message}\nPlease check console for details.`);
+            }
+        }
     </script>
 </body>
 </html>
