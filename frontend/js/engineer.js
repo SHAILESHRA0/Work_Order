@@ -1,31 +1,42 @@
 // ...existing code...
 
 async function createWorkOrder(formData) {
-    try {
-        const response = await fetch('/api/workorders', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${sessionStorage.getItem('token')}`
-            },
-            body: JSON.stringify(formData)
-        });
+    const maxRetries = 3;
+    let attempt = 0;
 
-        const result = await response.json();
+    while (attempt < maxRetries) {
+        try {
+            const response = await fetch('/api/workorders/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                },
+                body: JSON.stringify(formData)
+            });
 
-        if (!response.ok) {
-            throw new Error(result.error || result.message || 'Failed to create work order');
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || result.details || 'Failed to create work order');
+            }
+
+            // Show success message and refresh list
+            showNotification('Work order created successfully', 'success');
+            await loadWorkOrders();
+
+            return result.data;
+        } catch (error) {
+            attempt++;
+            if (error.message.includes('deadlock') && attempt < maxRetries) {
+                // Wait before retrying
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+                continue;
+            }
+            console.error('Error creating work order:', error);
+            showNotification(error.message, 'error');
+            throw error;
         }
-
-        // Show success message and refresh list
-        showNotification('Work order created successfully', 'success');
-        await loadWorkOrders();
-
-        return result.data;
-    } catch (error) {
-        console.error('Error creating work order:', error);
-        showNotification(error.message, 'error');
-        throw error;
     }
 }
 

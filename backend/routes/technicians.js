@@ -1,5 +1,5 @@
 import express from 'express';
-import { db } from '../db/db.js';
+import prisma from '../db/prisma.js';
 import { auth } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -8,11 +8,12 @@ const router = express.Router();
 const VALID_DEPARTMENTS = [
     'ELECTRICAL',
     'MECHANICAL',
-    'IT', 
-    'OPERATIONS',
+    'ELECTRONICS',
     'MAINTENANCE',
+    'OPERATIONS',
+    'PRODUCTION',
     'QUALITY',
-    'HSE',
+    'IT',
     'GENERAL'
 ];
 
@@ -29,7 +30,7 @@ router.get('/', auth, async (req, res) => {
         }
 
         const where = {
-            role: 'TECHNICIAN',
+            role: 'technician',
             isActive: true
         };
 
@@ -37,14 +38,14 @@ router.get('/', auth, async (req, res) => {
             where.department = department.toUpperCase();
         }
 
-        const technicians = await db.user.findMany({
+        const technicians = await prisma.user.findMany({
             where,
             select: {
                 id: true,
                 name: true,
                 department: true,
-                skills: true,
-                availability: true
+                email: true,
+                role: true
             },
             orderBy: {
                 name: 'asc'
@@ -64,8 +65,20 @@ router.get('/', auth, async (req, res) => {
 // Add new technician (manager only)
 router.post('/', auth, async (req, res) => {
     try {
-        const technician = new db.user(req.body);
-        await technician.save();
+        const technician = await prisma.user.create({
+            data: {
+                ...req.body,
+                role: 'technician',
+                isActive: true
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                department: true,
+                role: true
+            }
+        });
         res.status(201).json(technician);
     } catch (error) {
         res.status(400).json({ message: error.message });

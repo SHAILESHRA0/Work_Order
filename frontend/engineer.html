@@ -513,7 +513,8 @@
                         return;
                     }
 
-                    const response = await fetch("/api/workorders/list", {
+                    console.log('Fetching non-pending work orders...');
+                    const response = await fetch("/api/workorders/non-pending", {
                         headers: {
                             'Authorization': `Bearer ${token}`,
                             'Accept': 'application/json'
@@ -524,23 +525,35 @@
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
-                    const data = await response.json();
-                    // Ensure workOrders is always an array
-                    const workOrders = Array.isArray(data) ? data : data.workOrders || [];
+                    const result = await response.json();
+                    console.log('Received work orders:', result);
+
+                    // Handle both array and object responses
+                    const workOrders = Array.isArray(result) ? result : (result.data || []);
+                    console.log('Processed work orders:', workOrders);
 
                     const searchTerm = searchInput.value.toLowerCase();
                     const priorityFilter = filterPriority.value;
 
+                    console.log('Filtering with:', { searchTerm, priorityFilter });
                     const filteredOrders = workOrders.filter(wo => {
                         const matchesSearch = 
+                            wo.title?.toLowerCase().includes(searchTerm) ||
                             (wo.vehicle?.model || '').toLowerCase().includes(searchTerm) || 
                             (wo.vehicle?.licensePlate || '').toLowerCase().includes(searchTerm) || 
                             (wo.repairType || '').toLowerCase().includes(searchTerm);
-                        const matchesPriority = !priorityFilter || wo.priority === priorityFilter;
+                        const matchesPriority = !priorityFilter || wo.priority.toLowerCase() === priorityFilter.toLowerCase();
                         return matchesSearch && matchesPriority;
                     });
 
+                    console.log('Filtered orders:', filteredOrders);
                     const tbody = document.getElementById('historyTableBody');
+                    
+                    if (!filteredOrders.length) {
+                        tbody.innerHTML = '<tr><td colspan="11" class="text-center">No completed work orders found</td></tr>';
+                        return;
+                    }
+
                     tbody.innerHTML = filteredOrders.map(wo => `
                         <tr>
                             <td>${wo.orderNumber || 'N/A'}</td>
@@ -554,7 +567,6 @@
                             <td>${wo.startDate ? new Date(wo.startDate).toLocaleString() : 'N/A'}</td>
                             <td>${wo.dueDate ? new Date(wo.dueDate).toLocaleString() : 'N/A'}</td>
                             <td>
-                                <button onclick="editWorkOrder('${wo.id}')">Edit</button>
                                 <button onclick="deleteWorkOrder('${wo.id}')">Delete</button>
                             </td>
                         </tr>
@@ -573,43 +585,79 @@
                         return;
                     }
 
-                    const searchTerm = document.getElementById('pendingSearchInput').value.toLowerCase();
-                    const priorityFilter = document.getElementById('pendingPriorityFilter').value;
+                    const searchTerm = document.getElementById('pendingSearchInput')?.value?.toLowerCase().trim() || '';
+                    const priorityFilter = document.getElementById('pendingPriorityFilter')?.value || '';
 
                     console.log('Fetching pending orders...');
-                    const response = await fetch("/api/workorders/pending", {
+
+                    const response = await fetch("/api/workorders/list", {  // Changed endpoint to get all orders
                         headers: {
                             'Authorization': `Bearer ${token}`,
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
+                            'Accept': 'application/json'
                         }
                     });
 
-                    // Handle response status
                     if (!response.ok) {
-                        handleErrorResponse(response);
-                        return;
+                        throw new Error(`HTTP error! status: ${response.status}`);
                     }
 
                     const result = await response.json();
-                    const pendingOrders = result.data || result;
-                    
-                    if (!Array.isArray(pendingOrders)) {
-                        throw new Error('Invalid data format received from server');
-                    }
+                    const allOrders = Array.isArray(result) ? result : (result.data || []);
 
-                    // Filter orders based on search term and priority
-                    const filteredOrders = pendingOrders.filter(wo => {
-                        const matchesSearch = wo.title?.toLowerCase().includes(searchTerm);
-                        const matchesPriority = !priorityFilter || wo.priority === priorityFilter;
-                        return wo.status === 'PENDING' && matchesSearch && matchesPriority;
+                    // Filter for pending orders and other criteria
+                    const filteredOrders = allOrders.filter(wo => {
+                        const titleMatch = wo.title?.toLowerCase().includes(searchTerm);
+                        const priorityMatch = !priorityFilter || wo.priority === priorityFilter;
+                        // Check for both uppercase and lowercase 'pending' status
+                        const statusMatch = wo.status?.toUpperCase() === 'PENDING';
+
+                        console.log(`Order ${wo.orderNumber}: Status: ${wo.status}, Title Match: ${titleMatch}, Priority Match: ${priorityMatch}, Status Match: ${statusMatch}`);
+                        
+                        return statusMatch && titleMatch && priorityMatch;
                     });
 
-                    console.log('Filtered pending orders:', filteredOrders.length);
+                    console.log('Filtered pending orders:', filteredOrders);
                     renderPendingOrders(filteredOrders);
 
                 } catch (error) {
+                    console.error('Error fetching pending orders:', error);
                     handlePendingOrdersError(error);
+                }
+            }
+
+            function renderPendingOrders(orders) {
+                const tbody = document.getElementById('pendingTableBody');
+                if (!tbody) {
+                    throw new Error('Table body element not found');
+                }
+
+                if (!orders || orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="10" class="text-center">No pending work orders found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = orders.map(wo => `
+                    <tr>
+                        <td>${wo.orderNumber || 'N/A'}</td>
+                        <td>${wo.title || 'N/A'}</td>
+                        <td>${wo.vehicle?.model || 'N/A'}</td>
+                        <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
+                        <td>${wo.repairType || wo.vehicle?.repairType || 'N/A'}</td>
+                        <td>${wo.priority || 'N/A'}</td>
+                        <td>${wo.assignedTo?.name || 'Unassigned'}</td>
+                        <td><span class="status-badge status-pending">PENDING</span></td>
+                        <td>${wo.dueDate ? new Date(wo.dueDate).toLocaleString() : 'N/A'}</td>
+                        <td>
+                            <button onclick="editWorkOrder('${wo.id}')" class="btn btn-edit">Edit</button>
+                            <button onclick="completeWorkOrder('${wo.id}')" class="btn btn-complete">Complete</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Update count in button
+                const viewPendingBtn = document.getElementById('viewPendingBtn');
+                if (viewPendingBtn) {
+                    viewPendingBtn.textContent = `View Pending Orders (${orders.length})`;
                 }
             }
 
@@ -1157,212 +1205,12 @@
                     return;
                 }
 
-                console.log('Fetching pending orders...');
-                const response = await fetch("/api/workorders/pending", {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                // Log response status for debugging
-                console.log('Response status:', response.status);
-                
-                // Check for specific HTTP status codes
-                if (response.status === 401) {
-                    throw new Error('Unauthorized - Please log in again');
-                } else if (response.status === 403) {
-                    throw new Error('Forbidden - You do not have permission to access this resource');
-                } else if (response.status === 404) {
-                    throw new Error('API endpoint not found - Please check the URL');
-                } else if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.message || `Server error: ${response.status}`);
-                }
-
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('Invalid response format from server');
-                }
-
-                const result = await response.json();
-                console.log('Received data:', result);
-
-                const pendingOrders = result.data || result;
-                if (!Array.isArray(pendingOrders)) {
-                    throw new Error('Invalid data format received from server');
-                }
-
-                // Filter to only show PENDING status
-                const filteredOrders = pendingOrders.filter(wo => wo.status === 'PENDING');
-                console.log('Filtered pending orders:', filteredOrders.length);
-
-                const tbody = document.getElementById('pendingTableBody');
-                if (!tbody) {
-                    throw new Error('Table body element not found');
-                }
-
-                if (filteredOrders.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="10" style="text-align: center;">No pending work orders found</td></tr>';
-                    return;
-                }
-
-                tbody.innerHTML = filteredOrders.map(wo => `
-                    <tr>
-                        <td>${wo.orderNumber || 'N/A'}</td>
-                        <td>${wo.title || 'N/A'}</td>
-                        <td>${wo.vehicle?.model || 'N/A'}</td>
-                        <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
-                        <td>${wo.repairType || wo.vehicle?.repairType || 'N/A'}</td>
-                        <td>${wo.priority || 'N/A'}</td>
-                        <td>${wo.assignedTo?.name || 'Unassigned'}</td>
-                        <td><span class="status-badge status-pending">PENDING</span></td>
-                        <td>${wo.dueDate ? new Date(wo.dueDate).toLocaleString() : 'N/A'}</td>
-                        <td>
-                            <button onclick="editWorkOrder('${wo.id}')" class="btn btn-edit">Edit</button>
-                            ${wo.status === 'PENDING' ? `
-                                <button onclick="completeWorkOrder('${wo.id}')" class="btn btn-complete">Complete</button>
-                            ` : ''}
-                        </td>
-                    </tr>
-                `).join('');
-
-                // Update the pending count in button
-                const viewPendingBtn = document.getElementById('viewPendingBtn');
-                if (viewPendingBtn) {
-                    viewPendingBtn.textContent = `View Pending Orders (${filteredOrders.length})`;
-                }
-
-            } catch (error) {
-                console.error('Error details:', {
-                    message: error.message,
-                    stack: error.stack
-                });
-
-                const tbody = document.getElementById('pendingTableBody');
-                if (tbody) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="10" style="text-align: center; color: red;">
-                                ${error.message === 'Failed to fetch' 
-                                    ? 'Network error - Please check your connection' 
-                                    : `Error: ${error.message}`}
-                            </td>
-                        </tr>`;
-                }
-
-                // Only show alert for critical errors
-                if (!error.message.includes('No pending') && !error.message.includes('not found')) {
-                    alert(`Error loading pending orders: ${error.message}\nPlease check console for details.`);
-                }
-            }
-        }
-
-        // Add helper functions for better organization
-        function renderPendingOrders(orders) {
-            const tbody = document.getElementById('pendingTableBody');
-            if (!tbody) {
-                throw new Error('Table body element not found');
-            }
-
-            if (orders.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" class="text-center">No pending work orders found</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = orders.map(wo => `
-                <tr>
-                    <td>${wo.orderNumber || 'N/A'}</td>
-                    <td>${wo.title || 'N/A'}</td>
-                    <td>${wo.vehicle?.model || 'N/A'}</td>
-                    <td>${wo.vehicle?.licensePlate || 'N/A'}</td>
-                    <td>${wo.repairType || wo.vehicle?.repairType || 'N/A'}</td>
-                    <td>${wo.priority || 'N/A'}</td>
-                    <td>${wo.assignedTo?.name || 'Unassigned'}</td>
-                    <td><span class="status-badge status-${(wo.status || 'pending').toLowerCase()}">${wo.status}</span></td>
-                    <td>${wo.dueDate ? new Date(wo.dueDate).toLocaleString() : 'N/A'}</td>
-                    <td>
-                        <button onclick="editWorkOrder('${wo.id}')" class="btn btn-edit">Edit</button>
-                        ${wo.status === 'PENDING' ? `
-                            <button onclick="completeWorkOrder('${wo.id}')" class="btn btn-complete">Complete</button>
-                        ` : ''}
-                    </td>
-                </tr>
-            `).join('');
-
-            // Update count in button
-            const viewPendingBtn = document.getElementById('viewPendingBtn');
-            if (viewPendingBtn) {
-                viewPendingBtn.textContent = `View Pending Orders (${orders.length})`;
-            }
-        }
-
-        function handleErrorResponse(response) {
-            if (response.status === 401) {
-                alert('Unauthorized - Please log in again');
-                window.location.href = '/login.html';
-            } else if (response.status === 403) {
-                alert('Forbidden - You do not have permission to access this resource');
-            } else if (response.status === 404) {
-                alert('API endpoint not found - Please check the URL');
-            } else {
-                alert(`Server error: ${response.status}`);
-            }
-        }
-
-        function handlePendingOrdersError(error) {
-            console.error('Error details:', {
-                message: error.message,
-                stack: error.stack
-            });
-
-            const tbody = document.getElementById('pendingTableBody');
-            if (tbody) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="10" style="text-align: center; color: red;">
-                            ${error.message === 'Failed to fetch' 
-                                ? 'Network error - Please check your connection' 
-                                : `Error: ${error.message}`}
-                        </td>
-                    </tr>`;
-            }
-
-            // Only show alert for critical errors
-            if (!error.message.includes('No pending') && !error.message.includes('not found')) {
-                alert(`Error loading pending orders: ${error.message}\nPlease check console for details.`);
-            }
-        }
-
-        // Add event listeners for search and filter
-        document.addEventListener('DOMContentLoaded', function() {
-            // ...existing DOMContentLoaded code...
-
-            // Add these new event listeners
-            document.getElementById('pendingSearchInput').addEventListener('input', updatePendingOrders);
-            document.getElementById('pendingPriorityFilter').addEventListener('change', updatePendingOrders);
-
-            // ...rest of existing code...
-        });
-
-        // Refactored updatePendingOrders function
-        async function updatePendingOrders() {
-            try {
-                const token = sessionStorage.getItem('token');
-                if (!token) {
-                    window.location.href = '/login.html';
-                    return;
-                }
-
-                // Get search and filter values
                 const searchTerm = document.getElementById('pendingSearchInput')?.value?.toLowerCase().trim() || '';
                 const priorityFilter = document.getElementById('pendingPriorityFilter')?.value || '';
 
-                console.log('Search term:', searchTerm);
-                console.log('Priority filter:', priorityFilter);
+                console.log('Fetching pending orders...');
 
-                const response = await fetch("/api/workorders/pending", {
+                const response = await fetch("/api/workorders/list", {  // Changed endpoint to get all orders
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Accept': 'application/json'
@@ -1374,20 +1222,21 @@
                 }
 
                 const result = await response.json();
-                const pendingOrders = Array.isArray(result) ? result : (result.data || []);
+                const allOrders = Array.isArray(result) ? result : (result.data || []);
 
-                // Apply filters
-                const filteredOrders = pendingOrders.filter(wo => {
+                // Filter for pending orders and other criteria
+                const filteredOrders = allOrders.filter(wo => {
                     const titleMatch = wo.title?.toLowerCase().includes(searchTerm);
                     const priorityMatch = !priorityFilter || wo.priority === priorityFilter;
-                    const statusMatch = wo.status === 'PENDING';
+                    // Check for both uppercase and lowercase 'pending' status
+                    const statusMatch = wo.status?.toUpperCase() === 'PENDING';
 
-                    console.log(`Order ${wo.orderNumber}: Title Match: ${titleMatch}, Priority Match: ${priorityMatch}, Status Match: ${statusMatch}`);
+                    console.log(`Order ${wo.orderNumber}: Status: ${wo.status}, Title Match: ${titleMatch}, Priority Match: ${priorityMatch}, Status Match: ${statusMatch}`);
                     
                     return statusMatch && titleMatch && priorityMatch;
                 });
 
-                console.log('Filtered orders:', filteredOrders);
+                console.log('Filtered pending orders:', filteredOrders);
 
                 // Render the filtered orders
                 renderPendingOrders(filteredOrders);

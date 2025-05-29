@@ -15,6 +15,7 @@ router.put('/update/:id', auth, validateWorkOrderMiddleware, workOrderController
 router.put('/:id/approve', auth, workOrderController.approveWorkOrder);
 router.put('/:id/reject', auth, workOrderController.rejectWorkOrder);
 router.delete('/:id', auth, workOrderController.delete);
+router.get('/non-pending', auth, workOrderController.getNonPendingOrders);
 
 export { router as workOrderRouter };
 

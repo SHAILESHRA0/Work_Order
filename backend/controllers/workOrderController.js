@@ -3,106 +3,122 @@ import { WORK_ORDER_STATUS } from '../models/WorkOrder.js';
 
 export const workOrderController = {
     async create(req, res) {
-        try {
-            const {
-                title,
-                description,
-                department,
-                orderNumber,
-                priority,
-                startDate,
-                dueDate,
-                vehicle,
-                assignedToId,
-                tasks
-            } = req.body;
+        const maxRetries = 3;
+        let attempt = 0;
 
-            // Validate required fields
-            if (!title || !description || !department || !startDate || !dueDate) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'Missing required fields'
-                });
-            }
+        while (attempt < maxRetries) {
+            try {
+                const {
+                    title,
+                    description,
+                    department,
+                    orderNumber,
+                    priority,
+                    startDate,
+                    dueDate,
+                    vehicle,
+                    assignedToId,
+                    tasks
+                } = req.body;
 
-            // Create work order with vehicle in a transaction
-            const workOrder = await prisma.$transaction(async (tx) => {
-                let vehicleId = null;
-
-                if (vehicle?.licensePlate) {
-                    const existingVehicle = await tx.vehicle.findUnique({
-                        where: { licensePlate: vehicle.licensePlate }
+                // Validate required fields
+                if (!title || !description || !department || !startDate || !dueDate) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Missing required fields'
                     });
-
-                    if (existingVehicle) {
-                        vehicleId = existingVehicle.id;
-                    } else {
-                        const newVehicle = await tx.vehicle.create({
-                            data: {
-                                model: vehicle.model,
-                                licensePlate: vehicle.licensePlate
-                            }
-                        });
-                        vehicleId = newVehicle.id;
-                    }
                 }
 
-                return await tx.workOrder.create({
-                    data: {
-                        title,
-                        description,
-                        department,
-                        orderNumber,
-                        priority: priority || 'MEDIUM',
-                        status: 'PENDING',
-                        startDate: new Date(startDate),
-                        dueDate: new Date(dueDate),
-                        createdById: req.user.id,
-                        assignedToId,
-                        vehicleId, // Use the vehicle ID reference instead of nested create
-                        tasks: tasks ? {
-                            createMany: {
-                                data: tasks.map(task => ({
-                                    description: task.title,
-                                    status: 'PENDING',
-                                    priority: priority || 'MEDIUM'
-                                }))
-                            }
-                        } : undefined
-                    },
-                    include: {
-                        vehicle: true,
-                        tasks: true,
-                        assignedTo: {
-                            select: {
-                                id: true,
-                                name: true
-                            }
-                        },
-                        createdBy: {
-                            select: {
-                                id: true,
-                                name: true
-                            }
+                // Create work order with vehicle in a transaction
+                const workOrder = await prisma.$transaction(async (tx) => {
+                    let vehicleId = null;
+
+                    if (vehicle?.licensePlate) {
+                        const existingVehicle = await tx.vehicle.findUnique({
+                            where: { licensePlate: vehicle.licensePlate }
+                        });
+
+                        if (existingVehicle) {
+                            vehicleId = existingVehicle.id;
+                        } else {
+                            const newVehicle = await tx.vehicle.create({
+                                data: {
+                                    model: vehicle.model,
+                                    licensePlate: vehicle.licensePlate
+                                }
+                            });
+                            vehicleId = newVehicle.id;
                         }
                     }
+
+                    return await tx.workOrder.create({
+                        data: {
+                            title,
+                            description,
+                            department,
+                            orderNumber,
+                            priority: priority || 'MEDIUM',
+                            status: 'PENDING',
+                            startDate: new Date(startDate),
+                            dueDate: new Date(dueDate),
+                            createdById: req.user.id,
+                            assignedToId,
+                            vehicleId, // Use the vehicle ID reference instead of nested create
+                            tasks: tasks ? {
+                                createMany: {
+                                    data: tasks.map(task => ({
+                                        description: task.title,
+                                        status: 'PENDING',
+                                        priority: priority || 'MEDIUM'
+                                    }))
+                                }
+                            } : undefined
+                        },
+                        include: {
+                            vehicle: true,
+                            tasks: true,
+                            assignedTo: {
+                                select: {
+                                    id: true,
+                                    name: true
+                                }
+                            },
+                            createdBy: {
+                                select: {
+                                    id: true,
+                                    name: true
+                                }
+                            }
+                        }
+                    });
+                }, {
+                    maxWait: 5000, // 5s timeout
+                    timeout: 10000, // 10s timeout
+                    isolationLevel: prisma.TransactionIsolationLevel.Serializable // Highest isolation level
                 });
-            });
 
-            // Send success response with complete work order data
-            return res.status(201).json({
-                success: true,
-                message: 'Work order created successfully',
-                data: workOrder
-            });
+                // Send success response with complete work order data
+                return res.status(201).json({
+                    success: true,
+                    message: 'Work order created successfully',
+                    data: workOrder
+                });
 
-        } catch (error) {
-            console.error('Work order creation error:', error);
-            return res.status(500).json({
-                success: false,
-                error: 'Failed to create work order',
-                details: error.message
-            });
+            } catch (error) {
+                attempt++;
+                if (error.code === 'P2034' && attempt < maxRetries) {
+                    // Wait for a random time before retrying to prevent deadlocks
+                    await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
+                    continue;
+                }
+
+                console.error('Work order creation error:', error);
+                return res.status(500).json({
+                    success: false,
+                    error: 'Failed to create work order',
+                    details: attempt >= maxRetries ? 'Maximum retries exceeded' : error.message
+                });
+            }
         }
     },
 
@@ -511,6 +527,56 @@ export const workOrderController = {
             return res.status(500).json({
                 success: false,
                 error: 'Failed to reject work order'
+            });
+        }
+    },
+
+    async getNonPendingOrders(req, res) {
+        try {
+            const workOrders = await prisma.workOrder.findMany({
+                where: {
+                    NOT: {
+                        status: 'PENDING'
+                    }
+                },
+                include: {
+                    vehicle: {
+                        select: {
+                            model: true,
+                            licensePlate: true
+                        }
+                    },
+                    assignedTo: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    },
+                    createdBy: {
+                        select: {
+                            id: true,
+                            name: true
+                        }
+                    },
+                    tasks: true
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            });
+
+            return res.status(200).json({
+                success: true,
+                data: workOrders,
+                message: 'Non-pending work orders fetched successfully'
+            });
+
+        } catch (error) {
+            console.error('Error fetching non-pending work orders:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to fetch non-pending work orders',
+                details: error.message
             });
         }
     }
