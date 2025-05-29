@@ -16,7 +16,7 @@ const VALID_DEPARTMENTS = [
     'GENERAL'
 ];
 
-router.get('/api/technicians', auth, async (req, res) => {
+router.get('/', auth, async (req, res) => {
     try {
         const { department } = req.query;
 
@@ -62,7 +62,7 @@ router.get('/api/technicians', auth, async (req, res) => {
 });
 
 // Add new technician (manager only)
-router.post('/api/technicians', auth, async (req, res) => {
+router.post('/', auth, async (req, res) => {
     try {
         const technician = new db.user(req.body);
         await technician.save();
@@ -72,4 +72,4 @@ router.post('/api/technicians', auth, async (req, res) => {
     }
 });
 
-export { router as technicianRouter };
+export { router as techniciansRouter };

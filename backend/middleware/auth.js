@@ -7,7 +7,6 @@ export const auth = async (req, res, next) => {
         if (!token) {
             throw new Error('Authentication required');
         }
-
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const user = await prisma.user.findUnique({
             where: { id: decoded.id }
@@ -20,6 +19,7 @@ export const auth = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
+        console.log(error);
         res.status(401).json({ error: 'Please authenticate' });
     }
 };

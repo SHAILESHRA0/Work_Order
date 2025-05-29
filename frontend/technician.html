@@ -1,24 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Technician Panel</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+
+
+    <style>
+        .modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 70%;
+            border-radius: 8px;
+        }
+    </style>
 </head>
+
 <body>
     <div class="container">
         <header class="header-animate">
             <div class="logo">
-                <a href="index.html"><img src="../assets/logo.jpg" alt="Workorder Management Logo" class="logo" width="100" height="50"></a>
+                <a href="index.html"><img src="../assets/logo.jpg" alt="Workorder Management Logo" class="logo"
+                        width="100" height="50"></a>
                 <h1>Technician Panel</h1>
             </div>
         </header>
-        
+
         <nav>
             <ul>
-                <li><button id="logoutBtn" class="logout-btn" onclick="window.location.href='index.html'">Logout</button></li>
+                <li><button id="logoutBtn" class="logout-btn"
+                        onclick="window.location.href='index.html'">Logout</button></li>
             </ul>
         </nav>
 
@@ -28,10 +54,18 @@
                 <div class="filter-controls">
                     <select id="statusFilter">
                         <option value="all">All Status</option>
-                        <option value="pending">Pending</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="completed">Completed</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="ASSIGNED">Assigned</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="REJECTED">Rejected</option>
+                        <option value="ON_HOLD">On Hold</option>
+                        <option value="CANCELLED">Cancelled</option>
+                        <option value="ISSUE_REPORTED">Issue Reported</option>
+                        <option value="NEEDS_REVIEW">Needs Review</option>
                     </select>
+
                     <select id="assignedBy">
                         <option value="all">All Assigners</option>
                         <option value="manager">Manager</option>
@@ -41,11 +75,13 @@
                 <table id="workOrderTable">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>Work Order</th>
                             <th>Description</th>
                             <th>Assigned By</th>
-                            <th>Due Date</th>
                             <th>Status</th>
+                            <th>Priority</th>
+                            <th>Assigned Date</th>
+                            <th>Due Date</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -57,25 +93,36 @@
     </div>
 
     <!-- Work Order Details Modal -->
-    <div id="workOrderModal" class="modal scale-in">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Work Order Details</h3>
+    <dialog id="workOrderModal" class="modal scale-in">
+        <div class="modal-content max-w-96">
+            <div class="flex space-between w-full items-center">
+                <h3>Work Order Details</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
             <div id="workOrderDetails"></div>
             <div class="status-update">
                 <h4>Update Status</h4>
                 <select id="statusUpdate">
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                    <option value="issue">Issue Reported</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="ASSIGNED">Assigned</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="COMPLETED">Completed</option>
+                    <option value="REJECTED">Rejected</option>
+                    <option value="ON_HOLD">On Hold</option>
+                    <option value="CANCELLED">Cancelled</option>
+                    <option value="ISSUE_REPORTED">Issue Reported</option>
+                    <option value="NEEDS_REVIEW">Needs Review</option>
                 </select>
+
                 <div id="issueReportBox" style="display: none;">
                     <textarea id="issueDescription" placeholder="Describe the issue..."></textarea>
                 </div>
                 <button id="updateStatus">Update</button>
             </div>
         </div>
-    </div>
+    </dialog>
     <script src="js/technician.js"></script>
 </body>
+
 </html>

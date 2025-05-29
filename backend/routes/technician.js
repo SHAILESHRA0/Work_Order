@@ -8,57 +8,73 @@ const router = express.Router();
 router.get('/workorders', auth, async (req, res) => {
     try {
         const workOrders = await db.workOrder.findMany({
-            where: { 
-                assignedToId: req.user.id 
+            where: {
+                assignedToId: req.user.id,
+                status: "APPROVED"
             },
             include: {
-                creator: {
+                createdBy: {
                     select: {
                         name: true,
                         role: true
                     }
-                }
+                },
+                tasks: true
             }
         });
-        
-        res.json(workOrders);
+
+
+        workOrders.map(order => {
+            order.tasks.map(task => ({
+
+            }))
+        }).flat();
+
+        const result = workOrders.map(order => {
+            return order.tasks.map(task => ({
+                id:task.id,
+                workOrderTitle: order.title,
+                status: task.status,
+                description: task.description,
+                dueDate: order.dueDate,
+                assignedBy: order.createdBy.name,
+                priority: task.priority,
+                assignedDate: task.assignedDate,
+            }))
+        }).flat();
+
+        res.json(result);
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: 'Server error' });
     }
 });
 
 // Update work order status
-router.put('/workorders/:id/status', auth, async (req, res) => {
+router.put('/tasks/:id/status', auth, async (req, res) => {
     try {
         const { status, issueDescription } = req.body;
-        
-        const workOrder = await db.workOrder.findUnique({
+
+        const task = await db.task.findUnique({
             where: { id: req.params.id }
         });
-        
-        if (!workOrder) {
+
+        if (!task) {
             return res.status(404).json({ message: 'Work order not found' });
         }
-        
-        if (workOrder.assignedToId !== req.user.id) {
+
+        if (task.assignedToId !== req.user.id) {
             return res.status(401).json({ message: 'Not authorized' });
         }
-        
-        const updatedWorkOrder = await db.workOrder.update({
+
+        const updatedtask= await db.task.update({
             where: { id: req.params.id },
             data: {
                 status,
-                tasks: issueDescription ? {
-                    create: {
-                        description: issueDescription,
-                        createdById: req.user.id,
-                        status: 'issue_reported'
-                    }
-                } : undefined
             }
         });
-        
-        res.json(updatedWorkOrder);
+
+        res.json(updatedtask);
     } catch (error) {
         console.error('Error updating work order:', error);
         res.status(500).json({ message: 'Server error' });

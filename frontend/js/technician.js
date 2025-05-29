@@ -1,16 +1,16 @@
-const API_URL = 'http://localhost:5502/api'; // Corrected base API URL
-
 document.addEventListener('DOMContentLoaded', () => {
     loadWorkOrders();
     setupEventListeners();
     initAnimations();
 });
 
+let teaskIdToUpdate = null;
+
 async function loadWorkOrders() {
     try {
-        const response = await fetch(`${API_URL}/technician/workorders`, { // Corrected endpoint
+        const response = await fetch(`/api/technician/workorders`, { // Corrected endpoint
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`
             }
         });
         const workOrders = await response.json();
@@ -28,13 +28,15 @@ function displayWorkOrders(workOrders) {
         const row = document.createElement('tr');
         row.className = 'work-order-row';
         row.innerHTML = `
-            <td>${order.id}</td>
+            <td>${order.workOrderTitle}</td>
             <td>${order.description}</td>
             <td>${order.assignedBy}</td>
-            <td>${new Date(order.dueDate).toLocaleDateString()}</td>
             <td>${order.status}</td>
+            <td>${order.priority}</td>
+            <td>${new Date(order.assignedDate).toLocaleDateString()}</td>
+            <td>${new Date(order.dueDate).toLocaleDateString()}</td>
             <td>
-                <button onclick="showWorkOrderDetails('${order.id}')" class="view-btn">View</button>
+                <button onclick='showModal("${order.id}")' class="view-btn">Update Status</button>
             </td>
         `;
         tbody.appendChild(row);
@@ -44,13 +46,16 @@ function displayWorkOrders(workOrders) {
     });
 }
 
-async function updateWorkOrderStatus(orderId, status, issueDescription = null) {
+async function updateTaskStatus(orderId, status, issueDescription = null) {
+    if (!orderId){
+        return;
+    }
     try {
-        const response = await fetch(`${API_URL}/technician/workorders/${orderId}/status`, {
+        const response = await fetch(`/api/technician/tasks/${orderId}/status`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`
             },
             body: JSON.stringify({ status, issueDescription })
         });
@@ -61,7 +66,15 @@ async function updateWorkOrderStatus(orderId, status, issueDescription = null) {
         }
     } catch (error) {
         console.error('Error updating work order:', error);
+    } finally{
+        teaskIdToUpdate = null;
     }
+}
+
+
+function closeModal(){
+    teaskIdToUpdate = null;
+    document.getElementById('statusUpdate')?.close();
 }
 
 // Event listeners and modal handling functions
@@ -76,7 +89,7 @@ function setupEventListeners() {
         const orderId = document.getElementById('workOrderDetails').dataset.orderId;
         const status = document.getElementById('statusUpdate').value;
         const issueDescription = document.getElementById('issueDescription').value;
-        updateWorkOrderStatus(orderId, status, issueDescription);
+        updateTaskStatus(teaskIdToUpdate, status, issueDescription);
 
         gsap.to(".status-update", {
             duration: 0.3,
@@ -116,9 +129,10 @@ function animateWorkOrder(element, index) {
     });
 }
 
-function showModal() {
-    const modal = document.getElementById('workOrderModal');
-    modal.style.display = 'block';
+function showModal(taskId) {
+    teaskIdToUpdate = taskId;
+    const modal = document.getElementById('workOrderModal').showModal();
+    // modal.style.display = 'block';
     
     gsap.from(".modal-content", {
         duration: 0.5,

@@ -2,13 +2,14 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import { config } from "dotenv";
 import express from "express";
-import http from "http";
+import listEndpoints from 'express-list-endpoints';
 import path from "path";
 import { fileURLToPath } from "url";
 
 import { adminRouter } from "./backend/routes/admin.js";
 import { authRouter } from "./backend/routes/auth.js";
-import { technicianRouter } from './backend/routes/technicians.js';
+import { techniciansRouter } from './backend/routes/technicians.js';
+import { technicianRouter } from './backend/routes/technician.js';
 import { workOrderRouter } from "./backend/routes/workOrders.js";
 
 config();
@@ -16,9 +17,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const server = http.createServer(app);
-const PORT = parseInt(process.env.PORT || "3000", 10);
-const HOST = "0.0.0.0"; // Allows external access
+const PORT = parseInt(process.env.PORT || "3000");
 
 // Middleware
 app.use(cors());
@@ -29,20 +28,12 @@ app.use(bodyParser.json());
 app.use(authRouter);
 app.use(adminRouter);
 app.use('/api/workorders', workOrderRouter);
-app.use('/api/technicians', technicianRouter);
-
-app.get("/api", (req, res) => {
-  res.send("🚀 Welcome to the Work Order Management System API!");
-});
+app.use('/api/technicians', techniciansRouter);
+app.use('/api/technician', technicianRouter);
 
 // Serve static assets
 app.use("/assets", express.static(path.join(__dirname, "./assets")));
 app.use(express.static(path.join(__dirname, "./frontend")));
-
-// Catch-all route for SPA
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname, "../frontend", "index.html"));
-// });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -68,7 +59,16 @@ process.on("SIGINT", () => {
   });
 });
 
-// Start Server
-server.listen(PORT, HOST, async () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}/`);
+
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}`);
+
+  const endpoints = listEndpoints(app);
+  console.log("Available Routes:");
+  endpoints.forEach(route => {
+    console.log(`${route.methods.join(', ').padEnd(10)} ${route.path}`);
+  });
 });
+
+
+

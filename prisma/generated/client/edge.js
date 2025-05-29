@@ -265,7 +265,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\bokka\\OneDrive\\Desktop\\New folder\\Work_Order\\Work_Order\\prisma\\generated\\client",
+      "value": "/home/karthikssalian/work/Work_Order/prisma/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -274,12 +274,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-3.0.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\bokka\\OneDrive\\Desktop\\New folder\\Work_Order\\Work_Order\\prisma\\schema.prisma",
+    "sourceFilePath": "/home/karthikssalian/work/Work_Order/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -293,11 +293,12 @@ const config = {
     "db"
   ],
   "activeProvider": "mongodb",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "mongodb+srv://shaileshrao476:QgNlJBEU17QDAcPt@cluster0.pvrtzor.mongodb.net/Work_Order?retryWrites=true&w=majority"
+        "value": null
       }
     }
   },

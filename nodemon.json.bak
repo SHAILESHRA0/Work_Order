@@ -1,6 +1,0 @@
-{
-  "watch": ["lib", "public", "index.ts", "*.html", "*.css", "*.js", "*.ts" , ".env"],
-  "ext": "ts,json",
-  "ignore": ["node_modules", "certificates"],
-  "exec": "node index.js"
-}

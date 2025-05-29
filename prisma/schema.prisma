@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/client"
 }
 
 datasource db {
@@ -90,7 +89,7 @@ model Session {
 model WorkOrder {
   id             String          @id @default(auto()) @map("_id") @db.ObjectId
   orderNumber    String          @unique
-  title          String
+  title          String         @unique
   description    String
   department     Department
   priority       Priority        @default(MEDIUM)
@@ -99,6 +98,7 @@ model WorkOrder {
   dueDate        DateTime
   completedDate  DateTime?
   equipment      String?
+  repairType     String?
   version        Int             @default(1)
   estimatedHours Float?
   actualHours    Float?

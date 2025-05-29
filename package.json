@@ -4,7 +4,7 @@
   "description": "Work Order Management System",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node --watch index.js",
     "dev": "nodemon",
     "test": "nodemon backend/index.js",
     "db:push": "prisma db push",
@@ -20,6 +20,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
+    "express-list-endpoints": "^7.1.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.0.1",
     "prisma": "^6.6.0",

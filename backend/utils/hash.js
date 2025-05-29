@@ -6,19 +6,13 @@ export async function hashPassword(password) {
 }
 
 export async function comparePassword(password, hashedPassword) {
-  try {
-    console.log("Comparing passwords:");
-    console.log("Input password length:", password?.length);
-    console.log("Stored hash length:", hashedPassword?.length);
-    
-    if (!password || !hashedPassword) {
-      console.log("Missing password or hash");
-      return false;
-    }
 
-    const result = await bcrypt.compare(password, hashedPassword);
-    console.log("Password comparison result:", result);
-    return result;
+  if (!password || !hashedPassword) {
+    return false;
+  }
+
+  try {
+    return await bcrypt.compare(password, hashedPassword);
   } catch (error) {
     console.error("Password comparison error:", error);
     return false;

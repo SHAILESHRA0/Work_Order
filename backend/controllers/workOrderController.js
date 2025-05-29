@@ -4,7 +4,7 @@ import { WORK_ORDER_STATUS } from '../models/WorkOrder.js';
 export const workOrderController = {
     async create(req, res) {
         try {
-            const { 
+            const {
                 title,
                 description,
                 department,
@@ -14,7 +14,7 @@ export const workOrderController = {
                 dueDate,
                 vehicle,
                 assignedToId,
-                tasks 
+                tasks
             } = req.body;
 
             // Validate required fields
@@ -28,7 +28,7 @@ export const workOrderController = {
             // Create work order with vehicle in a transaction
             const workOrder = await prisma.$transaction(async (tx) => {
                 let vehicleId = null;
-                
+
                 if (vehicle?.licensePlate) {
                     const existingVehicle = await tx.vehicle.findUnique({
                         where: { licensePlate: vehicle.licensePlate }
@@ -98,10 +98,10 @@ export const workOrderController = {
 
         } catch (error) {
             console.error('Work order creation error:', error);
-            return res.status(500).json({ 
+            return res.status(500).json({
                 success: false,
                 error: 'Failed to create work order',
-                details: error.message 
+                details: error.message
             });
         }
     },
@@ -109,8 +109,8 @@ export const workOrderController = {
     async getAll(req, res) {
         try {
             const workOrders = await prisma.workOrder.findMany({
-                orderBy: { 
-                    createdAt: 'desc' 
+                orderBy: {
+                    createdAt: 'desc'
                 },
                 include: {
                     vehicle: {
@@ -121,15 +121,15 @@ export const workOrderController = {
                     },
                     tasks: true,
                     assignedTo: {
-                        select: { 
-                            id: true, 
-                            name: true 
+                        select: {
+                            id: true,
+                            name: true
                         }
                     },
                     createdBy: {
-                        select: { 
-                            id: true, 
-                            name: true 
+                        select: {
+                            id: true,
+                            name: true
                         }
                     }
                 }
@@ -168,19 +168,19 @@ export const workOrderController = {
         try {
             const { orderNo } = req.params;
             const existingOrder = await prisma.workOrder.findFirst({
-                where: { 
-                    orderNumber: orderNo 
+                where: {
+                    orderNumber: orderNo
                 }
             });
-            
+
             if (!existingOrder) {
-                return res.status(404).json({ 
+                return res.status(404).json({
                     success: true,
                     exists: false,
                     message: 'Work order number is available'
                 });
             }
-            
+
             return res.status(200).json({
                 success: true,
                 exists: true,
@@ -190,10 +190,10 @@ export const workOrderController = {
 
         } catch (error) {
             console.error('Error checking work order:', error);
-            return res.status(500).json({ 
+            return res.status(500).json({
                 success: false,
                 error: 'Failed to check work order',
-                details: error.message 
+                details: error.message
             });
         }
     },
@@ -202,7 +202,7 @@ export const workOrderController = {
         try {
             const { id } = req.params;
             const { isValid, errors } = validateWorkOrder(req.body);
-            
+
             if (!isValid) {
                 return res.status(400).json({ errors });
             }
@@ -211,7 +211,7 @@ export const workOrderController = {
                 where: { id },
                 data: req.body
             });
-            
+
             res.json(workOrder);
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -292,9 +292,9 @@ export const workOrderController = {
             res.status(201).json(workOrder);
         } catch (error) {
             console.error('Error creating sample work order:', error);
-            res.status(500).json({ 
+            res.status(500).json({
                 error: 'Failed to create sample work order',
-                details: error.message 
+                details: error.message
             });
         }
     },
@@ -315,6 +315,11 @@ export const workOrderController = {
                     assignedTo: {
                         select: {
                             id: true,
+                            name: true
+                        }
+                    },
+                    createdBy: {
+                        select: {
                             name: true
                         }
                     },
@@ -442,9 +447,8 @@ export const workOrderController = {
                     updatedAt: new Date(),
                     comments: {
                         create: {
-                            text: comments || 'Work order approved',
-                            userId: req.user.id,
-                            type: 'APPROVAL'
+                            content: 'Work order approved',
+                            authorId: req.user.id
                         }
                     }
                 },
@@ -487,9 +491,8 @@ export const workOrderController = {
                     updatedAt: new Date(),
                     comments: {
                         create: {
-                            text: comments,
-                            userId: req.user.id,
-                            type: 'REJECTION'
+                            content: comments,
+                            authorId: req.user.id
                         }
                     }
                 },
