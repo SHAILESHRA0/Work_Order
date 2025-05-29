@@ -47,10 +47,17 @@ const WORKFLOW_STEPS = {
 
 const workOrderSchema = new mongoose.Schema({
     id: String,
+    orderNumber: {
+        type: String,
+        required: true,
+        unique: true,
+        trim: true
+    },
     title: { 
         type: String,
         required: true,
-        trim: true 
+        trim: true,
+        index: true // Keep index without uniqueness
     },
     description: {
         type: String,
@@ -298,8 +305,15 @@ workOrderSchema.methods.assignTechnician = async function(technicianId, assigned
     return this.save();
 };
 
-// Add a pre-save hook for version control
+// Add a pre-save hook to generate unique order number if not provided
 workOrderSchema.pre('save', async function(next) {
+    if (this.isNew && !this.orderNumber) {
+        // Generate order number based on timestamp and random string
+        const timestamp = Date.now().toString(36);
+        const random = Math.random().toString(36).substring(2, 7);
+        this.orderNumber = `WO-${timestamp}-${random}`.toUpperCase();
+    }
+    
     if (this.isNew) {
         this.version = 1;
     } else if (this.isModified()) {

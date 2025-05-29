@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
@@ -89,7 +90,7 @@ model Session {
 model WorkOrder {
   id             String          @id @default(auto()) @map("_id") @db.ObjectId
   orderNumber    String          @unique
-  title          String         @unique
+  title          String         // Remove @unique constraint
   description    String
   department     Department
   priority       Priority        @default(MEDIUM)
