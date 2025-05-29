@@ -50,35 +50,67 @@ router.get('/workorders', auth, async (req, res) => {
     }
 });
 
-// Update work order status
+// Update task status
 router.put('/tasks/:id/status', auth, async (req, res) => {
     try {
-        const { status, issueDescription } = req.body;
+        const { status, comments } = req.body;
+        const taskId = req.params.id;
 
-        const task = await db.task.findUnique({
-            where: { id: req.params.id }
-        });
+        // Start a transaction
+        const result = await db.$transaction(async (prisma) => {
+            // Update the task
+            const task = await prisma.task.update({
+                where: { id: taskId },
+                data: {
+                    status,
+                    comments: comments || undefined,
+                    updatedAt: new Date(),
+                    // Only update completion fields if status is COMPLETED
+                    ...(status === 'COMPLETED' ? {
+                        actualTime: req.body.actualTime ? parseFloat(req.body.actualTime) : null,
+                        completedAt: new Date() // Changed from completedDate to completedAt
+                    } : {})
+                },
+                include: {
+                    workOrder: true
+                }
+            });
 
-        if (!task) {
-            return res.status(404).json({ message: 'Work order not found' });
-        }
+            // Check and update work order if all tasks completed
+            if (status === 'COMPLETED') {
+                const allTasks = await prisma.task.findMany({
+                    where: { workOrderId: task.workOrder.id }
+                });
 
-        if (task.assignedToId !== req.user.id) {
-            return res.status(401).json({ message: 'Not authorized' });
-        }
+                const allCompleted = allTasks.every(t => 
+                    t.status === 'COMPLETED' || t.id === taskId
+                );
 
-        const updatedtask= await db.task.update({
-            where: { id: req.params.id },
-            data: {
-                status,
+                if (allCompleted) {
+                    await prisma.workOrder.update({
+                        where: { id: task.workOrder.id },
+                        data: {
+                            status: 'COMPLETED',
+                            completedDate: new Date() // This is correct for WorkOrder model
+                        }
+                    });
+                }
             }
+
+            return task;
         });
 
-        res.json(updatedtask);
+        res.json({ success: true, data: result });
+
     } catch (error) {
-        console.error('Error updating work order:', error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error updating task status:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Failed to update task status',
+            details: error.message 
+        });
     }
 });
 
 export { router as technicianRouter };
+

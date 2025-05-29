@@ -4,15 +4,18 @@ document.addEventListener('DOMContentLoaded', () => {
     initAnimations();
 });
 
-let teaskIdToUpdate = null;
+let taskIdToUpdate = null;
 
 async function loadWorkOrders() {
     try {
-        const response = await fetch(`/api/technician/workorders`, { // Corrected endpoint
+        const response = await fetch('/api/technician/workorders', {
             headers: {
-                'Authorization': `Bearer ${sessionStorage.getItem('token')}`
+                'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                'Accept': 'application/json'
             }
         });
+
+        if (!response.ok) throw new Error('Failed to fetch work orders');
         const workOrders = await response.json();
         displayWorkOrders(workOrders);
     } catch (error) {
@@ -46,57 +49,97 @@ function displayWorkOrders(workOrders) {
     });
 }
 
-async function updateTaskStatus(orderId, status, issueDescription = null) {
-    if (!orderId){
-        return;
-    }
+async function updateTaskStatus(taskId, updateData) {
     try {
-        const response = await fetch(`/api/technician/tasks/${orderId}/status`, {
+        const response = await fetch(`/api/technician/tasks/${taskId}/status`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${sessionStorage.getItem('token')}`
             },
-            body: JSON.stringify({ status, issueDescription })
+            body: JSON.stringify({
+                status: updateData.status,
+                comments: updateData.comments,
+                actualTime: updateData.status === 'COMPLETED' ? 
+                    parseFloat(document.getElementById('actualHours').value) : null
+            })
         });
-        
-        if (response.ok) {
-            loadWorkOrders();
-            closeModal();
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || error.error || 'Failed to update status');
         }
+
+        const result = await response.json();
+        await loadWorkOrders();
+        closeModal();
+        showNotification(`Status updated to ${updateData.status} successfully`, 'success');
     } catch (error) {
-        console.error('Error updating work order:', error);
-    } finally{
-        teaskIdToUpdate = null;
+        console.error('Error updating task:', error);
+        showNotification(error.message, 'error');
     }
 }
 
-
-function closeModal(){
-    teaskIdToUpdate = null;
-    document.getElementById('statusUpdate')?.close();
+function closeModal() {
+    taskIdToUpdate = null;
+    const modal = document.getElementById('workOrderModal');
+    if (modal instanceof HTMLDialogElement) {
+        modal.close();
+    }
 }
 
 // Event listeners and modal handling functions
 function setupEventListeners() {
-    const statusUpdate = document.getElementById('statusUpdate');
-    statusUpdate.addEventListener('change', (e) => {
-        const issueBox = document.getElementById('issueReportBox');
-        issueBox.style.display = e.target.value === 'issue' ? 'block' : 'none';
+    const statusSelect = document.getElementById('statusUpdate');
+    const completionChecklist = document.getElementById('completionChecklist');
+    const issueReportBox = document.getElementById('issueReportBox');
+    const onHoldChecklist = document.getElementById('onHoldChecklist');
+    
+    statusSelect.addEventListener('change', (e) => {
+        completionChecklist.style.display = e.target.value === 'COMPLETED' ? 'block' : 'none';
+        issueReportBox.style.display = e.target.value === 'ISSUE_REPORTED' ? 'block' : 'none';
+        onHoldChecklist.style.display = e.target.value === 'ON_HOLD' ? 'block' : 'none';
     });
 
-    document.getElementById('updateStatus').addEventListener('click', () => {
-        const orderId = document.getElementById('workOrderDetails').dataset.orderId;
-        const status = document.getElementById('statusUpdate').value;
-        const issueDescription = document.getElementById('issueDescription').value;
-        updateTaskStatus(teaskIdToUpdate, status, issueDescription);
+    document.getElementById('updateStatus').addEventListener('click', async () => {
+        const status = statusSelect.value;
+        const updateData = { status };
 
-        gsap.to(".status-update", {
-            duration: 0.3,
-            scale: 1.1,
-            yoyo: true,
-            repeat: 1
-        });
+        switch (status) {
+            case 'COMPLETED':
+                const completedDate = document.getElementById('completedDate').value;
+                const actualTime = document.getElementById('actualHours').value;
+                
+                if (!completedDate || !actualTime) {
+                    showNotification('Please fill all completion details', 'error');
+                    return;
+                }
+                
+                updateData.completedDate = completedDate;
+                updateData.actualTime = parseFloat(actualTime);
+                break;
+
+            case 'ISSUE_REPORTED':
+                const issueDescription = document.getElementById('issueDescription').value;
+                if (!issueDescription.trim()) {
+                    showNotification('Please describe the issue', 'error');
+                    return;
+                }
+                updateData.comments = issueDescription;
+                break;
+
+            case 'ON_HOLD':
+                const holdDescription = document.getElementById('holdDescription').value;
+                const resumeDate = document.getElementById('resumeDate').value;
+                if (!holdDescription.trim() || !resumeDate) {
+                    showNotification('Please fill hold reason and resume date', 'error');
+                    return;
+                }
+                updateData.comments = holdDescription;
+                break;
+        }
+
+        await updateTaskStatus(taskIdToUpdate, updateData);
     });
 }
 
@@ -130,7 +173,7 @@ function animateWorkOrder(element, index) {
 }
 
 function showModal(taskId) {
-    teaskIdToUpdate = taskId;
+    taskIdToUpdate = taskId;
     const modal = document.getElementById('workOrderModal').showModal();
     // modal.style.display = 'block';
     
@@ -140,4 +183,13 @@ function showModal(taskId) {
         opacity: 0,
         ease: "back.out(1.7)"
     });
+}
+
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => notification.remove(), 3000);
 }

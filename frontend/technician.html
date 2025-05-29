@@ -28,6 +28,45 @@
             width: 70%;
             border-radius: 8px;
         }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+        }
+
+        .close-btn:hover {
+            color: #ff0000;
+        }
+
+        dialog {
+            border: none;
+            padding: 0;
+            background: transparent;
+        }
+
+        dialog::backdrop {
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .scale-in {
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
     </style>
 </head>
 
@@ -93,35 +132,67 @@
     </div>
 
     <!-- Work Order Details Modal -->
-    <dialog id="workOrderModal" class="modal scale-in">
+    <dialog id="workOrderModal" class="modal">
         <div class="modal-content max-w-96">
             <div class="flex space-between w-full items-center">
                 <h3>Work Order Details</h3>
-                <button class="close" onclick="closeModal()">&times;</button>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
             <div id="workOrderDetails"></div>
             <div class="status-update">
                 <h4>Update Status</h4>
                 <select id="statusUpdate">
-                    <option value="PENDING">Pending</option>
-                    <option value="APPROVED">Approved</option>
-                    <option value="ASSIGNED">Assigned</option>
                     <option value="IN_PROGRESS">In Progress</option>
                     <option value="COMPLETED">Completed</option>
-                    <option value="REJECTED">Rejected</option>
                     <option value="ON_HOLD">On Hold</option>
-                    <option value="CANCELLED">Cancelled</option>
                     <option value="ISSUE_REPORTED">Issue Reported</option>
                     <option value="NEEDS_REVIEW">Needs Review</option>
                 </select>
 
-                <div id="issueReportBox" style="display: none;">
-                    <textarea id="issueDescription" placeholder="Describe the issue..."></textarea>
+                <div id="statusChecklists">
+                    <div id="completionChecklist" class="checklist" style="display: none;">
+                        <h5>Completion Details</h5>
+                        <div class="checklist-items">
+                            <label><input type="checkbox" name="completion" value="testing" required> Testing completed</label>
+                            <label><input type="checkbox" name="completion" value="quality" required> Quality check done</label>
+                            <label><input type="checkbox" name="completion" value="documentation" required> Documentation updated</label>
+                            <div class="mt-3">
+                                <label>Completion Date:</label>
+                                <input type="datetime-local" id="completedDate" class="w-full p-2 border rounded" required>
+                            </div>
+                            <div class="mt-3">
+                                <label>Actual Hours Spent:</label>
+                                <input type="number" id="actualHours" min="0" step="0.5" class="w-full p-2 border rounded" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="issueReportBox" class="checklist" style="display: none;">
+                        <h5>Issue Report</h5>
+                        <textarea id="issueDescription"
+                                placeholder="Describe the issue in detail..."
+                                class="mt-3 w-full p-2 border rounded"
+                                required></textarea>
+                    </div>
+
+                    <div id="onHoldChecklist" class="checklist" style="display: none;">
+                        <h5>On Hold Details</h5>
+                        <textarea id="holdDescription"
+                                placeholder="Reason for putting on hold..."
+                                class="mt-3 w-full p-2 border rounded"
+                                required></textarea>
+                        <div class="mt-3">
+                            <label>Expected Resume Date:</label>
+                            <input type="date" id="resumeDate" class="w-full p-2 border rounded">
+                        </div>
+                    </div>
                 </div>
-                <button id="updateStatus">Update</button>
+
+                <button id="updateStatus" class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded">Update</button>
             </div>
         </div>
     </dialog>
+
     <script src="js/technician.js"></script>
 </body>
 
