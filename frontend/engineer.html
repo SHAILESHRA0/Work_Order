@@ -34,10 +34,13 @@
             padding: 0.5rem 1rem;
             border-radius: 5px;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        header button:hover {
-            background-color: #0056b3;
+        header button.active {
+            background-color: #28a745;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            transform: scale(1.05);
         }
 
         main {
@@ -162,6 +165,19 @@
             background-color: #b8daff;
             color: #004085;
         }
+
+        .section-title {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            border-left: 5px solid #007bff;
+        }
+
+        .section-title.active {
+            border-left-color: #28a745;
+            background-color: #e9ecef;
+        }
     </style>
 </head>
 <body>
@@ -169,9 +185,9 @@
         <h1>Engineer Panel - Car Repair Work Order</h1>
         <div>
             <button id="logoutBtn">Logout</button>
+            <button id="createOrderBtn" class="active">Create Order</button>
             <button id="viewPendingBtn">View Pending Orders</button>
             <button id="viewHistoryBtn">View Order History</button>
-            <button id="createOrderBtn">Create Order</button>
         </div>
     </header>
     
@@ -472,9 +488,36 @@
 
             // Toggle View
             function showSection(sectionName) {
+                // Update section visibility
                 workorderSection.style.display = sectionName === 'create' ? 'block' : 'none';
                 pendingSection.style.display = sectionName === 'pending' ? 'block' : 'none';
                 historySection.style.display = sectionName === 'history' ? 'block' : 'none';
+
+                // Update button active states
+                createOrderBtn.classList.toggle('active', sectionName === 'create');
+                viewPendingBtn.classList.toggle('active', sectionName === 'pending');
+                viewHistoryBtn.classList.toggle('active', sectionName === 'history');
+
+                // Update window title to reflect current section
+                document.title = `Engineer Panel - ${sectionName.charAt(0).toUpperCase() + sectionName.slice(1)}`;
+
+                // Add section title if it doesn't exist
+                const sections = {
+                    create: workorderSection,
+                    pending: pendingSection,
+                    history: historySection
+                };
+
+                Object.entries(sections).forEach(([key, section]) => {
+                    let title = section.querySelector('.section-title');
+                    if (!title) {
+                        title = document.createElement('div');
+                        title.className = 'section-title';
+                        title.innerHTML = `<h2>${key.charAt(0).toUpperCase() + key.slice(1)} ${key === 'create' ? 'Work Order' : 'Orders'}</h2>`;
+                        section.insertBefore(title, section.firstChild);
+                    }
+                    title.classList.toggle('active', key === sectionName);
+                });
             }
 
             viewPendingBtn.addEventListener('click', () => showSection('pending'));

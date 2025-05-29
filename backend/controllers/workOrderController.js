@@ -8,34 +8,13 @@ export const workOrderController = {
 
         while (attempt < maxRetries) {
             try {
-                const {
-                    title,
-                    description,
-                    department,
-                    orderNumber,
-                    priority,
-                    startDate,
-                    dueDate,
-                    vehicle,
-                    assignedToId,
-                    tasks
-                } = req.body;
-
-                // Validate required fields
-                if (!title || !description || !department || !startDate || !dueDate) {
-                    return res.status(400).json({
-                        success: false,
-                        error: 'Missing required fields'
-                    });
-                }
-
-                // Create work order with vehicle in a transaction
+                // Create work order in a transaction without isolation level
                 const workOrder = await prisma.$transaction(async (tx) => {
                     let vehicleId = null;
 
-                    if (vehicle?.licensePlate) {
+                    if (req.body.vehicle?.licensePlate) {
                         const existingVehicle = await tx.vehicle.findUnique({
-                            where: { licensePlate: vehicle.licensePlate }
+                            where: { licensePlate: req.body.vehicle.licensePlate }
                         });
 
                         if (existingVehicle) {
@@ -43,8 +22,8 @@ export const workOrderController = {
                         } else {
                             const newVehicle = await tx.vehicle.create({
                                 data: {
-                                    model: vehicle.model,
-                                    licensePlate: vehicle.licensePlate
+                                    model: req.body.vehicle.model,
+                                    licensePlate: req.body.vehicle.licensePlate
                                 }
                             });
                             vehicleId = newVehicle.id;
@@ -53,23 +32,23 @@ export const workOrderController = {
 
                     return await tx.workOrder.create({
                         data: {
-                            title,
-                            description,
-                            department,
-                            orderNumber,
-                            priority: priority || 'MEDIUM',
+                            title: req.body.title,
+                            description: req.body.description,
+                            department: req.body.department,
+                            orderNumber: req.body.orderNumber,
+                            priority: req.body.priority || 'MEDIUM',
                             status: 'PENDING',
-                            startDate: new Date(startDate),
-                            dueDate: new Date(dueDate),
+                            startDate: new Date(req.body.startDate),
+                            dueDate: new Date(req.body.dueDate),
                             createdById: req.user.id,
-                            assignedToId,
-                            vehicleId, // Use the vehicle ID reference instead of nested create
-                            tasks: tasks ? {
+                            assignedToId: req.body.assignedToId,
+                            vehicleId,
+                            tasks: req.body.tasks ? {
                                 createMany: {
-                                    data: tasks.map(task => ({
+                                    data: req.body.tasks.map(task => ({
                                         description: task.title,
                                         status: 'PENDING',
-                                        priority: priority || 'MEDIUM'
+                                        priority: req.body.priority || 'MEDIUM'
                                     }))
                                 }
                             } : undefined
@@ -91,13 +70,8 @@ export const workOrderController = {
                             }
                         }
                     });
-                }, {
-                    maxWait: 5000, // 5s timeout
-                    timeout: 10000, // 10s timeout
-                    isolationLevel: prisma.TransactionIsolationLevel.Serializable // Highest isolation level
                 });
 
-                // Send success response with complete work order data
                 return res.status(201).json({
                     success: true,
                     message: 'Work order created successfully',
@@ -106,8 +80,8 @@ export const workOrderController = {
 
             } catch (error) {
                 attempt++;
+                // Handle MongoDB specific error cases
                 if (error.code === 'P2034' && attempt < maxRetries) {
-                    // Wait for a random time before retrying to prevent deadlocks
                     await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
                     continue;
                 }

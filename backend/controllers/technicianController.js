@@ -3,13 +3,34 @@ const { WorkOrder } = require('../models/WorkOrder');
 const technicianController = {
     async getAssignedWorkOrders(req, res) {
         try {
+            // Validate user exists in request
+            if (!req.user || !req.user.id) {
+                return res.status(401).json({ 
+                    success: false, 
+                    error: 'User not authenticated or invalid user ID' 
+                });
+            }
+
             const workOrders = await WorkOrder.find({ 
                 assignedToId: req.user.id,
                 status: { $nin: ['COMPLETED', 'REJECTED'] }
             }).sort('-createdAt');
+
+            // Return empty array if no work orders found
+            if (!workOrders) {
+                return res.json({
+                    success: true,
+                    data: []
+                });
+            }
+
             res.json({ success: true, data: workOrders });
         } catch (error) {
-            res.status(500).json({ success: false, error: error.message });
+            console.error('Error fetching assigned work orders:', error);
+            res.status(500).json({ 
+                success: false, 
+                error: error.message || 'Internal server error'
+            });
         }
     },
 

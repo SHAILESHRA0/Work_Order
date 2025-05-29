@@ -50,6 +50,17 @@ enum Department {
   GENERAL
 }
 
+enum RepairType {
+  ENGINE
+  TRANSMISSION
+  BRAKES
+  SUSPENSION
+  ELECTRICAL
+  BODY
+  MAINTENANCE
+  OTHER
+}
+
 model User {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   email      String      @unique
@@ -99,7 +110,7 @@ model WorkOrder {
   dueDate        DateTime
   completedDate  DateTime?
   equipment      String?
-  repairType     String?
+  repairType     RepairType     @default(OTHER)  // Changed from String? to RepairType
   version        Int             @default(1)
   estimatedHours Float?
   actualHours    Float?

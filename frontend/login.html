@@ -88,6 +88,28 @@
         margin-top: 1rem;
         text-align: center;
       }
+
+      .password-field {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+
+      .password-toggle {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        user-select: none;
+        color: #666;
+      }
+
+      .password-field input[type="password"],
+      .password-field input[type="text"] {
+        padding-right: 35px;
+        width: 100%;
+      }
     </style>
   </head>
   <body>
@@ -118,7 +140,10 @@
 
           <div class="form-group">
             <label for="password">Password:</label>
-            <input type="password" id="password" required />
+            <div class="password-field">
+              <input type="password" id="password" required />
+              <span class="password-toggle" onclick="togglePassword('password')">👁️</span>
+            </div>
           </div>
           
           <button type="submit" class="btn-primary">Login</button>
@@ -139,12 +164,18 @@
 
           <div class="form-group">
             <label for="newPassword">Password:</label>
-            <input type="password" id="newPassword" required />
+            <div class="password-field">
+              <input type="password" id="newPassword" required />
+              <span class="password-toggle" onclick="togglePassword('newPassword')">👁️</span>
+            </div>
           </div>
 
           <div class="form-group">
             <label for="confirmPassword">Confirm Password:</label>
-            <input type="password" id="confirmPassword" required />
+            <div class="password-field">
+              <input type="password" id="confirmPassword" required />
+              <span class="password-toggle" onclick="togglePassword('confirmPassword')">👁️</span>
+            </div>
           </div>
           
           <button type="submit" class="btn-primary">Sign Up</button>
@@ -421,6 +452,12 @@
           }
         }
       });
+
+      // Add this function before the existing scripts
+      function togglePassword(inputId) {
+        const input = document.getElementById(inputId);
+        input.type = input.type === 'password' ? 'text' : 'password';
+      }
     </script>
   </body>
 </html>

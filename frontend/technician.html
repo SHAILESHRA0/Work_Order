@@ -82,8 +82,7 @@
 
         <nav>
             <ul>
-                <li><button id="logoutBtn" class="logout-btn"
-                        onclick="window.location.href='index.html'">Logout</button></li>
+                <li><button id="logoutBtn" class="logout-btn">Logout</button></li>
             </ul>
         </nav>
 
@@ -194,6 +193,30 @@
     </dialog>
 
     <script src="js/technician.js"></script>
-</body>
+    <script>
+        // Handle logout
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            // Clear all storage
+            sessionStorage.clear();
+            localStorage.clear();
+            
+            // Clear any cached data
+            window.location.replace('/index.html');
+            
+            // Prevent going back
+            window.history.forward();
+        });
 
+        // Check authentication on page load
+        if (!sessionStorage.getItem('token')) {
+            window.location.replace('/index.html');
+        }
+
+        // Prevent back button after logout
+        window.history.pushState(null, '', window.location.href);
+        window.onpopstate = function() {
+            window.history.pushState(null, '', window.location.href);
+        };
+    </script>
+</body>
 </html>
