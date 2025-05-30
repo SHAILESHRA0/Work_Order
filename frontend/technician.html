@@ -36,10 +36,28 @@
             cursor: pointer;
             padding: 0.5rem;
             line-height: 1;
+            color: #666;
+            transition: color 0.3s ease;
+            margin-left: auto;
         }
 
         .close-btn:hover {
             color: #ff0000;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1rem;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #333;
+            font-weight: bold;
         }
 
         dialog {
@@ -67,6 +85,19 @@
                 opacity: 1;
             }
         }
+
+        .welcome-text {
+            margin-left: 20px;
+            color: #333;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
     </style>
 </head>
 
@@ -77,6 +108,7 @@
                 <a href="index.html"><img src="../assets/logo.jpg" alt="Workorder Management Logo" class="logo"
                         width="100" height="50"></a>
                 <h1>Technician Panel</h1>
+                <span id="welcomeMessage" class="welcome-text"></span>
             </div>
         </header>
 
@@ -113,17 +145,31 @@
                 <table id="workOrderTable">
                     <thead>
                         <tr>
-                            <th>Work Order</th>
+                            <th>Order #</th>
+                            <th>Title</th>
                             <th>Description</th>
-                            <th>Assigned By</th>
-                            <th>Status</th>
+                            <th>Equipment</th>
+                            <th>Vehicle</th>
                             <th>Priority</th>
-                            <th>Assigned Date</th>
+                            <th>Status</th>
                             <th>Due Date</th>
-                            <th>Action</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="workOrdersList">
+                        <!-- Loading indicator -->
+                        <tr id="loadingRow">
+                            <td colspan="9" class="text-center">Loading work orders...</td>
+                        </tr>
+                        <!-- Error message placeholder -->
+                        <tr id="errorRow" style="display: none;">
+                            <td colspan="9" class="text-center text-red-600">
+                                <div class="error-message"></div>
+                                <button onclick="loadWorkOrders()" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+                                    Retry
+                                </button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </section>
@@ -133,7 +179,7 @@
     <!-- Work Order Details Modal -->
     <dialog id="workOrderModal" class="modal">
         <div class="modal-content max-w-96">
-            <div class="flex space-between w-full items-center">
+            <div class="modal-header">
                 <h3>Work Order Details</h3>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
             </div>
@@ -217,6 +263,130 @@
         window.onpopstate = function() {
             window.history.pushState(null, '', window.location.href);
         };
+
+        // Add these functions before the existing script
+        async function loadWorkOrders() {
+            const tbody = document.getElementById('workOrdersList');
+            const loadingRow = document.getElementById('loadingRow');
+            const errorRow = document.getElementById('errorRow');
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            // Check if elements exist
+            if (!tbody || !loadingRow || !errorRow) {
+                console.error('Required DOM elements not found');
+                return;
+            }
+
+            try {
+                loadingRow.style.display = 'table-row';
+                errorRow.style.display = 'none';
+
+                // Fetch all work orders first
+                const response = await fetch('/api/technician/work-orders/assigned', {
+                    headers: {
+                        'Authorization': `Bearer ${sessionStorage.getItem('token')}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+                let workOrders = Array.isArray(result) ? result : (result.data || []);
+
+                // Apply status filter client-side
+                if (statusFilter !== 'all') {
+                    workOrders = workOrders.filter(wo => wo.status === statusFilter);
+                }
+
+                if (workOrders.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                ${statusFilter === 'all' 
+                                    ? 'No work orders currently assigned to you.' 
+                                    : `No work orders with status "${statusFilter}" found.`}
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                tbody.innerHTML = workOrders.map(wo => `
+                    <tr class="work-order-row">
+                        <td>${wo.orderNumber || 'N/A'}</td>
+                        <td>${wo.title || 'N/A'}</td>
+                        <td>${wo.description || 'N/A'}</td>
+                        <td>${wo.equipment || 'N/A'}</td>
+                        <td>${wo.vehicle ? `${wo.vehicle.model} (${wo.vehicle.licensePlate})` : 'N/A'}</td>
+                        <td>${wo.priority || 'N/A'}</td>
+                        <td><span class="status-badge ${wo.status.toLowerCase()}">${wo.status}</span></td>
+                        <td>${new Date(wo.dueDate).toLocaleString()}</td>
+                        <td>
+                            <button onclick="showModal('${wo.id}')" class="view-btn">Update Status</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+            } catch (error) {
+                console.error('Error loading work orders:', error);
+                if (errorRow && errorRow.style) {
+                    errorRow.style.display = 'table-row';
+                    const errorMessage = errorRow.querySelector('.error-message');
+                    if (errorMessage) {
+                        errorMessage.textContent = `Failed to load work orders: ${error.message}. Please try again.`;
+                    }
+                }
+            } finally {
+                if (loadingRow && loadingRow.style) {
+                    loadingRow.style.display = 'none';
+                }
+            }
+        }
+
+        // Add this function to handle viewing work order details
+        function showModal(workOrderId) {
+            if (!workOrderId) {
+                console.error('No work order ID provided');
+                return;
+            }
+            const modal = document.getElementById('workOrderModal');
+            if (modal) {
+                window.currentWorkOrderId = workOrderId; // Store the ID globally
+                modal.showModal();
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('workOrderModal');
+            if (modal) {
+                window.currentWorkOrderId = null; // Clear the stored ID
+                modal.close();
+            }
+        }
+
+        // Add retry on network failure
+        window.addEventListener('online', () => {
+            loadWorkOrders();
+        });
+
+        // Add this at the beginning of your script section
+        function displayWelcomeMessage() {
+            const userData = JSON.parse(sessionStorage.getItem('user')) || {};
+            const welcomeMessage = document.getElementById('welcomeMessage');
+            if (welcomeMessage) {
+                welcomeMessage.textContent = `Welcome, ${userData.name || userData.username || 'Technician'}`;
+            }
+        }
+
+        // Load work orders when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            displayWelcomeMessage();
+            loadWorkOrders();
+            // Refresh every 30 seconds
+            setInterval(loadWorkOrders, 30000);
+        });
+
+        // Add status filter event listener
+        document.getElementById('statusFilter').addEventListener('change', loadWorkOrders);
     </script>
 </body>
 </html>

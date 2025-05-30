@@ -1,6 +1,6 @@
-const { WorkOrder } = require('../models/WorkOrder');
+import { prisma } from '../db/index.js';
 
-const technicianController = {
+export const technicianController = {
     async getAssignedWorkOrders(req, res) {
         try {
             // Validate user exists in request
@@ -11,10 +11,24 @@ const technicianController = {
                 });
             }
 
-            const workOrders = await WorkOrder.find({ 
-                assignedToId: req.user.id,
-                status: { $nin: ['COMPLETED', 'REJECTED'] }
-            }).sort('-createdAt');
+            // Verify database connection
+            await prisma.$connect();
+
+            const workOrders = await prisma.workOrder.findMany({
+                where: {
+                    assignedToId: req.user.id,
+                    status: {
+                        notIn: ['COMPLETED', 'REJECTED']
+                    }
+                },
+                include: {
+                    vehicle: true,
+                    tasks: true
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                }
+            });
 
             // Return empty array if no work orders found
             if (!workOrders) {
@@ -24,12 +38,12 @@ const technicianController = {
                 });
             }
 
-            res.json({ success: true, data: workOrders });
+            return res.json({ success: true, data: workOrders });
         } catch (error) {
             console.error('Error fetching assigned work orders:', error);
-            res.status(500).json({ 
+            return res.status(500).json({ 
                 success: false, 
-                error: error.message || 'Internal server error'
+                error: 'Database connection failed'
             });
         }
     },
@@ -37,116 +51,49 @@ const technicianController = {
     async updateWorkOrderStatus(req, res) {
         try {
             const { id } = req.params;
-            const { status, issueDetails } = req.body;
-            
-            const workOrder = await WorkOrder.findById(id);
-            if (!workOrder) {
-                return res.status(404).json({ success: false, error: 'Work order not found' });
-            }
+            const { status, comments, completedDate, actualHours } = req.body;
 
-            workOrder.status = status;
-            if (status === 'ISSUE_REPORTED') {
-                workOrder.issueDetails = {
-                    description: issueDetails,
-                    reportedAt: new Date()
-                };
-            }
-
-            workOrder.statusHistory.push({
-                status,
-                updatedById: req.user.id,
-                details: issueDetails
-            });
-
-            await workOrder.save();
-            res.json({ success: true, data: workOrder });
-        } catch (error) {
-            res.status(500).json({ success: false, error: error.message });
-        }
-    },
-
-    async updateTaskStatus(req, res) {
-        try {
-            const { id } = req.params;
-            const { status, completedAt, actualHours, checklist, comments, resumeDate } = req.body;
-
-            const task = await prisma.task.findUnique({
-                where: { id },
-                include: {
-                    workOrder: true
-                }
-            });
-
-            if (!task) {
-                return res.status(404).json({ success: false, error: 'Task not found' });
-            }
-
-            // Basic update data
             const updateData = {
                 status,
-                updatedAt: new Date()
-            };
-
-            // Add specific fields based on status
-            switch (status) {
-                case 'COMPLETED':
-                    updateData.completedAt = new Date(completedAt);
-                    updateData.actualHours = actualHours;
-                    updateData.checklist = checklist;
-                    break;
-
-                case 'ISSUE_REPORTED':
-                    updateData.issueDetails = {
-                        description: comments,
-                        reportedAt: new Date()
-                    };
-                    break;
-
-                case 'ON_HOLD':
-                    updateData.holdDetails = {
-                        reason: comments,
-                        resumeDate: new Date(resumeDate)
-                    };
-                    break;
-            }
-
-            // Update task in a transaction
-            const updatedTask = await prisma.$transaction(async (tx) => {
-                const updated = await tx.task.update({
-                    where: { id },
-                    data: updateData
-                });
-
-                // If task is completed, check if all tasks in work order are completed
-                if (status === 'COMPLETED') {
-                    const allTasks = await tx.task.findMany({
-                        where: { workOrderId: task.workOrderId }
-                    });
-
-                    const allCompleted = allTasks.every(t => 
-                        t.status === 'COMPLETED' || t.id === id
-                    );
-
-                    if (allCompleted) {
-                        await tx.workOrder.update({
-                            where: { id: task.workOrderId },
-                            data: {
-                                status: 'COMPLETED',
-                                completedAt: new Date()
-                            }
-                        });
+                statusHistory: {
+                    create: {
+                        status,
+                        updatedById: req.user.id,
+                        comments: comments || `Status updated to ${status}`,
+                        updatedAt: new Date()
                     }
                 }
+            };
 
-                return updated;
+            // Add completion details if status is COMPLETED
+            if (status === 'COMPLETED') {
+                updateData.completedDate = completedDate ? new Date(completedDate) : new Date();
+                if (actualHours) {
+                    updateData.actualHours = parseFloat(actualHours);
+                }
+                updateData.updatedAt = new Date();
+            }
+
+            const workOrder = await prisma.workOrder.update({
+                where: { id },
+                data: updateData,
+                include: {
+                    statusHistory: true,
+                    assignedTo: true
+                }
             });
 
-            res.json({ success: true, data: updatedTask });
+            return res.json({
+                success: true,
+                data: workOrder
+            });
         } catch (error) {
-            console.error('Error updating task status:', error);
-            res.status(500).json({ success: false, error: error.message });
+            console.error('Error updating work order status:', error);
+            return res.status(500).json({
+                success: false,
+                error: 'Failed to update work order status',
+                details: error.message
+            });
         }
     }
 };
-
-module.exports = technicianController;

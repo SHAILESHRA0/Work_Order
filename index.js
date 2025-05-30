@@ -8,8 +8,8 @@ import { fileURLToPath } from "url";
 
 import { adminRouter } from "./backend/routes/admin.js";
 import { authRouter } from "./backend/routes/auth.js";
-import { techniciansRouter } from './backend/routes/technicians.js';
 import { technicianRouter } from './backend/routes/technician.js';
+import { techniciansRouter } from './backend/routes/technicians.js';
 import { workOrderRouter } from "./backend/routes/workOrders.js";
 
 config();
@@ -29,7 +29,7 @@ app.use(authRouter);
 app.use(adminRouter);
 app.use('/api/workorders', workOrderRouter);
 app.use('/api/technicians', techniciansRouter);
-app.use('/api/technician', technicianRouter);
+app.use('/api/technician/work-orders', technicianRouter);
 
 // Serve static assets
 app.use("/assets", express.static(path.join(__dirname, "./assets")));
