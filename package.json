@@ -4,7 +4,7 @@
   "description": "Work Order Management System",
   "main": "index.js",
   "scripts": {
-    "start": "node --watch index.js",
+    "start": "node server.js",
     "dev": "nodemon",
     "test": "nodemon backend/index.js",
     "db:push": "prisma db push",
